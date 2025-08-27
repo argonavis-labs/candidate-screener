@@ -1,0 +1,21 @@
+{
+  "1": {
+    "candidate_id": "1",
+    "portfolio_category": "Minimal",
+    "image_filename": "candidate_1.jpg",
+    "criteria": {
+      "typography": {
+        "score": 4,
+        "comment": ""
+      },
+      "layout_composition": {
+        "score": 2,
+        "comment": ""
+      },
+      "color": {
+        "score": 3,
+        "comment": ""
+      }
+    }
+  }
+}
