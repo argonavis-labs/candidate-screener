@@ -1,0 +1,2 @@
+# This file ensures the examplar-images directory is tracked by git
+# Exemplar images are always committed as they're essential for evaluation calibration

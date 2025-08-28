@@ -255,6 +255,24 @@ tmp_*
 # Backup files
 *.bak
 *.backup
+
+# Portfolio Evaluation - Large Image Files
+# Keep candidate images out of git to avoid repo bloat
+candidate-images/*.jpg
+candidate-images/*.png
+candidate-images/*.jpeg
+candidate-images/*.webp
+candidate-images/backup_*/
+
+# But keep the directories and documentation
+!candidate-images/.gitkeep
+!candidate-images/README.md
+
+# Exemplar images ARE committed (small, essential for evaluation)
+# examplar-images/ files will be tracked normally
+
+# Keep one sample for testing (optional)
+# !candidate-images/candidate_1.jpg
 *~
 
 # Node.js (in case you add any JS tooling)

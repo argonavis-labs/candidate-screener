@@ -1,0 +1,15 @@
+# Required packages for portfolio evaluation script
+
+# Core dependencies
+python-dotenv==1.0.0
+requests==2.31.0
+
+# Model provider SDKs (install based on which provider you use)
+openai==1.12.0  # For OpenAI GPT-4o
+# anthropic==0.21.0  # For Claude (uncomment if using Claude)
+
+# Image processing
+Pillow==10.2.0  # For compressing candidate images
+
+# Optional for better error handling and logging
+tenacity==8.2.3  # For retry logic
