@@ -21,11 +21,10 @@ We want to feed a model designer portfolio sites (starting with images) and have
     4. [P2] implement some prompt caching
     5. [P2] We also feed in our code based supplemental 
     6. Update an ai-ratings.json file after each call finishes. we should keep the IDs consistent with the human-ratings.json
-5. Create an evaluation script that loops through the results
-    1. Calculate how far off we are on average
-    2. Whether there are any systemic biases up or down
-    3. Highlights the top 10 sites where there are the most gaps
-    4. generates a very simple visualization of the human vs ai scores in a table (can literally be ASCII if needed) so that I can visualize the outcome
+5. Create an analytics page that helps me understand the results
+    1. Show a table of all ratings for all candidates, along all dimensions and their final score. The first row of this table should always use our human data. each following row should show the ai evaliations we got from our runs. The first column of each row should show the average gap between the AI ratings and human ratings for that run. (e.g. candidate 1 was an AI eval 4, but human 2. candidate 1 was an AI eval 2, but human 4. the diff is calc as (abs(4-2) + abs(2-4))/2 =4). 
+    2. Make chart visualizing the human vs ai ratings for all candidates for all runs. choose the best format.
+    3. Add another section for other potential relevant metrics. think hard and come up with some on your own
 
 ----
 ## If this doesn't work

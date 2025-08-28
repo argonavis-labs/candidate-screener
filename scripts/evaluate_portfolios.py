@@ -204,6 +204,10 @@ class PortfolioEvaluator:
     def __init__(self, provider: ModelProvider, base_dir: Path):
         self.provider = provider
         self.base_dir = base_dir
+        self.start_time = None
+        self.end_time = None
+        self.full_prompt = None
+        self.exemplar_images_used = []
         
     def load_json(self, filename: str) -> Dict:
         """Load JSON file from project directory."""
@@ -237,6 +241,9 @@ class PortfolioEvaluator:
         
         full_prompt = "\n".join(prompt_parts)
         
+        # Store for metadata
+        self.full_prompt = full_prompt
+        
         # Save generated prompt
         with open(self.base_dir / "generated-prompt.md", 'w') as f:
             f.write(full_prompt)
@@ -253,6 +260,8 @@ class PortfolioEvaluator:
             image_path = exemplar_dir / f"exemplar_{i}.jpg"
             if image_path.exists():
                 images.append(str(image_path))
+                # Store relative path for metadata
+                self.exemplar_images_used.append(f"examplar-images/exemplar_{i}.jpg")
             else:
                 print(f"Warning: Missing exemplar image: {image_path}")
         
@@ -261,8 +270,12 @@ class PortfolioEvaluator:
     def evaluate_candidates(self, candidate_ids: Optional[List[str]] = None):
         """Evaluate all candidate portfolios."""
         
+        # Track start time
+        self.start_time = datetime.now()
+        
         print("Starting portfolio evaluation...")
         print(f"Using provider: {self.provider.__class__.__name__}")
+        print(f"Start time: {self.start_time.strftime('%Y-%m-%d %H:%M:%S')}")
         
         # Generate the prompt
         print("Generating evaluation prompt...")
@@ -288,12 +301,16 @@ class PortfolioEvaluator:
         
         print(f"Found {len(candidate_files)} candidate(s) to evaluate")
         
-        # Load existing AI ratings if they exist
-        ai_ratings_file = self.base_dir / "ai-ratings.json"
-        if ai_ratings_file.exists():
-            ai_ratings = self.load_json("ai-ratings.json")
-        else:
-            ai_ratings = {}
+        # Create evaluation results directory
+        results_dir = self.base_dir / "evaluation-results"
+        results_dir.mkdir(exist_ok=True)
+        
+        # Generate timestamped filename
+        timestamp = self.start_time.strftime("%Y%m%d_%H%M%S")
+        ai_ratings_file = results_dir / f"evaluation_{timestamp}.json"
+        
+        # Initialize empty ratings
+        ai_ratings = {}
         
         # Evaluate each candidate
         for candidate_file in candidate_files:
@@ -317,8 +334,8 @@ class PortfolioEvaluator:
                 ai_ratings[candidate_id] = structured_result
                 
                 # Save after each evaluation (in case of interruption)
-                with open(ai_ratings_file, 'w') as f:
-                    json.dump(ai_ratings, f, indent=2)
+                # Include metadata in every save
+                self.save_with_metadata(ai_ratings, ai_ratings_file)
                 
                 print(f"✓ Candidate {candidate_id} evaluated successfully")
                 print(f"  Overall score: {structured_result.get('overall_weighted_score', 'N/A'):.2f}")
@@ -330,11 +347,23 @@ class PortfolioEvaluator:
                 print(f"✗ Error evaluating candidate {candidate_id}: {e}")
                 continue
         
-        # Final save
-        with open(ai_ratings_file, 'w') as f:
-            json.dump(ai_ratings, f, indent=2)
+        # Track end time
+        self.end_time = datetime.now()
+        duration = (self.end_time - self.start_time).total_seconds()
         
-        print(f"\n✓ Evaluation complete! Results saved to {ai_ratings_file}")
+        # Final save with complete metadata
+        self.save_with_metadata(ai_ratings, ai_ratings_file, final=True)
+        
+        # Create symlink to latest results for backwards compatibility
+        latest_link = self.base_dir / "ai-ratings.json"
+        if latest_link.exists() or latest_link.is_symlink():
+            latest_link.unlink()
+        latest_link.symlink_to(ai_ratings_file.relative_to(self.base_dir))
+        
+        print(f"\n✓ Evaluation complete!")
+        print(f"  Results saved to: {ai_ratings_file}")
+        print(f"  Latest symlink: ai-ratings.json")
+        print(f"  Duration: {duration:.1f} seconds ({duration/60:.1f} minutes)")
         
         # Print summary
         self.print_summary(ai_ratings)
@@ -368,6 +397,41 @@ class PortfolioEvaluator:
         result["red_flags"] = raw_result.get("red_flags", [])
         
         return result
+    
+    def save_with_metadata(self, ratings: Dict, filepath: Path, final: bool = False):
+        """Save ratings with metadata about the evaluation run."""
+        
+        # Calculate duration if this is the final save
+        duration = None
+        if final and self.start_time:
+            self.end_time = datetime.now()
+            duration = (self.end_time - self.start_time).total_seconds()
+        
+        # Get model info
+        model_info = {
+            "provider": self.provider.__class__.__name__,
+            "model": getattr(self.provider, 'model', 'unknown')
+        }
+        
+        # Build metadata
+        metadata = {
+            "evaluation_metadata": {
+                "timestamp": self.start_time.isoformat() if self.start_time else datetime.now().isoformat(),
+                "end_time": self.end_time.isoformat() if self.end_time else None,
+                "duration_seconds": duration,
+                "model_used": model_info,
+                "exemplar_images": self.exemplar_images_used,
+                "total_candidates_evaluated": len(ratings),
+                "prompt_length_chars": len(self.full_prompt) if self.full_prompt else 0,
+                "evaluation_complete": final
+            },
+            "full_prompt_used": self.full_prompt,
+            "candidate_ratings": ratings
+        }
+        
+        # Save with metadata
+        with open(filepath, 'w') as f:
+            json.dump(metadata, f, indent=2)
     
     def print_summary(self, ai_ratings: Dict):
         """Print a summary of the evaluation results."""

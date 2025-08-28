@@ -271,6 +271,9 @@ candidate-images/backup_*/
 # Exemplar images ARE committed (small, essential for evaluation)
 # examplar-images/ files will be tracked normally
 
+# Evaluation results history (keep all runs for tracking progress)
+# evaluation-results/ directory and JSON files are tracked
+
 # Keep one sample for testing (optional)
 # !candidate-images/candidate_1.jpg
 *~

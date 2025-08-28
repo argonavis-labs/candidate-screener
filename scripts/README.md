@@ -87,6 +87,16 @@ python3 generate_prompt.py
 
 ## Key Features
 
+### Timestamped Results with Full Metadata
+- Each evaluation creates a timestamped file in `evaluation-results/`
+- Includes complete metadata:
+  - Model and provider used
+  - Start/end timestamps and duration
+  - Full prompt text (12K+ chars)
+  - Exemplar images used
+  - Total candidates evaluated
+- Maintains history of all evaluation runs
+
 ### Error Handling
 - Automatic retry on API failures
 - Saves progress after each evaluation
@@ -112,29 +122,46 @@ The system is designed to easily switch between model providers:
 
 ### Output Format
 
-Results are saved in `ai-ratings.json` with this structure:
+Results are saved in timestamped files in `evaluation-results/` with this structure:
 
 ```json
 {
-  "1": {
-    "candidate_id": "1",
-    "image_filename": "candidate_1.jpg",
-    "evaluated_at": "2024-12-17T10:30:00",
-    "criteria": {
-      "typography": {
-        "score": 3,
-        "explanation": "Clear hierarchy with...",
-        "confidence": 4
-      },
-      "layout_composition": {...},
-      "color": {...}
+  "evaluation_metadata": {
+    "timestamp": "2024-12-17T14:30:22",
+    "end_time": "2024-12-17T14:50:45",
+    "duration_seconds": 1223,
+    "model_used": {
+      "provider": "OpenAIProvider",
+      "model": "gpt-4o"
     },
-    "overall_weighted_score": 3.15,
-    "overall_confidence": 3.7,
-    "red_flags": []
+    "exemplar_images": ["examplar-images/exemplar_1.jpg", "..."],
+    "total_candidates_evaluated": 54,
+    "prompt_length_chars": 12648
+  },
+  "full_prompt_used": "...(complete 12K+ char prompt)...",
+  "candidate_ratings": {
+    "1": {
+      "candidate_id": "1",
+      "image_filename": "candidate_1.jpg",
+      "evaluated_at": "2024-12-17T10:30:00",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Clear hierarchy with...",
+          "confidence": 4
+        },
+        "layout_composition": {...},
+        "color": {...}
+      },
+      "overall_weighted_score": 3.15,
+      "overall_confidence": 3.7,
+      "red_flags": []
+    }
   }
 }
 ```
+
+The symlink `ai-ratings.json` always points to the latest evaluation for backwards compatibility.
 
 ## Scoring Logic
 

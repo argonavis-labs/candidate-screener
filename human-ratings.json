@@ -3,19 +3,26 @@
     "candidate_id": "1",
     "portfolio_category": "Minimal",
     "image_filename": "candidate_1.jpg",
+    "evaluated_at": "2025-08-28T11:00:00.000Z",
     "criteria": {
       "typography": {
         "score": 4,
-        "comment": ""
+        "explanation": "",
+        "confidence": 3
       },
       "layout_composition": {
         "score": 2,
-        "comment": ""
+        "explanation": "",
+        "confidence": 3
       },
       "color": {
         "score": 3,
-        "comment": ""
+        "explanation": "",
+        "confidence": 3
       }
-    }
+    },
+    "overall_weighted_score": 3.05,
+    "overall_confidence": 3,
+    "red_flags": []
   }
 }
