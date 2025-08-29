@@ -6,15 +6,15 @@
     "image_filename": "exemplar_1.jpg",
     "criteria": {
       "typography": {
-        "score": 3.67,
+        "score": 3,
         "comment": "The typography takes a minimal direction. They create strong constrast between the title and the body, by making the title twice as large and bold, while using subtle changes in color to reflect the changes in hierarchy within the body text. The whole thing is set to system font, which further reinforces the minimal approach. While not original, it is well executed, achieving contrast and hierarchy with restraint"
       },
       "layout_composition": {
-        "score": 3.67,
+        "score": 3,
         "comment": "The layout is takes a minimal approach, putting in the experience of the candidate forward, instead of leaning on screenshots. The line width is set to make reading comfortable while also playing into the minimalism. Whitespace and high constrast typography is used to provide hierarchy, which keeps visual noise low, while still being clear. There are no visual flourishes, but everything is clear, clean, and well-executed"
       },
       "color": {
-        "score": 3.67,
+        "score": 3,
         "comment": "The color system is extremely constrained, in keeping with the minimalism of the website. While not unique, the candidate uses shades of grey to effectively convey hierarchy while maintaing a clean minimal palette"
       }
     }
@@ -26,16 +26,16 @@
     "image_filename": "exemplar_2.jpg",
     "criteria": {
       "typography": {
-        "score": 5.0,
+        "score": 4,
         "comment": "The typography mixes an editorial serif font for headers, which gives the website a distinct identity, with a simple sans serif for body text, which keeps things clean and simple. It also two great paid typefaces (GT Alpina and Untitled Sans) which tells us that the candidate really thought through their choices.\n\nThe overall effect combination of typefaces achieve a good blend of elegance and simplicity"
       },
       "layout_composition": {
-        "score": 3.67,
+        "score": 3,
         "comment": "The layout heavily emphasizes screenshots of the author's work and leans on them heavily as the center of visual interest. Because the images are so important, the author has also taken care to design each one of them in intentional layouts.\n\nThe core concept of heavily image site is simple, but well-execute with adequate whitespace to create hierarchy, and subtle details like rounded corners for the screenshots to add a subtle flair."
       },
       "color": {
-        "score": 5.0,
-        "comment": "The website itself is minimal to not distract from the work screenshots, which are designed to each bring a different pop of colour. The primary colour of each screenshot is also well coordinate \u2013 each is a different hue, but are all similarly pastel, which makes them feel each unique but still cohesive"
+        "score": 4,
+        "comment": "The website itself is minimal to not distract from the work screenshots, which are designed to each bring a different pop of colour. The primary colour of each screenshot is also well coordinate – each is a different hue, but are all similarly pastel, which makes them feel each unique but still cohesive"
       }
     }
   },
@@ -46,15 +46,15 @@
     "image_filename": "exemplar_3.jpg",
     "criteria": {
       "typography": {
-        "score": 1.0,
+        "score": 1,
         "comment": "The site combines two similar looking sans serifs (overpass & roboto) which don't constrast enough to achieve visual interest. Instead adds random visual noise. Visual hierachy is also lacking due to poor use of line spacing. The site uses multiple weight, size, family, opacity without restraint, causing it to feel busy and incohesive."
       },
       "layout_composition": {
-        "score": 2.33,
+        "score": 2,
         "comment": "The site layout itself is relatively basic. The problem is that the author has put very busy screenshots of their work in small image boxes, which makes it feel busy and hard to read. There is insufficient differentiation between the case study sections and the author's bio, leading two distinct content sections to blend in together. The footer also randomly switches from full width content to narrow center aligned content."
       },
       "color": {
-        "score": 1.0,
+        "score": 1,
         "comment": "The website overuses colors without intentionality. Every case study has its own theme color in the CTA text, without the color contributing any meaning to the design. The site itself also has its purple theme color, which gets lost in the many colors from the case studies."
       }
     }
@@ -66,15 +66,15 @@
     "image_filename": "exemplar_4.jpg",
     "criteria": {
       "typography": {
-        "score": 1.0,
+        "score": 1,
         "comment": "The type choices are mediocre free fonts from google (open sans & calluna). The white space is also poorly done. The title and body should be closer. They also use a vertical bar to divide labels in their case study, but the vertical bars are taller and just as dark as the text they divider, making them feel like the primary visual element instead of a subtle divider."
       },
       "layout_composition": {
-        "score": 1.0,
+        "score": 1,
         "comment": "Every section of this website, from nav, hero, case studies, to footer, are a different width for no apparent reason. The nav is full width jusified, the hero is left aligned, the cases are justified full width, and the footer is center aligned again for no good reason.\n\nThe screenshots of the work are also poorly laid out. They're mosty zoomed out too far to be able to show anything and use generic device templates."
       },
       "color": {
-        "score": 1.0,
+        "score": 1,
         "comment": "There was some attempt at creating a cohesive pastel color system, however, the effect is defeated by: \n1. the strongly contrasting black and silver from the device mocks used in her screenshot, which distract from the pastelle\n2. the fact that there is a random darker colour used in the footer that is not cohesive with the softer, lighter pastelle used in the rest of the site"
       }
     }

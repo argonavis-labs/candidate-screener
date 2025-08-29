@@ -1,0 +1,80 @@
+{
+  "1": {
+    "candidate_id": "1",
+    "portfolio_category": "Minimal",
+    "image_filename": "candidate_1.jpg",
+    "evaluated_at": "2025-08-29T19:13:11.143Z",
+    "criteria": {
+      "typography": {
+        "score": 3,
+        "explanation": "The type chooses a cool serif and it has a strong contrast with some of the small dates. It doesn't do much, but what it does, it does well. My one small feedback is that the work play contact section on the right doesn't seem as well done as the main text. But if you look at the main text, it's pretty good. ",
+        "confidence": 4
+      },
+      "layout_composition": {
+        "score": 3,
+        "explanation": "I think the layout is a little bit weak here. It doesn't do much, so I expect everything to be really good. But the work-play-contact section feels a little random and not super well-positioned with regard to everything else. ",
+        "confidence": 4
+      },
+      "color": {
+        "score": 3,
+        "explanation": "This is generally pretty decent. On color usage, it uses one main color which is blue and then it carries it between the background and the highlight for the text. It's not super sophisticated, but what it does, it does decently well. ",
+        "confidence": 4
+      }
+    },
+    "overall_weighted_score": 3,
+    "overall_confidence": 4,
+    "red_flags": []
+  },
+  "2": {
+    "candidate_id": "2",
+    "portfolio_category": "Unknown",
+    "image_filename": "candidate_2.jpg",
+    "evaluated_at": "2025-08-29T19:07:23.505Z",
+    "criteria": {
+      "typography": {
+        "score": 3,
+        "explanation": "The type design here is fine - it doesn't do much, it's one of those minimal sites. But what it does, it does decently well. I think the approach here is a little bit of elevated basics. It uses a lot of the sort of browser default of black and blue but just does them slightly better. You can tell from the line spacing and the general restraint in the color usage and the stop restraint in the number of styles that it's a someone who is good at typography but didn't necessarily want to push it super far in this specific design. ",
+        "confidence": 4
+      },
+      "layout_composition": {
+        "score": 3,
+        "explanation": "The layout on this is pretty good. It's a relatively simple layout, but because there's a little bit more content here, we can tell that a little bit more. And generally, I think that there is good use of white space here to create hierarchy and sections. They use a restrained amount of visuals, but all the visuals have a consistent style and layout that is effective. Because the visuals are really strong, they've kept the typography and the layout relatively minimal, which I think was an effective strategy. ",
+        "confidence": 4
+      },
+      "color": {
+        "score": 4,
+        "explanation": "The color usage here is minimal but also strong. I think that the work is iconography, which means that a lot of the icons are very colorful, and the general minimal palette is working quite well for them. And then you can also tell from their iconography work that they have a very strong command of color usage. ",
+        "confidence": 4
+      }
+    },
+    "overall_weighted_score": 3.3,
+    "overall_confidence": 4,
+    "red_flags": []
+  },
+  "3": {
+    "candidate_id": "3",
+    "portfolio_category": "Minimal",
+    "image_filename": "candidate_3.jpg",
+    "evaluated_at": "2025-08-29T19:07:57.345Z",
+    "criteria": {
+      "typography": {
+        "score": 3,
+        "explanation": "",
+        "confidence": 4
+      },
+      "layout_composition": {
+        "score": 3,
+        "explanation": "",
+        "confidence": 4
+      },
+      "color": {
+        "score": 4,
+        "explanation": "",
+        "confidence": 4
+      }
+    },
+    "overall_weighted_score": 3.3,
+    "overall_confidence": 4,
+    "red_flags": []
+  }
+}

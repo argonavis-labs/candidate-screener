@@ -24,7 +24,7 @@ interface HumanEvaluationFormProps {
 }
 
 const PORTFOLIO_CATEGORIES = ['Unknown', 'Minimal', 'Standard', 'Elaborate'];
-const SCORE_LABELS = ['Very bad', 'Below average', 'Above average', 'Great'];
+const SCORE_LABELS = ['Terrible', 'Below average', 'Average', 'Above average', 'Fantastic'];
 
 export default function HumanEvaluationForm({
   candidateId,
@@ -36,15 +36,15 @@ export default function HumanEvaluationForm({
   const [evaluation, setEvaluation] = useState<HumanEvaluation>(() => {
     return existingEvaluation || {
       candidate_id: candidateId,
-      portfolio_category: 'Unknown',
+      portfolio_category: 'Minimal',
       image_filename: imageFilename,
       evaluated_at: new Date().toISOString(),
       criteria: {
-        typography: { score: 2.5, explanation: '', confidence: 3 },
-        layout_composition: { score: 2.5, explanation: '', confidence: 3 },
-        color: { score: 2.5, explanation: '', confidence: 3 },
+        typography: { score: 3, explanation: '', confidence: 3 },
+        layout_composition: { score: 3, explanation: '', confidence: 3 },
+        color: { score: 3, explanation: '', confidence: 3 },
       },
-      overall_weighted_score: 2.5,
+      overall_weighted_score: 3,
       overall_confidence: 3,
       red_flags: [],
     };
@@ -92,15 +92,15 @@ export default function HumanEvaluationForm({
       // Reset to default for new candidate
       setEvaluation({
         candidate_id: candidateId,
-        portfolio_category: 'Unknown',
+        portfolio_category: 'Minimal',
         image_filename: imageFilename,
         evaluated_at: new Date().toISOString(),
         criteria: {
-          typography: { score: 2.5, explanation: '', confidence: 3 },
-          layout_composition: { score: 2.5, explanation: '', confidence: 3 },
-          color: { score: 2.5, explanation: '', confidence: 3 },
+          typography: { score: 3, explanation: '', confidence: 3 },
+          layout_composition: { score: 3, explanation: '', confidence: 3 },
+          color: { score: 3, explanation: '', confidence: 3 },
         },
-        overall_weighted_score: 2.5,
+        overall_weighted_score: 3,
         overall_confidence: 3,
         red_flags: [],
       });
@@ -116,14 +116,27 @@ export default function HumanEvaluationForm({
         color: 0.3,
       };
 
-      const typographyScore = evaluation.criteria.typography?.score ?? 2.5;
-      const layoutScore = evaluation.criteria.layout_composition?.score ?? 2.5;
-      const colorScore = evaluation.criteria.color?.score ?? 2.5;
+      const typographyScore = evaluation.criteria.typography?.score ?? 3;
+      const layoutScore = evaluation.criteria.layout_composition?.score ?? 3;
+      const colorScore = evaluation.criteria.color?.score ?? 3;
 
-      const weightedScore = 
+      const baseScore = 
         typographyScore * weights.typography +
         layoutScore * weights.layout_composition +
         colorScore * weights.color;
+
+      // Apply red flag penalties
+      const penaltyWeights: Record<string, number> = {
+        'template_scent_high': 0.5,
+        'sloppy_images': 0.3,
+        'process_soup': 0.2,
+      };
+      
+      const totalPenalty = evaluation.red_flags.reduce((sum, flag) => {
+        return sum + (penaltyWeights[flag] || 0);
+      }, 0);
+      
+      const weightedScore = baseScore - totalPenalty;  // Allow scores to go below 0
 
       const typographyConfidence = evaluation.criteria.typography?.confidence ?? 3;
       const layoutConfidence = evaluation.criteria.layout_composition?.confidence ?? 3;
@@ -134,6 +147,8 @@ export default function HumanEvaluationForm({
 
       setEvaluation(prev => ({
         ...prev,
+        base_weighted_score: parseFloat(baseScore.toFixed(2)),
+        penalty_applied: totalPenalty,
         overall_weighted_score: parseFloat(weightedScore.toFixed(2)),
         overall_confidence: parseFloat(avgConfidence.toFixed(2)),
       }));
@@ -145,22 +160,23 @@ export default function HumanEvaluationForm({
     evaluation.criteria?.layout_composition?.confidence,
     evaluation.criteria?.color?.score,
     evaluation.criteria?.color?.confidence,
+    evaluation.red_flags,
     rubric,
   ]);
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Set all confidence scores to 4 for human evaluations
+      // Set all confidence scores to 5 for human evaluations (max confidence)
       const evaluationWithConfidence = {
         ...evaluation,
         evaluated_at: new Date().toISOString(),
         criteria: {
-          typography: { ...evaluation.criteria.typography, confidence: 4 },
-          layout_composition: { ...evaluation.criteria.layout_composition, confidence: 4 },
-          color: { ...evaluation.criteria.color, confidence: 4 },
+          typography: { ...evaluation.criteria.typography, confidence: 5 },
+          layout_composition: { ...evaluation.criteria.layout_composition, confidence: 5 },
+          color: { ...evaluation.criteria.color, confidence: 5 },
         },
-        overall_confidence: 4,
+        overall_confidence: 5,
       };
       
       await onSave(evaluationWithConfidence);
@@ -214,6 +230,11 @@ export default function HumanEvaluationForm({
               <span className="text-xs text-muted-foreground">Score</span>
               <span className="text-base font-semibold">
                 {(evaluation.overall_weighted_score ?? 0).toFixed(2)}
+                {evaluation.penalty_applied && evaluation.penalty_applied > 0 && (
+                  <span className="text-xs text-orange-600 ml-1">
+                    (-{evaluation.penalty_applied.toFixed(1)})
+                  </span>
+                )}
               </span>
             </div>
           </div>
@@ -236,7 +257,7 @@ export default function HumanEvaluationForm({
                 onValueChange={(value) => updateCriterion(criterion, 'score', value)}
                 className="flex gap-1"
               >
-                {[1, 2, 3, 4].map(score => (
+                {[1, 2, 3, 4, 5].map(score => (
                   <div key={score} className="flex items-center">
                     <RadioGroupItem 
                       value={score.toString()} 
@@ -269,6 +290,46 @@ export default function HumanEvaluationForm({
             </div>
           </div>
         ))}
+
+        {/* Red Flags */}
+        <div className="space-y-2 pt-2">
+          <h4 className="text-sm font-medium">Red Flags</h4>
+          <div className="space-y-2">
+            {rubric?.rubric?.red_flags?.map((flag) => {
+              const [flagKey, flagDescription] = flag.split(': ');
+              return (
+                <div key={flagKey} className="flex items-start space-x-2">
+                  <Checkbox
+                    id={flagKey}
+                    checked={evaluation.red_flags.includes(flagKey)}
+                    onCheckedChange={() => toggleRedFlag(flagKey)}
+                    className="mt-0.5"
+                  />
+                  <div className="flex-1">
+                    <Label
+                      htmlFor={flagKey}
+                      className="text-xs font-medium cursor-pointer"
+                    >
+                      {flagKey.replace(/_/g, ' ')}
+                    </Label>
+                    <p className="text-xs text-muted-foreground">
+                      {flagDescription}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {evaluation.red_flags.length > 0 && (
+            <div className="text-xs text-orange-600 font-medium">
+              Penalty: -{evaluation.red_flags.map((flag): number => 
+                flag === 'template_scent_high' ? 0.5 : 
+                flag === 'sloppy_images' ? 0.3 : 
+                flag === 'process_soup' ? 0.2 : 0
+              ).reduce((a: number, b: number) => a + b, 0).toFixed(1)} points
+            </div>
+          )}
+        </div>
 
         {/* Save Button */}
         <div className="pt-4 flex items-center gap-2">

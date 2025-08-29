@@ -391,10 +391,27 @@ class PortfolioEvaluator:
                         "confidence": scores[dimension].get("confidence", 0)
                     }
         
-        # Add overall scores
-        result["overall_weighted_score"] = raw_result.get("overall_weighted_score", 0)
+        # Get red flags
+        red_flags = raw_result.get("red_flags", [])
+        result["red_flags"] = red_flags
+        
+        # Calculate weighted score with penalties
+        base_score = raw_result.get("overall_weighted_score", 0)
+        
+        # Apply red flag penalties
+        penalty_weights = {
+            "template_scent_high": 0.5,
+            "sloppy_images": 0.3,
+            "process_soup": 0.2
+        }
+        
+        total_penalty = sum(penalty_weights.get(flag, 0) for flag in red_flags)
+        final_score = base_score - total_penalty  # Allow scores to go below 0
+        
+        result["base_weighted_score"] = base_score  # Store original score for reference
+        result["penalty_applied"] = total_penalty
+        result["overall_weighted_score"] = round(final_score, 2)
         result["overall_confidence"] = raw_result.get("overall_confidence", 0)
-        result["red_flags"] = raw_result.get("red_flags", [])
         
         return result
     
@@ -447,19 +464,19 @@ class PortfolioEvaluator:
             score = rating.get("overall_weighted_score", 0)
             confidence = rating.get("overall_confidence", 0)
             
-            # Determine verdict based on score
-            if score >= 3.375:  # 85% of 4-point scale
+            # Determine verdict based on score (5-point scale)
+            if score >= 4.25:    # 85% of 5-point scale
                 verdict = "strong_yes"
-            elif score >= 3.0:   # 75% of 4-point scale
+            elif score >= 3.75:  # 75% of 5-point scale
                 verdict = "weak_yes"
-            elif score >= 2.4:   # 60% of 4-point scale
+            elif score >= 3.0:   # 60% of 5-point scale
                 verdict = "hold"
             else:
                 verdict = "no"
             
             print(f"\nCandidate {candidate_id}:")
-            print(f"  Score: {score:.2f}/4.00")
-            print(f"  Confidence: {confidence:.1f}/4.0")
+            print(f"  Score: {score:.2f}/5.00")
+            print(f"  Confidence: {confidence:.1f}/5.0")
             print(f"  Verdict: {verdict}")
             
             if rating.get("red_flags"):

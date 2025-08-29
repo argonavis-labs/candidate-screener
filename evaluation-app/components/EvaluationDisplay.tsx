@@ -3,6 +3,8 @@
 import { Evaluation } from "@/lib/types";
 
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { AlertTriangle, AlertCircle, Info } from "lucide-react";
 
 interface EvaluationDisplayProps {
   evaluation: Evaluation | null;
@@ -54,26 +56,16 @@ export default function EvaluationDisplay({
               <span className="text-xs text-muted-foreground">Score</span>
               <span className="text-base font-semibold">
                 {evaluation.overall_weighted_score.toFixed(2)}
+                {evaluation.penalty_applied &&
+                  evaluation.penalty_applied > 0 && (
+                    <span className="text-xs text-orange-600 ml-1">
+                      (-{evaluation.penalty_applied.toFixed(1)})
+                    </span>
+                  )}
               </span>
             </div>
           </div>
         </div>
-
-        {evaluation.red_flags.length > 0 && (
-          <>
-            <Separator className="my-2" />
-            <div className="space-y-1">
-              <p className="text-xs font-medium text-destructive">Red Flags</p>
-              <div className="flex flex-wrap gap-1">
-                {evaluation.red_flags.map((flag, index) => (
-                  <span key={index} className="text-xs text-destructive">
-                    {flag.replace(/_/g, " ")}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
       </div>
 
       {/* Content */}
@@ -102,6 +94,70 @@ export default function EvaluationDisplay({
           </div>
         ))}
       </div>
+      {/* red flags */}
+      {evaluation.red_flags.length > 0 && (
+        <>
+          <div className="space-y-2 px-4 mt-4">
+            <div className="flex flex-wrap gap-1.5">
+              {evaluation.red_flags.map((flag, index) => {
+                // Get penalty amount and severity
+                const getPenaltyInfo = (flag: string) => {
+                  switch (flag) {
+                    case "template_scent_high":
+                      return {
+                        penalty: 0.5,
+                        label: "Template-like",
+                        variant: "destructive" as const,
+                        icon: AlertTriangle,
+                        description: "Site feels like a template",
+                      };
+                    case "sloppy_images":
+                      return {
+                        penalty: 0.3,
+                        label: "Sloppy Images",
+                        variant: "secondary" as const,
+                        icon: AlertCircle,
+                        description: "Poor image layout/quality",
+                      };
+                    case "process_soup":
+                      return {
+                        penalty: 0.2,
+                        label: "Process Heavy",
+                        variant: "outline" as const,
+                        icon: Info,
+                        description: "Too much process content",
+                      };
+                    default:
+                      return {
+                        penalty: 0,
+                        label: flag.replace(/_/g, " "),
+                        variant: "outline" as const,
+                        icon: Info,
+                        description: "",
+                      };
+                  }
+                };
+
+                const flagInfo = getPenaltyInfo(flag);
+                const Icon = flagInfo.icon;
+
+                return (
+                  <Badge
+                    key={index}
+                    variant={flagInfo.variant}
+                    className="text-xs py-0.5 px-2"
+                    title={flagInfo.description}
+                  >
+                    <Icon className="h-3 w-3" />
+                    <span>{flagInfo.label}</span>
+                    <span className="ml-1 font-bold">-{flagInfo.penalty}</span>
+                  </Badge>
+                );
+              })}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

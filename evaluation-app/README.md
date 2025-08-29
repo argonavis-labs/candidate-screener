@@ -41,11 +41,10 @@ npm run dev
 
 3. **Submit Human Evaluation** (bottom right panel):
    - Select portfolio category
-   - Rate each criterion (typography, layout, color) from 1-4
-   - Set confidence level for each criterion
+   - Rate each criterion (typography, layout, color) from 1-5
    - Add explanations for your ratings
    - Check any applicable red flags
-   - Click "Save" to persist your evaluation
+   - Click "Save" to persist your evaluation (confidence auto-set to 5)
 
 ### Progress Indicators
 
@@ -54,12 +53,13 @@ npm run dev
 - **Gray bubbles**: Not yet evaluated
 - **Progress bar**: Shows overall completion
 
-### Scoring System
+### Scoring System (5-point scale)
 
-- **1**: Very bad
+- **1**: Terrible
 - **2**: Below average
-- **3**: Above average
-- **4**: Great
+- **3**: Average
+- **4**: Above average
+- **5**: Fantastic
 
 ### File Structure
 

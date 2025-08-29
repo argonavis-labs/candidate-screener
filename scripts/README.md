@@ -103,7 +103,7 @@ python3 generate_prompt.py
 - Continues from where it left off if interrupted
 
 ### Confidence Scores
-Each evaluation includes confidence ratings (1-4 scale):
+Each evaluation includes confidence ratings (1-5 scale):
 - Individual confidence for each dimension (typography, layout, color)
 - Overall confidence score (average of dimension confidences)
 
@@ -153,9 +153,11 @@ Results are saved in timestamped files in `evaluation-results/` with this struct
         "layout_composition": {...},
         "color": {...}
       },
+      "base_weighted_score": 3.45,
+      "penalty_applied": 0.3,
       "overall_weighted_score": 3.15,
       "overall_confidence": 3.7,
-      "red_flags": []
+      "red_flags": ["sloppy_images"]
     }
   }
 }
@@ -166,13 +168,18 @@ The symlink `ai-ratings.json` always points to the latest evaluation for backwar
 ## Scoring Logic
 
 - **Weights:** Typography (35%), Layout (35%), Color (30%)
-- **Scale:** 1-4 (Very bad, Below average, Above average, Great)
-- **Overall score:** Weighted average of dimension scores
+- **Scale:** 1-5 (Terrible, Below average, Average, Above average, Fantastic)
+- **Base score:** Weighted average of dimension scores
+- **Penalties:** Red flags subtract from base score:
+  - template_scent_high: -0.5 points
+  - sloppy_images: -0.3 points
+  - process_soup: -0.2 points
+- **Final score:** Base score - Penalties (can go below 0)
 - **Verdict thresholds:**
-  - ≥3.375 (84%+): Strong yes
-  - ≥3.0 (75%+): Weak yes
-  - ≥2.4 (60%+): Hold
-  - <2.4: No
+  - ≥4.25 (85%+): Strong yes
+  - ≥3.75 (75%+): Weak yes
+  - ≥3.0 (60%+): Hold
+  - <3.0: No
 
 ## Troubleshooting
 

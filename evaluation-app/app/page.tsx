@@ -293,13 +293,13 @@ export default function Home() {
               <div className="space-y-4  border-b border-stone-100 py-3 px-4">
                 {/* Navigation Row: Previous/Next Buttons + AI Toggle */}
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center divide-x divide-stone-100">
                     <Button
                       onClick={() =>
                         navigateToCandidate(currentCandidateIndex - 1)
                       }
                       disabled={currentCandidateIndex === 0}
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
                     >
                       <ChevronLeft className="h-4 w-4 mr-1" />
@@ -313,7 +313,7 @@ export default function Home() {
                       disabled={
                         currentCandidateIndex === candidateIds.length - 1
                       }
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
                     >
                       Next

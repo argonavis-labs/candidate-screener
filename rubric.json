@@ -65,10 +65,11 @@
       "process_soup: the case studies spend too much time a lot of time talking about process"
     ],
     "rating_scale": [
-      "1: Very bad",
+      "1: Terrible",
       "2: Below average",
-      "3: Above average",
-      "4: Great"
+      "3: Average",
+      "4: Above average",
+      "5: Fantastic"
     ]
   }
 }

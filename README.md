@@ -1,6 +1,22 @@
 # Overall goal
 We want to feed a model designer portfolio sites (starting with images) and have it determine whether the design is good enough that this person is worth interviewing. We want the model to get as good at portfolio screening as the best senior design hiring managers.
 
+## Scoring System
+
+### Base Score Calculation
+- **Typography**: 35% weight
+- **Layout & Composition**: 35% weight  
+- **Color**: 30% weight
+- **Scale**: 1-5 (1=Terrible, 2=Below Average, 3=Average, 4=Above Average, 5=Fantastic)
+
+### Red Flag Penalty System
+Portfolios with red flags receive score penalties that are subtracted from the base score:
+- **template_scent_high**: -0.5 points (Major issue - portfolio looks like a template)
+- **sloppy_images**: -0.3 points (Moderate issue - poor image quality/treatment)
+- **process_soup**: -0.2 points (Minor issue - process content overwhelming design)
+
+**Final Score** = Base Score - Penalties (can go below 0)
+
 ## Todos
 
 1. Create exemplars to feed into the context

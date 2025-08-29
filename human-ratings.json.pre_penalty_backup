@@ -23,9 +23,7 @@
     },
     "overall_weighted_score": 3.65,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 3.65,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "2": {
     "candidate_id": "2",
@@ -51,9 +49,7 @@
     },
     "overall_weighted_score": 4,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 4,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "3": {
     "candidate_id": "3",
@@ -79,9 +75,7 @@
     },
     "overall_weighted_score": 4,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 4,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "4": {
     "candidate_id": "4",
@@ -107,9 +101,7 @@
     },
     "overall_weighted_score": 2.65,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 2.65,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "5": {
     "candidate_id": "5",
@@ -135,9 +127,7 @@
     },
     "overall_weighted_score": 4,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 4,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "6": {
     "candidate_id": "6",
@@ -163,9 +153,7 @@
     },
     "overall_weighted_score": 4,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 4,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "7": {
     "candidate_id": "7",
@@ -191,9 +179,7 @@
     },
     "overall_weighted_score": 1.3,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 1.3,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "8": {
     "candidate_id": "8",
@@ -219,9 +205,7 @@
     },
     "overall_weighted_score": 4.7,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 4.7,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "9": {
     "candidate_id": "9",
@@ -247,9 +231,7 @@
     },
     "overall_weighted_score": 3,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 3,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "10": {
     "candidate_id": "10",
@@ -275,9 +257,7 @@
     },
     "overall_weighted_score": 1.65,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 1.65,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "11": {
     "candidate_id": "11",
@@ -303,9 +283,7 @@
     },
     "overall_weighted_score": 2.3,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 2.3,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "12": {
     "candidate_id": "12",
@@ -331,9 +309,7 @@
     },
     "overall_weighted_score": 4.65,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 4.65,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "13": {
     "candidate_id": "13",
@@ -359,9 +335,7 @@
     },
     "overall_weighted_score": 2.25,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 2.25,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "14": {
     "candidate_id": "14",
@@ -387,9 +361,7 @@
     },
     "overall_weighted_score": 4.7,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 4.7,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "15": {
     "candidate_id": "15",
@@ -415,9 +387,7 @@
     },
     "overall_weighted_score": 4,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 4,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "16": {
     "candidate_id": "16",
@@ -443,9 +413,7 @@
     },
     "overall_weighted_score": 4.65,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 4.65,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "17": {
     "candidate_id": "17",
@@ -471,15 +439,13 @@
     },
     "overall_weighted_score": 3.65,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 3.65,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "18": {
     "candidate_id": "18",
     "portfolio_category": "Minimal",
     "image_filename": "candidate_18.jpg",
-    "evaluated_at": "2025-08-29T21:20:09.700Z",
+    "evaluated_at": "2025-08-29T21:05:26.106Z",
     "criteria": {
       "typography": {
         "score": 2,
@@ -497,13 +463,9 @@
         "confidence": 5
       }
     },
-    "overall_weighted_score": 1.8,
+    "overall_weighted_score": 2.3,
     "overall_confidence": 5,
-    "red_flags": [
-      "template_scent_high"
-    ],
-    "base_weighted_score": 2.3,
-    "penalty_applied": 0.5
+    "red_flags": []
   },
   "19": {
     "candidate_id": "19",
@@ -529,9 +491,7 @@
     },
     "overall_weighted_score": 4,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 4,
-    "penalty_applied": 0
+    "red_flags": []
   },
   "20": {
     "candidate_id": "20",
@@ -560,551 +520,5 @@
     "red_flags": [],
     "base_weighted_score": 2,
     "penalty_applied": 0
-  },
-  "21": {
-    "candidate_id": "21",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_21.jpg",
-    "evaluated_at": "2025-08-29T21:20:03.232Z",
-    "criteria": {
-      "typography": {
-        "score": 1,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 1,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 1,
-    "overall_confidence": 5,
-    "red_flags": [
-      "template_scent_high",
-      "sloppy_images"
-    ],
-    "base_weighted_score": 1.3,
-    "penalty_applied": 0.8
-  },
-  "24": {
-    "candidate_id": "24",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_24.jpg",
-    "evaluated_at": "2025-08-29T21:20:50.951Z",
-    "criteria": {
-      "typography": {
-        "score": 1,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 1,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 1,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 1,
-    "overall_confidence": 5,
-    "red_flags": [
-      "template_scent_high"
-    ],
-    "base_weighted_score": 1,
-    "penalty_applied": 0.5
-  },
-  "25": {
-    "candidate_id": "25",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_25.jpg",
-    "evaluated_at": "2025-08-29T21:19:46.066Z",
-    "criteria": {
-      "typography": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 1,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 1.35,
-    "overall_confidence": 5,
-    "red_flags": [
-      "sloppy_images"
-    ],
-    "base_weighted_score": 1.65,
-    "penalty_applied": 0.3
-  },
-  "26": {
-    "candidate_id": "26",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_26.jpg",
-    "evaluated_at": "2025-08-29T21:20:36.350Z",
-    "criteria": {
-      "typography": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 1,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 1,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 1,
-    "overall_confidence": 5,
-    "red_flags": [
-      "sloppy_images",
-      "template_scent_high"
-    ],
-    "base_weighted_score": 1.35,
-    "penalty_applied": 0.8
-  },
-  "27": {
-    "candidate_id": "27",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_27.jpg",
-    "evaluated_at": "2025-08-29T21:24:00.441Z",
-    "criteria": {
-      "typography": {
-        "score": 1,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 1,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 1,
-    "overall_confidence": 5,
-    "red_flags": [
-      "sloppy_images"
-    ],
-    "base_weighted_score": 1.3,
-    "penalty_applied": 0.3
-  },
-  "28": {
-    "candidate_id": "28",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_28.jpg",
-    "evaluated_at": "2025-08-29T21:28:02.011Z",
-    "criteria": {
-      "typography": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 2.35,
-    "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 2.35,
-    "penalty_applied": 0
-  },
-  "29": {
-    "candidate_id": "29",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_29.jpg",
-    "evaluated_at": "2025-08-29T21:28:17.082Z",
-    "criteria": {
-      "typography": {
-        "score": 1,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 1.65,
-    "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 1.65,
-    "penalty_applied": 0
-  },
-  "30": {
-    "candidate_id": "30",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_30.jpg",
-    "evaluated_at": "2025-08-29T21:28:48.080Z",
-    "criteria": {
-      "typography": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 4,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 3.3,
-    "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 3.3,
-    "penalty_applied": 0
-  },
-  "31": {
-    "candidate_id": "31",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_31.jpg",
-    "evaluated_at": "2025-08-29T21:29:15.797Z",
-    "criteria": {
-      "typography": {
-        "score": 1,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 1,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 1.3,
-    "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 1.3,
-    "penalty_applied": 0
-  },
-  "32": {
-    "candidate_id": "32",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_32.jpg",
-    "evaluated_at": "2025-08-29T21:30:25.117Z",
-    "criteria": {
-      "typography": {
-        "score": 5,
-        "explanation": "This is an example of a good minimalist portfolio in terms of typography. If they use one size but they use a subtle technique to create hierarchy using slightly different weights and they use slightly different colors, so that it achieves a lot of clarity and design intent without overwhelming with different styles. ",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 4,
-        "explanation": "The layout here is really simple, with ample use of white space to differentiate these sections. ",
-        "confidence": 5
-      },
-      "color": {
-        "score": 4,
-        "explanation": "The usage of the shades of gray here is nice and it's nicely punctuated by an illustration of their own face at the top, which sort of creates a focal point. ",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 4.35,
-    "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 4.35,
-    "penalty_applied": 0
-  },
-  "33": {
-    "candidate_id": "33",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_33.jpg",
-    "evaluated_at": "2025-08-29T21:30:37.482Z",
-    "criteria": {
-      "typography": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 3,
-    "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 3,
-    "penalty_applied": 0
-  },
-  "34": {
-    "candidate_id": "34",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_34.jpg",
-    "evaluated_at": "2025-08-29T21:31:03.915Z",
-    "criteria": {
-      "typography": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 3,
-    "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 3,
-    "penalty_applied": 0
-  },
-  "35": {
-    "candidate_id": "35",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_35.jpg",
-    "evaluated_at": "2025-08-29T21:32:13.286Z",
-    "criteria": {
-      "typography": {
-        "score": 5,
-        "explanation": "Typography here is really strong. They use a very subtle serif to emphasize certain things while keeping things in line. It's usually pretty hard to combine both serif and sans-serif in line, and they've done it well. There's also really good use of white space to create hierarchy here. ",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 5,
-        "explanation": "The layout is effective and simple. They also switch from a single column to three columns in the middle, which works quite well because it keeps the same width throughout. ",
-        "confidence": 5
-      },
-      "color": {
-        "score": 4,
-        "explanation": "It's all monochrome, but it's working quite well because of the subtle color choices. There is a restraint and balance in the use of different shades of gray here. ",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 4.7,
-    "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 4.7,
-    "penalty_applied": 0
-  },
-  "36": {
-    "candidate_id": "36",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_36.jpg",
-    "evaluated_at": "2025-08-29T21:32:43.251Z",
-    "criteria": {
-      "typography": {
-        "score": 5,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 5,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 4.4,
-    "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 4.4,
-    "penalty_applied": 0
-  },
-  "37": {
-    "candidate_id": "37",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_37.jpg",
-    "evaluated_at": "2025-08-29T21:33:21.521Z",
-    "criteria": {
-      "typography": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 1,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 1.7,
-    "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 1.7,
-    "penalty_applied": 0
-  },
-  "38": {
-    "candidate_id": "38",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_38.jpg",
-    "evaluated_at": "2025-08-29T21:33:39.203Z",
-    "criteria": {
-      "typography": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 2.65,
-    "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 2.65,
-    "penalty_applied": 0
-  },
-  "39": {
-    "candidate_id": "39",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_39.jpg",
-    "evaluated_at": "2025-08-29T21:34:03.836Z",
-    "criteria": {
-      "typography": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 4,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 4,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 3.3,
-    "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 3.3,
-    "penalty_applied": 0
-  },
-  "40": {
-    "candidate_id": "40",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_40.jpg",
-    "evaluated_at": "2025-08-29T21:34:21.204Z",
-    "criteria": {
-      "typography": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 2.65,
-    "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 2.65,
-    "penalty_applied": 0
-  },
-  "41": {
-    "candidate_id": "41",
-    "portfolio_category": "Minimal",
-    "image_filename": "candidate_41.jpg",
-    "evaluated_at": "2025-08-29T21:35:54.924Z",
-    "criteria": {
-      "typography": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      },
-      "layout_composition": {
-        "score": 3,
-        "explanation": "",
-        "confidence": 5
-      },
-      "color": {
-        "score": 2,
-        "explanation": "",
-        "confidence": 5
-      }
-    },
-    "overall_weighted_score": 2.4,
-    "overall_confidence": 5,
-    "red_flags": [
-      "sloppy_images"
-    ],
-    "base_weighted_score": 2.7,
-    "penalty_applied": 0.3
   }
 }

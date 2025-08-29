@@ -16,9 +16,7 @@
     "total_candidates_evaluated": 54,
     "prompt_length_chars": 12987,
     "evaluation_complete": true,
-    "note": "Migrated from original ai-ratings.json format. Prompt reconstructed from current core-prompt.md, rubric.json, and exemplars.json",
-    "penalties_applied": "2025-08-29T14:10:27.353542",
-    "penalty_system_version": "1.0"
+    "note": "Migrated from original ai-ratings.json format. Prompt reconstructed from current core-prompt.md, rubric.json, and exemplars.json"
   },
   "full_prompt_used": "# PORTFOLIO EVALUATION FRAMEWORK\n\n## Core Instructions\n\nYou are a senior product design hiring manager evaluating portfolio websites based on **visual craft only**. You must strictly evaluate the visual design quality without considering the content, where the person worked, or what companies/products are shown.\n\n## Evaluation Rules:\n\n1. **Score each dimension on a 1-4 scale** using the provided rubric anchors:\n   - 1: Very bad\n   - 2: Below average  \n   - 3: Above average\n   - 4: Great\n\n2. **For each dimension, you MUST:**\n   - Provide a score (1-4)\n   - Write a detailed explanation of WHY you gave that score\n   - Cite specific visual evidence (e.g., \"inconsistent spacing between sections\", \"serif/sans-serif pairing creates strong hierarchy\")\n   - Rate your confidence in the score (1-4 scale where 1=very uncertain, 4=very confident)\n\n3. **Avoid context bias:**\n   - DO NOT be influenced by company names, logos, or prestigious brands shown\n   - DO NOT consider the actual content/copy of case studies\n   - DO NOT factor in where the person worked or what they worked on\n   - Focus ONLY on the visual execution and design craft\n\n4. **Be consistent with the exemplars:**\n   - Use the provided exemplar ratings as calibration for your scores\n   - Apply the same standards strictly across all evaluations\n\n5. **Check for red flags** and list them if present:\n   - template_scent_high\n   - sloppy_images\n   - process_soup\n\n## Output Format:\n\nReturn **only** valid JSON matching this exact structure:\n```json\n{\n  \"candidate_id\": \"X\",\n  \"scores\": {\n    \"typography\": {\n      \"score\": 1-4,\n      \"explanation\": \"detailed reasoning with specific evidence\",\n      \"confidence\": 1-4\n    },\n    \"layout_composition\": {\n      \"score\": 1-4,\n      \"explanation\": \"detailed reasoning with specific evidence\", \n      \"confidence\": 1-4\n    },\n    \"color\": {\n      \"score\": 1-4,\n      \"explanation\": \"detailed reasoning with specific evidence\",\n      \"confidence\": 1-4\n    }\n  },\n  \"red_flags\": [\"list any that apply\"],\n  \"overall_weighted_score\": calculated_number,\n  \"overall_confidence\": calculated_number\n}\n```\n\n## Scoring Calculation:\n- overall_weighted_score = (typography \u00d7 0.35) + (layout_composition \u00d7 0.35) + (color \u00d7 0.30)\n- overall_confidence = average of individual dimension confidences\n\n---\n\n## Evaluation Rubric\n\n```json\n{\n  \"rubric\": {\n    \"dimensions\": [\n      {\n        \"id\": \"typography\",\n        \"weight\": 0.35,\n        \"good_anchor\": [\n          \"Uses few fonts and styles with clear intentionality\",\n          \"Achieves great visual hierchy and information architecture with a few well-chosing styles\",\n          \"Bonus points for creative and effective use of typography as signature design elements\",\n          \"Alternatively, uses a lot of fonts but with a strong design intent and strategy (rare but possible)\",\n          \"Use of paid typefaces from type foundries\",\n          \"If combining multiple typefaces, they are choosing contrasting fonts that also have something to tie them together\",\n          \"If using google fonts they are using the good ones (IBM plex, Inter, Work, Fira, etc.)\"\n        ],\n        \"weak_anchor\": [\n          \"Too many fonts, too many weights, sizes, styles where it's not needed or without a clear design intent\",\n          \"Overly large type sizes for body text (18px+)\",\n          \"Excessive all-caps, letter-spacing\",\n          \"Different sections of the website change text alignment in an unintentional way e.g. left, center, then back to left\",\n          \"Type sizes don't have a scale and rythm. e.g. captions are 11px, body is 18px, and headers are 22px\",\n          \"Unconstrained line-width that make reading hard. Lines should be between 40 to 100 chars ish\",\n          \"Usage of common low quality free google fonts\",\n          \"Choosing a combination of typefaces that don't work well together either because they are too similar, or too contrasting with nothing to tie them together\",\n          \"Random, overly large, or overley small line-spacing that leads to poor hierarchy\"\n        ]\n      },\n      {\n        \"id\": \"layout_composition\",\n        \"weight\": 0.35,\n        \"good_anchor\": [\n          \"Consistency: uses a few layout patterns judiciously.\",\n          \"Intentional use of white space to create hierarchy and clarity\",\n          \"There is a vertical rythm where spacing is consistent\",\n          \"If there are screenshots of the work, they are laid out intentionally within the screenshot and the different screenshots have some elements visually tying them together (even if small like a shared color palette or corner radius) even as the work is distinct\"\n        ],\n        \"weak_anchor\": [\n          \"Every section feels like it's different from the next, with no element tying them together\",\n          \"Inconsistent gutters\\u00a0\\u2013 different sections of the website have different widths in an unintentinal way\",\n          \"No clear structure; elements appear randomly placed with no alignment\",\n          \"Screenshots of the work are haphazardly presented. Generic device mocks are used. Nothing to tie the screenshots together to make them feel like they belong on the same site\",\n          \"Poor spacing: Cramped elements or excessive empty space that doesn't serve a purpose\",\n          \"Competing focal points: Everything tries to grab attention equally, creating visual noise.\"\n        ]\n      },\n      {\n        \"id\": \"color\",\n        \"weight\": 0.3,\n        \"good_anchor\": [\n          \"Harmonious palette: the colors chosen are either complementary or adjacent. they share either intentional constrast or intentional similarity\",\n          \"There are few colours and their used with restraint in ways that are meaningful to the design.\",\n          \"The shadows are dialed in - using more than default css value. maybe they have a hue, or are very diffuse\"\n        ],\n        \"weak_anchor\": [\n          \"Too many colours that don't share a throughline or intentional contrast\",\n          \"Or, if the site is minimal greyscale, then there is lack of intentional use of different shades of grey. \",\n          \"Default looking shadows that look too dark for the site, or don't match the hue\"\n        ]\n      }\n    ],\n    \"red_flags\": [\n      \"template_scent_high: the site clearly feels like it was template\",\n      \"sloppy_images: they show their work, but it's sloppily laid out and you can't see what's going on.\",\n      \"process_soup: the case studies spend too much time a lot of time talking about process\"\n    ],\n    \"rating_scale\": [\n      \"1: Very bad\",\n      \"2: Below average\",\n      \"3: Above average\",\n      \"4: Great\"\n    ]\n  }\n}\n```\n\n---\n\n## Exemplar Portfolios with Ratings\n\nUse these exemplars to calibrate your scoring:\n\n```json\n{\n  \"1\": {\n    \"exemplar_id\": \"1\",\n    \"portfolio_category\": \"Minimal\",\n    \"site_url\": \"https://charliedeets.com/\",\n    \"image_filename\": \"exemplar_1.jpg\",\n    \"criteria\": {\n      \"typography\": {\n        \"score\": 3,\n        \"comment\": \"The typography takes a minimal direction. They create strong constrast between the title and the body, by making the title twice as large and bold, while using subtle changes in color to reflect the changes in hierarchy within the body text. The whole thing is set to system font, which further reinforces the minimal approach. While not original, it is well executed, achieving contrast and hierarchy with restraint\"\n      },\n      \"layout_composition\": {\n        \"score\": 3,\n        \"comment\": \"The layout is takes a minimal approach, putting in the experience of the candidate forward, instead of leaning on screenshots. The line width is set to make reading comfortable while also playing into the minimalism. Whitespace and high constrast typography is used to provide hierarchy, which keeps visual noise low, while still being clear. There are no visual flourishes, but everything is clear, clean, and well-executed\"\n      },\n      \"color\": {\n        \"score\": 3,\n        \"comment\": \"The color system is extremely constrained, in keeping with the minimalism of the website. While not unique, the candidate uses shades of grey to effectively convey hierarchy while maintaing a clean minimal palette\"\n      }\n    }\n  },\n  \"2\": {\n    \"exemplar_id\": \"2\",\n    \"portfolio_category\": \"Minimal\",\n    \"site_url\": \"https://www.elvinhu.com/\",\n    \"image_filename\": \"exemplar_2.jpg\",\n    \"criteria\": {\n      \"typography\": {\n        \"score\": 4,\n        \"comment\": \"The typography mixes an editorial serif font for headers, which gives the website a distinct identity, with a simple sans serif for body text, which keeps things clean and simple. It also two great paid typefaces (GT Alpina and Untitled Sans) which tells us that the candidate really thought through their choices.\\n\\nThe overall effect combination of typefaces achieve a good blend of elegance and simplicity\"\n      },\n      \"layout_composition\": {\n        \"score\": 3,\n        \"comment\": \"The layout heavily emphasizes screenshots of the author's work and leans on them heavily as the center of visual interest. Because the images are so important, the author has also taken care to design each one of them in intentional layouts.\\n\\nThe core concept of heavily image site is simple, but well-execute with adequate whitespace to create hierarchy, and subtle details like rounded corners for the screenshots to add a subtle flair.\"\n      },\n      \"color\": {\n        \"score\": 4,\n        \"comment\": \"The website itself is minimal to not distract from the work screenshots, which are designed to each bring a different pop of colour. The primary colour of each screenshot is also well coordinate \\u2013 each is a different hue, but are all similarly pastel, which makes them feel each unique but still cohesive\"\n      }\n    }\n  },\n  \"3\": {\n    \"exemplar_id\": \"3\",\n    \"portfolio_category\": \"Minimal\",\n    \"site_url\": \"https://www.agnimurthy.com/\",\n    \"image_filename\": \"exemplar_3.jpg\",\n    \"criteria\": {\n      \"typography\": {\n        \"score\": 1,\n        \"comment\": \"The site combines two similar looking sans serifs (overpass & roboto) which don't constrast enough to achieve visual interest. Instead adds random visual noise. Visual hierachy is also lacking due to poor use of line spacing. The site uses multiple weight, size, family, opacity without restraint, causing it to feel busy and incohesive.\"\n      },\n      \"layout_composition\": {\n        \"score\": 2,\n        \"comment\": \"The site layout itself is relatively basic. The problem is that the author has put very busy screenshots of their work in small image boxes, which makes it feel busy and hard to read. There is insufficient differentiation between the case study sections and the author's bio, leading two distinct content sections to blend in together. The footer also randomly switches from full width content to narrow center aligned content.\"\n      },\n      \"color\": {\n        \"score\": 1,\n        \"comment\": \"The website overuses colors without intentionality. Every case study has its own theme color in the CTA text, without the color contributing any meaning to the design. The site itself also has its purple theme color, which gets lost in the many colors from the case studies.\"\n      }\n    }\n  },\n  \"4\": {\n    \"exemplar_id\": \"4\",\n    \"portfolio_category\": \"Minimal\",\n    \"site_url\": \"https://sallywangdesigns.com/\",\n    \"image_filename\": \"exemplar_4.jpg\",\n    \"criteria\": {\n      \"typography\": {\n        \"score\": 1,\n        \"comment\": \"The type choices are mediocre free fonts from google (open sans & calluna). The white space is also poorly done. The title and body should be closer. They also use a vertical bar to divide labels in their case study, but the vertical bars are taller and just as dark as the text they divider, making them feel like the primary visual element instead of a subtle divider.\"\n      },\n      \"layout_composition\": {\n        \"score\": 1,\n        \"comment\": \"Every section of this website, from nav, hero, case studies, to footer, are a different width for no apparent reason. The nav is full width jusified, the hero is left aligned, the cases are justified full width, and the footer is center aligned again for no good reason.\\n\\nThe screenshots of the work are also poorly laid out. They're mosty zoomed out too far to be able to show anything and use generic device templates.\"\n      },\n      \"color\": {\n        \"score\": 1,\n        \"comment\": \"There was some attempt at creating a cohesive pastel color system, however, the effect is defeated by: \\n1. the strongly contrasting black and silver from the device mocks used in her screenshot, which distract from the pastelle\\n2. the fact that there is a random darker colour used in the footer that is not cohesive with the softer, lighter pastelle used in the rest of the site\"\n      }\n    }\n  }\n}\n```\n\n---\n\n## Your Task\n\nEvaluate the provided portfolio image using the rubric above.\nBe consistent with the exemplar ratings.\nReturn your evaluation as a JSON object following the specified format.",
   "candidate_ratings": {
@@ -46,9 +44,7 @@
       },
       "overall_weighted_score": 3.35,
       "overall_confidence": 3.33,
-      "red_flags": [],
-      "base_weighted_score": 3.35,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "10": {
       "candidate_id": "10",
@@ -74,9 +70,7 @@
       },
       "overall_weighted_score": 2.0,
       "overall_confidence": 3.0,
-      "red_flags": [],
-      "base_weighted_score": 2.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "11": {
       "candidate_id": "11",
@@ -102,9 +96,7 @@
       },
       "overall_weighted_score": 3.0,
       "overall_confidence": 4.0,
-      "red_flags": [],
-      "base_weighted_score": 3.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "12": {
       "candidate_id": "12",
@@ -130,9 +122,7 @@
       },
       "overall_weighted_score": 3.4,
       "overall_confidence": 4,
-      "red_flags": [],
-      "base_weighted_score": 3.4,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "13": {
       "candidate_id": "13",
@@ -158,9 +148,7 @@
       },
       "overall_weighted_score": 3.0,
       "overall_confidence": 4.0,
-      "red_flags": [],
-      "base_weighted_score": 3.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "14": {
       "candidate_id": "14",
@@ -186,9 +174,7 @@
       },
       "overall_weighted_score": 2.75,
       "overall_confidence": 3.67,
-      "red_flags": [],
-      "base_weighted_score": 2.75,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "15": {
       "candidate_id": "15",
@@ -214,9 +200,7 @@
       },
       "overall_weighted_score": 3.0,
       "overall_confidence": 4.0,
-      "red_flags": [],
-      "base_weighted_score": 3.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "16": {
       "candidate_id": "16",
@@ -242,9 +226,7 @@
       },
       "overall_weighted_score": 3.65,
       "overall_confidence": 3.67,
-      "red_flags": [],
-      "base_weighted_score": 3.65,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "17": {
       "candidate_id": "17",
@@ -270,9 +252,7 @@
       },
       "overall_weighted_score": 2.35,
       "overall_confidence": 3,
-      "red_flags": [],
-      "base_weighted_score": 2.35,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "18": {
       "candidate_id": "18",
@@ -296,13 +276,11 @@
           "confidence": 3
         }
       },
-      "overall_weighted_score": 1.5,
+      "overall_weighted_score": 2.0,
       "overall_confidence": 3.0,
       "red_flags": [
         "template_scent_high"
-      ],
-      "base_weighted_score": 2.0,
-      "penalty_applied": 0.5
+      ]
     },
     "19": {
       "candidate_id": "19",
@@ -328,9 +306,7 @@
       },
       "overall_weighted_score": 3,
       "overall_confidence": 4,
-      "red_flags": [],
-      "base_weighted_score": 3,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "2": {
       "candidate_id": "2",
@@ -356,9 +332,7 @@
       },
       "overall_weighted_score": 3.3,
       "overall_confidence": 4,
-      "red_flags": [],
-      "base_weighted_score": 3.3,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "20": {
       "candidate_id": "20",
@@ -382,13 +356,11 @@
           "confidence": 3
         }
       },
-      "overall_weighted_score": 1.5,
+      "overall_weighted_score": 2.0,
       "overall_confidence": 3.0,
       "red_flags": [
         "template_scent_high"
-      ],
-      "base_weighted_score": 2.0,
-      "penalty_applied": 0.5
+      ]
     },
     "21": {
       "candidate_id": "21",
@@ -412,13 +384,11 @@
           "confidence": 3
         }
       },
-      "overall_weighted_score": 1.5,
+      "overall_weighted_score": 2,
       "overall_confidence": 3,
       "red_flags": [
         "template_scent_high"
-      ],
-      "base_weighted_score": 2,
-      "penalty_applied": 0.5
+      ]
     },
     "22": {
       "candidate_id": "22",
@@ -444,9 +414,7 @@
       },
       "overall_weighted_score": 3.35,
       "overall_confidence": 4,
-      "red_flags": [],
-      "base_weighted_score": 3.35,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "23": {
       "candidate_id": "23",
@@ -472,9 +440,7 @@
       },
       "overall_weighted_score": 3.65,
       "overall_confidence": 4,
-      "red_flags": [],
-      "base_weighted_score": 3.65,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "24": {
       "candidate_id": "24",
@@ -498,13 +464,11 @@
           "confidence": 3
         }
       },
-      "overall_weighted_score": 1.5,
+      "overall_weighted_score": 2.0,
       "overall_confidence": 3.0,
       "red_flags": [
         "template_scent_high"
-      ],
-      "base_weighted_score": 2.0,
-      "penalty_applied": 0.5
+      ]
     },
     "25": {
       "candidate_id": "25",
@@ -530,9 +494,7 @@
       },
       "overall_weighted_score": 3.0,
       "overall_confidence": 4.0,
-      "red_flags": [],
-      "base_weighted_score": 3.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "26": {
       "candidate_id": "26",
@@ -556,13 +518,11 @@
           "confidence": 3
         }
       },
-      "overall_weighted_score": 1.5,
+      "overall_weighted_score": 2,
       "overall_confidence": 3,
       "red_flags": [
         "template_scent_high"
-      ],
-      "base_weighted_score": 2,
-      "penalty_applied": 0.5
+      ]
     },
     "27": {
       "candidate_id": "27",
@@ -586,13 +546,11 @@
           "confidence": 3
         }
       },
-      "overall_weighted_score": 1.5,
+      "overall_weighted_score": 2,
       "overall_confidence": 3,
       "red_flags": [
         "template_scent_high"
-      ],
-      "base_weighted_score": 2,
-      "penalty_applied": 0.5
+      ]
     },
     "28": {
       "candidate_id": "28",
@@ -618,9 +576,7 @@
       },
       "overall_weighted_score": 2.8,
       "overall_confidence": 3.67,
-      "red_flags": [],
-      "base_weighted_score": 2.8,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "29": {
       "candidate_id": "29",
@@ -646,9 +602,7 @@
       },
       "overall_weighted_score": 3.0,
       "overall_confidence": 4.0,
-      "red_flags": [],
-      "base_weighted_score": 3.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "3": {
       "candidate_id": "3",
@@ -674,9 +628,7 @@
       },
       "overall_weighted_score": 3.0,
       "overall_confidence": 4.0,
-      "red_flags": [],
-      "base_weighted_score": 3.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "30": {
       "candidate_id": "30",
@@ -702,9 +654,7 @@
       },
       "overall_weighted_score": 3,
       "overall_confidence": 3.67,
-      "red_flags": [],
-      "base_weighted_score": 3,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "31": {
       "candidate_id": "31",
@@ -730,9 +680,7 @@
       },
       "overall_weighted_score": 2.55,
       "overall_confidence": 3.33,
-      "red_flags": [],
-      "base_weighted_score": 2.55,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "32": {
       "candidate_id": "32",
@@ -758,9 +706,7 @@
       },
       "overall_weighted_score": 2.8,
       "overall_confidence": 3.67,
-      "red_flags": [],
-      "base_weighted_score": 2.8,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "33": {
       "candidate_id": "33",
@@ -786,9 +732,7 @@
       },
       "overall_weighted_score": 3.0,
       "overall_confidence": 4.0,
-      "red_flags": [],
-      "base_weighted_score": 3.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "34": {
       "candidate_id": "34",
@@ -814,9 +758,7 @@
       },
       "overall_weighted_score": 3,
       "overall_confidence": 3.33,
-      "red_flags": [],
-      "base_weighted_score": 3,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "35": {
       "candidate_id": "35",
@@ -842,9 +784,7 @@
       },
       "overall_weighted_score": 2.85,
       "overall_confidence": 3.67,
-      "red_flags": [],
-      "base_weighted_score": 2.85,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "36": {
       "candidate_id": "36",
@@ -870,9 +810,7 @@
       },
       "overall_weighted_score": 3.0,
       "overall_confidence": 4.0,
-      "red_flags": [],
-      "base_weighted_score": 3.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "37": {
       "candidate_id": "37",
@@ -898,9 +836,7 @@
       },
       "overall_weighted_score": 3,
       "overall_confidence": 4,
-      "red_flags": [],
-      "base_weighted_score": 3,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "38": {
       "candidate_id": "38",
@@ -926,9 +862,7 @@
       },
       "overall_weighted_score": 3,
       "overall_confidence": 4,
-      "red_flags": [],
-      "base_weighted_score": 3,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "39": {
       "candidate_id": "39",
@@ -954,9 +888,7 @@
       },
       "overall_weighted_score": 3.0,
       "overall_confidence": 4.0,
-      "red_flags": [],
-      "base_weighted_score": 3.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "4": {
       "candidate_id": "4",
@@ -982,9 +914,7 @@
       },
       "overall_weighted_score": 3,
       "overall_confidence": 4,
-      "red_flags": [],
-      "base_weighted_score": 3,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "40": {
       "candidate_id": "40",
@@ -1010,9 +940,7 @@
       },
       "overall_weighted_score": 2.65,
       "overall_confidence": 3,
-      "red_flags": [],
-      "base_weighted_score": 2.65,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "41": {
       "candidate_id": "41",
@@ -1038,9 +966,7 @@
       },
       "overall_weighted_score": 3.0,
       "overall_confidence": 4.0,
-      "red_flags": [],
-      "base_weighted_score": 3.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "42": {
       "candidate_id": "42",
@@ -1066,9 +992,7 @@
       },
       "overall_weighted_score": 2.35,
       "overall_confidence": 3,
-      "red_flags": [],
-      "base_weighted_score": 2.35,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "43": {
       "candidate_id": "43",
@@ -1094,9 +1018,7 @@
       },
       "overall_weighted_score": 3.0,
       "overall_confidence": 4.0,
-      "red_flags": [],
-      "base_weighted_score": 3.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "44": {
       "candidate_id": "44",
@@ -1122,9 +1044,7 @@
       },
       "overall_weighted_score": 2.8,
       "overall_confidence": 3.67,
-      "red_flags": [],
-      "base_weighted_score": 2.8,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "45": {
       "candidate_id": "45",
@@ -1150,9 +1070,7 @@
       },
       "overall_weighted_score": 3,
       "overall_confidence": 4,
-      "red_flags": [],
-      "base_weighted_score": 3,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "46": {
       "candidate_id": "46",
@@ -1178,9 +1096,7 @@
       },
       "overall_weighted_score": 3.0,
       "overall_confidence": 4.0,
-      "red_flags": [],
-      "base_weighted_score": 3.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "47": {
       "candidate_id": "47",
@@ -1204,13 +1120,11 @@
           "confidence": 3
         }
       },
-      "overall_weighted_score": 1.5,
+      "overall_weighted_score": 2.0,
       "overall_confidence": 3,
       "red_flags": [
         "template_scent_high"
-      ],
-      "base_weighted_score": 2.0,
-      "penalty_applied": 0.5
+      ]
     },
     "48": {
       "candidate_id": "48",
@@ -1236,9 +1150,7 @@
       },
       "overall_weighted_score": 3,
       "overall_confidence": 4,
-      "red_flags": [],
-      "base_weighted_score": 3,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "49": {
       "candidate_id": "49",
@@ -1264,9 +1176,7 @@
       },
       "overall_weighted_score": 2.0,
       "overall_confidence": 3.0,
-      "red_flags": [],
-      "base_weighted_score": 2.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "5": {
       "candidate_id": "5",
@@ -1292,9 +1202,7 @@
       },
       "overall_weighted_score": 3.0,
       "overall_confidence": 4.0,
-      "red_flags": [],
-      "base_weighted_score": 3.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "50": {
       "candidate_id": "50",
@@ -1318,13 +1226,11 @@
           "confidence": 3
         }
       },
-      "overall_weighted_score": 1.7,
+      "overall_weighted_score": 2,
       "overall_confidence": 3,
       "red_flags": [
         "sloppy_images"
-      ],
-      "base_weighted_score": 2,
-      "penalty_applied": 0.3
+      ]
     },
     "51": {
       "candidate_id": "51",
@@ -1350,9 +1256,7 @@
       },
       "overall_weighted_score": 3,
       "overall_confidence": 4,
-      "red_flags": [],
-      "base_weighted_score": 3,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "52": {
       "candidate_id": "52",
@@ -1376,13 +1280,11 @@
           "confidence": 3
         }
       },
-      "overall_weighted_score": 1.5,
+      "overall_weighted_score": 2.0,
       "overall_confidence": 3.0,
       "red_flags": [
         "template_scent_high"
-      ],
-      "base_weighted_score": 2.0,
-      "penalty_applied": 0.5
+      ]
     },
     "53": {
       "candidate_id": "53",
@@ -1408,9 +1310,7 @@
       },
       "overall_weighted_score": 2,
       "overall_confidence": 3,
-      "red_flags": [],
-      "base_weighted_score": 2,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "54": {
       "candidate_id": "54",
@@ -1436,9 +1336,7 @@
       },
       "overall_weighted_score": 3.0,
       "overall_confidence": 4.0,
-      "red_flags": [],
-      "base_weighted_score": 3.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "6": {
       "candidate_id": "6",
@@ -1464,9 +1362,7 @@
       },
       "overall_weighted_score": 3.65,
       "overall_confidence": 3.67,
-      "red_flags": [],
-      "base_weighted_score": 3.65,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "7": {
       "candidate_id": "7",
@@ -1492,9 +1388,7 @@
       },
       "overall_weighted_score": 3.0,
       "overall_confidence": 3.33,
-      "red_flags": [],
-      "base_weighted_score": 3.0,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "8": {
       "candidate_id": "8",
@@ -1520,9 +1414,7 @@
       },
       "overall_weighted_score": 2.75,
       "overall_confidence": 3.67,
-      "red_flags": [],
-      "base_weighted_score": 2.75,
-      "penalty_applied": 0
+      "red_flags": []
     },
     "9": {
       "candidate_id": "9",
@@ -1548,9 +1440,7 @@
       },
       "overall_weighted_score": 3.35,
       "overall_confidence": 4,
-      "red_flags": [],
-      "base_weighted_score": 3.35,
-      "penalty_applied": 0
+      "red_flags": []
     }
   }
 }
