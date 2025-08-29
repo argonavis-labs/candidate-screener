@@ -102,3 +102,4 @@ if __name__ == "__main__":
     print("=" * 60)
     migrate_existing_results()
     print("\n✨ Migration complete! Future evaluations will use the new format.")
+

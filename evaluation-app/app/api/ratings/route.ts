@@ -3,33 +3,61 @@ import fs from 'fs/promises';
 import path from 'path';
 import { Ratings, HumanRatings } from '@/lib/types';
 
-const AI_RATINGS_PATH = path.join(process.cwd(), '..', 'ai-ratings.json');
+const EVALUATION_RESULTS_PATH = path.join(process.cwd(), '..', 'evaluation-results');
 const HUMAN_RATINGS_PATH = path.join(process.cwd(), '..', 'human-ratings.json');
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const type = searchParams.get('type') || 'ai';
+    const filename = searchParams.get('filename'); // For AI ratings from specific run
     
-    const filePath = type === 'ai' ? AI_RATINGS_PATH : HUMAN_RATINGS_PATH;
-    
-    try {
-      const data = await fs.readFile(filePath, 'utf-8');
-      const parsed = JSON.parse(data);
-      
-      // Handle the new AI ratings format which has ratings nested under 'candidate_ratings'
-      if (type === 'ai' && parsed.candidate_ratings) {
-        return NextResponse.json(parsed.candidate_ratings);
+    if (type === 'ai') {
+      if (!filename) {
+        // Return most recent evaluation by default
+        try {
+          const files = await fs.readdir(EVALUATION_RESULTS_PATH);
+          const evaluationFiles = files.filter(file => 
+            file.startsWith('evaluation_') && file.endsWith('.json')
+          ).sort().reverse(); // Most recent first
+          
+          if (evaluationFiles.length === 0) {
+            return NextResponse.json({});
+          }
+          
+          const mostRecentFile = evaluationFiles[0];
+          const filePath = path.join(EVALUATION_RESULTS_PATH, mostRecentFile);
+          const data = await fs.readFile(filePath, 'utf-8');
+          const parsed = JSON.parse(data);
+          return NextResponse.json(parsed.candidate_ratings || {});
+        } catch (error: any) {
+          console.error('Error reading most recent AI ratings:', error);
+          return NextResponse.json({});
+        }
+      } else {
+        // Return specific evaluation run
+        try {
+          const filePath = path.join(EVALUATION_RESULTS_PATH, filename);
+          const data = await fs.readFile(filePath, 'utf-8');
+          const parsed = JSON.parse(data);
+          return NextResponse.json(parsed.candidate_ratings || {});
+        } catch (error: any) {
+          console.error(`Error reading AI ratings from ${filename}:`, error);
+          return NextResponse.json({});
+        }
       }
-      
-      return NextResponse.json(parsed);
-    } catch (error: any) {
-      // If file doesn't exist, return empty object
-      if (error.code === 'ENOENT') {
+    } else {
+      // Human ratings
+      try {
+        const data = await fs.readFile(HUMAN_RATINGS_PATH, 'utf-8');
+        return NextResponse.json(JSON.parse(data));
+      } catch (error: any) {
+        if (error.code === 'ENOENT') {
+          return NextResponse.json({});
+        }
+        console.error('Error reading human ratings:', error);
         return NextResponse.json({});
       }
-      console.error(`Error reading ${type} ratings:`, error);
-      return NextResponse.json({});
     }
   } catch (error) {
     console.error('Error in GET /api/ratings:', error);

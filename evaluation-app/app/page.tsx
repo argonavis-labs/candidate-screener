@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { Ratings, HumanRatings, HumanEvaluation, Rubric } from '@/lib/types';
 import EvaluationDisplay from '@/components/EvaluationDisplay';
 import HumanEvaluationForm from '@/components/HumanEvaluationForm';
-import { ChevronLeft, ChevronRight, Eye, EyeOff, Search } from 'lucide-react';
+import Analytics from '@/components/Analytics';
+import { ChevronLeft, ChevronRight, Eye, EyeOff, Search, BarChart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +13,17 @@ import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
+
+interface EvaluationRun {
+  filename: string;
+  timestamp: string;
+  model: string;
+  total_candidates: number;
+  complete: boolean;
+}
 
 export default function Home() {
   const [currentCandidateIndex, setCurrentCandidateIndex] = useState(0);
@@ -22,18 +33,42 @@ export default function Home() {
   const [showAiEvaluation, setShowAiEvaluation] = useState(true);
   const [jumpToCandidate, setJumpToCandidate] = useState('');
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('evaluation');
+  
+  // New state for evaluation runs
+  const [evaluationRuns, setEvaluationRuns] = useState<EvaluationRun[]>([]);
+  const [selectedRun, setSelectedRun] = useState<string>('');
 
   // Generate list of all candidates (1-54)
   const candidateIds = Array.from({ length: 54 }, (_, i) => String(i + 1));
   const currentCandidateId = candidateIds[currentCandidateIndex];
   const currentImageFilename = `candidate_${currentCandidateId}.jpg`;
 
-  // Load all data on mount
+  // Load evaluation runs on mount
   useEffect(() => {
+    const loadEvaluationRuns = async () => {
+      try {
+        const response = await fetch('/api/evaluation-runs');
+        const runs = await response.json();
+        setEvaluationRuns(runs);
+        if (runs.length > 0) {
+          setSelectedRun(runs[0].filename); // Default to most recent
+        }
+      } catch (error) {
+        console.error('Error loading evaluation runs:', error);
+      }
+    };
+    loadEvaluationRuns();
+  }, []);
+
+  // Load data when selected run changes
+  useEffect(() => {
+    if (!selectedRun) return;
+    
     const loadData = async () => {
       try {
         const [aiRes, humanRes, rubricRes] = await Promise.all([
-          fetch('/api/ratings?type=ai'),
+          fetch(`/api/ratings?type=ai&filename=${selectedRun}`),
           fetch('/api/ratings?type=human'),
           fetch('/api/rubric'),
         ]);
@@ -55,7 +90,7 @@ export default function Home() {
     };
 
     loadData();
-  }, []);
+  }, [selectedRun]);
 
   const handleSaveHumanEvaluation = async (evaluation: HumanEvaluation) => {
     try {
@@ -97,6 +132,8 @@ export default function Home() {
   const hasHumanEvaluation = currentCandidateId in humanRatings;
   const progressPercentage = (evaluatedCount / candidateIds.length) * 100;
 
+  const currentRun = evaluationRuns.find(run => run.filename === selectedRun);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -116,133 +153,193 @@ export default function Home() {
           <div className="flex items-center gap-6">
             <div>
               <h1 className="text-xl font-semibold">Portfolio Evaluation</h1>
-              <p className="text-sm text-muted-foreground">Candidate {currentCandidateId} of {candidateIds.length}</p>
+              <p className="text-sm text-muted-foreground">
+                {activeTab === 'evaluation' 
+                  ? `Candidate ${currentCandidateId} of ${candidateIds.length}`
+                  : 'Analytics Dashboard'
+                }
+              </p>
             </div>
 
-            {/* Progress */}
-            <div className="flex items-center gap-3">
-              <Progress value={progressPercentage} className="w-32" />
-              <span className="text-sm font-medium">{evaluatedCount}/{candidateIds.length}</span>
-            </div>
+            {activeTab === 'evaluation' && (
+              <div className="flex items-center gap-3">
+                <Progress value={progressPercentage} className="w-32" />
+                <span className="text-sm font-medium">{evaluatedCount}/{candidateIds.length}</span>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Jump to candidate */}
-            <div className="flex items-center gap-2">
-              <Input
-                type="number"
-                min="1"
-                max="54"
-                value={jumpToCandidate}
-                onChange={(e) => setJumpToCandidate(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleJumpToCandidate()}
-                placeholder="Jump to..."
-                className="w-24 h-8"
-              />
-              <Button onClick={handleJumpToCandidate} size="sm" variant="outline">
-                <Search className="h-3 w-3" />
-              </Button>
-            </div>
+            {/* AI Run Selector */}
+            {evaluationRuns.length > 0 && (
+              <div className="flex items-center gap-2">
+                <Label htmlFor="run-selector" className="text-sm">AI Run:</Label>
+                <Select value={selectedRun} onValueChange={setSelectedRun}>
+                  <SelectTrigger id="run-selector" className="w-48 h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {evaluationRuns.map(run => (
+                      <SelectItem key={run.filename} value={run.filename}>
+                        <div className="flex flex-col">
+                          <span className="text-sm">{run.model}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(run.timestamp).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
-            {/* Toggle AI evaluation */}
-            <div className="flex items-center gap-2">
-              <Switch
-                id="ai-toggle"
-                checked={showAiEvaluation}
-                onCheckedChange={setShowAiEvaluation}
-              />
-              <Label htmlFor="ai-toggle" className="text-sm cursor-pointer">
-                {showAiEvaluation ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-              </Label>
-            </div>
+            {activeTab === 'evaluation' && (
+              <>
+                {/* Jump to candidate */}
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    min="1"
+                    max="54"
+                    value={jumpToCandidate}
+                    onChange={(e) => setJumpToCandidate(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleJumpToCandidate()}
+                    placeholder="Jump to..."
+                    className="w-24 h-8"
+                  />
+                  <Button onClick={handleJumpToCandidate} size="sm" variant="outline">
+                    <Search className="h-3 w-3" />
+                  </Button>
+                </div>
+
+                {/* Toggle AI evaluation */}
+                <div className="flex items-center gap-2">
+                  <Switch
+                    id="ai-toggle"
+                    checked={showAiEvaluation}
+                    onCheckedChange={setShowAiEvaluation}
+                  />
+                  <Label htmlFor="ai-toggle" className="text-sm cursor-pointer">
+                    {showAiEvaluation ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                  </Label>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </header>
 
-      {/* Main content */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left side - Image viewer (75%) */}
-        <div className="w-3/4 p-6">
-          <div className="h-full bg-muted/20 rounded-lg border overflow-hidden">
-            <ScrollArea className="h-full">
-              <img
-                src={`/api/image/${currentImageFilename}`}
-                alt={`Candidate ${currentCandidateId}`}
-                className="w-full h-auto"
-              />
-            </ScrollArea>
-          </div>
-        </div>
+      {/* Main content with tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+        <TabsList className="mx-6 mt-3 w-fit">
+          <TabsTrigger value="evaluation">Evaluation</TabsTrigger>
+          <TabsTrigger value="analytics">
+            <BarChart className="h-4 w-4 mr-1" />
+            Analytics
+          </TabsTrigger>
+        </TabsList>
 
-        {/* Right side - Evaluations (25%) */}
-        <div className="w-1/4 p-6 pl-0 flex flex-col gap-4">
-          {/* AI Evaluation */}
-          <div className="flex-1 min-h-0">
-            <EvaluationDisplay
-              evaluation={aiRatings[currentCandidateId] || null}
-              isVisible={showAiEvaluation}
-            />
-          </div>
-
-          {/* Human Evaluation Form */}
-          <div className="flex-1 min-h-0">
-            <HumanEvaluationForm
-              candidateId={currentCandidateId}
-              imageFilename={currentImageFilename}
-              existingEvaluation={humanRatings[currentCandidateId] || null}
-              rubric={rubric}
-              onSave={handleSaveHumanEvaluation}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Footer - Navigation */}
-      <footer className="border-t px-6 py-3">
-        <div className="flex items-center justify-between">
-          <Button
-            onClick={() => navigateToCandidate(currentCandidateIndex - 1)}
-            disabled={currentCandidateIndex === 0}
-            variant="outline"
-            size="sm"
-          >
-            <ChevronLeft className="h-4 w-4 mr-1" />
-            Previous
-          </Button>
-
-          {/* Candidate dots */}
-          <ScrollArea className="max-w-xl">
-            <div className="flex items-center gap-1.5 px-4">
-              {candidateIds.map((id, index) => (
-                <button
-                  key={id}
-                  onClick={() => navigateToCandidate(index)}
-                  className={cn(
-                    "w-2 h-2 rounded-full transition-all",
-                    "hover:scale-125",
-                    index === currentCandidateIndex
-                      ? "w-6 bg-primary"
-                      : humanRatings[id]
-                      ? "bg-green-500"
-                      : "bg-muted-foreground/30"
-                  )}
-                  title={`Candidate ${id}${humanRatings[id] ? ' (Evaluated)' : ''}`}
-                />
-              ))}
+        {/* Evaluation Tab */}
+        <TabsContent value="evaluation" className="flex-1 flex overflow-hidden mt-0">
+          <div className="flex-1 flex overflow-hidden">
+            {/* Left side - Image viewer (75%) */}
+            <div className="w-3/4 p-6">
+              <div className="h-full bg-muted/20 rounded-lg border overflow-hidden">
+                <ScrollArea className="h-full">
+                  <img
+                    src={`/api/image/${currentImageFilename}`}
+                    alt={`Candidate ${currentCandidateId}`}
+                    className="w-full h-auto"
+                  />
+                </ScrollArea>
+              </div>
             </div>
-          </ScrollArea>
 
-          <Button
-            onClick={() => navigateToCandidate(currentCandidateIndex + 1)}
-            disabled={currentCandidateIndex === candidateIds.length - 1}
-            variant="outline"
-            size="sm"
-          >
-            Next
-            <ChevronRight className="h-4 w-4 ml-1" />
-          </Button>
-        </div>
-      </footer>
+            {/* Right side - Evaluations (25%) */}
+            <div className="w-1/4 p-6 pl-0 flex flex-col gap-4">
+              {/* AI Evaluation */}
+              <div className="flex-1 min-h-0">
+                <EvaluationDisplay
+                  evaluation={aiRatings[currentCandidateId] || null}
+                  isVisible={showAiEvaluation}
+                />
+              </div>
+
+              {/* Human Evaluation Form */}
+              <div className="flex-1 min-h-0">
+                <HumanEvaluationForm
+                  candidateId={currentCandidateId}
+                  imageFilename={currentImageFilename}
+                  existingEvaluation={humanRatings[currentCandidateId] || null}
+                  rubric={rubric}
+                  onSave={handleSaveHumanEvaluation}
+                />
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Analytics Tab */}
+        <TabsContent value="analytics" className="flex-1 overflow-hidden mt-0">
+          <div className="p-6 h-full overflow-y-auto">
+            <Analytics 
+              humanRatings={humanRatings}
+              aiRatings={aiRatings}
+              selectedRun={selectedRun}
+            />
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      {/* Footer - Navigation (only show in evaluation tab) */}
+      {activeTab === 'evaluation' && (
+        <footer className="border-t px-6 py-3">
+          <div className="flex items-center justify-between">
+            <Button
+              onClick={() => navigateToCandidate(currentCandidateIndex - 1)}
+              disabled={currentCandidateIndex === 0}
+              variant="outline"
+              size="sm"
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
+            </Button>
+
+            {/* Candidate dots */}
+            <ScrollArea className="max-w-xl">
+              <div className="flex items-center gap-1.5 px-4">
+                {candidateIds.map((id, index) => (
+                  <button
+                    key={id}
+                    onClick={() => navigateToCandidate(index)}
+                    className={cn(
+                      "w-2 h-2 rounded-full transition-all",
+                      "hover:scale-125",
+                      index === currentCandidateIndex
+                        ? "w-6 bg-primary"
+                        : humanRatings[id]
+                        ? "bg-green-500"
+                        : "bg-muted-foreground/30"
+                    )}
+                    title={`Candidate ${id}${humanRatings[id] ? ' (Evaluated)' : ''}`}
+                  />
+                ))}
+              </div>
+            </ScrollArea>
+
+            <Button
+              onClick={() => navigateToCandidate(currentCandidateIndex + 1)}
+              disabled={currentCandidateIndex === candidateIds.length - 1}
+              variant="outline"
+              size="sm"
+            >
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </footer>
+      )}
     </div>
   );
 }
