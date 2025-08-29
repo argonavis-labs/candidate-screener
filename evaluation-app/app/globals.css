@@ -47,6 +47,9 @@ body {
   color: var(--color-foreground);
   background: var(--color-background);
   font-feature-settings: "rlig" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
 }
 
 /* Custom scrollbar */
@@ -85,4 +88,21 @@ body {
 
 [data-radix-scroll-area-viewport]::-webkit-scrollbar-thumb:hover {
   background: var(--color-muted-foreground);
+}
+
+/* App container utility for consistent horizontal rhythm */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
 }

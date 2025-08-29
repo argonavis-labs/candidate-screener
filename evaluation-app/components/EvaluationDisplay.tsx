@@ -44,10 +44,10 @@ export default function EvaluationDisplay({ evaluation, isVisible }: EvaluationD
 
   return (
     <Card className="h-full flex flex-col">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-2">
         <div className="space-y-1">
-          <CardTitle className="text-lg">AI Evaluation</CardTitle>
-          <CardDescription className="text-xs">
+          <CardTitle className="text-base tracking-tight">AI Evaluation</CardTitle>
+          <CardDescription className="text-xs leading-relaxed">
             {evaluation.portfolio_category} • {new Date(evaluation.evaluated_at).toLocaleDateString()}
           </CardDescription>
         </div>

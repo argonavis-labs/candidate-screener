@@ -200,11 +200,11 @@ export default function HumanEvaluationForm({
 
   return (
     <Card className="h-full flex flex-col">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <CardTitle className="text-lg">Human Evaluation</CardTitle>
-            <CardDescription className="text-xs">
+            <CardTitle className="text-base tracking-tight">Human Evaluation</CardTitle>
+            <CardDescription className="text-xs leading-relaxed">
               Score: {(evaluation.overall_weighted_score ?? 0).toFixed(2)} • Confidence: {(evaluation.overall_confidence ?? 0).toFixed(1)}
             </CardDescription>
           </div>
@@ -214,7 +214,7 @@ export default function HumanEvaluationForm({
           </Button>
         </div>
 
-        <div className="pt-3">
+        <div className="pt-2">
           <Label htmlFor="category" className="text-xs">Portfolio Category</Label>
           <Select
             value={evaluation.portfolio_category}
@@ -234,7 +234,7 @@ export default function HumanEvaluationForm({
 
       <CardContent className="flex-1 overflow-hidden pb-3">
         <ScrollArea className="h-full pr-3">
-          <div className="space-y-4">
+          <div className="space-y-3">
             {/* Criteria Evaluations */}
             {(['typography', 'layout_composition', 'color'] as const).map(criterion => (
               <div key={criterion} className="space-y-2">
@@ -242,7 +242,7 @@ export default function HumanEvaluationForm({
                   className="flex items-center justify-between cursor-pointer"
                   onClick={() => setExpandedCriteria(prev => ({ ...prev, [criterion]: !prev[criterion] }))}
                 >
-                  <h4 className="text-sm font-medium capitalize">
+                  <h4 className="text-sm font-medium capitalize tracking-tight">
                     {criterion.replace('_', ' ')}
                   </h4>
                   <div className="flex items-center gap-2">
@@ -254,7 +254,7 @@ export default function HumanEvaluationForm({
                 </div>
 
                 {expandedCriteria[criterion] && (
-                  <div className="space-y-3 pl-3 border-l-2">
+                  <div className="space-y-3 pl-2">
                     {/* Score */}
                     <div className="space-y-1">
                       <Label className="text-xs">Score</Label>
@@ -273,13 +273,13 @@ export default function HumanEvaluationForm({
                               <Label
                                 htmlFor={`${criterion}-${score}`}
                                 className={cn(
-                                  "flex flex-col items-center justify-center w-full p-2 text-xs border rounded-md cursor-pointer transition-all",
+                                  "flex flex-col items-center justify-center w-full p-2 text-xs rounded-md cursor-pointer transition-all",
                                   "hover:bg-accent",
-                                  "peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground"
+                                  " peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground"
                                 )}
                               >
                                 <span className="font-bold">{score}</span>
-                                <span className="text-[10px] opacity-70">{SCORE_LABELS[score - 1].split(' ')[0]}</span>
+                                <span className="text-[10px] leading-tight opacity-70">{SCORE_LABELS[score - 1].split(' ')[0]}</span>
                               </Label>
                             </div>
                           ))}
@@ -305,9 +305,9 @@ export default function HumanEvaluationForm({
                               <Label
                                 htmlFor={`${criterion}-conf-${conf}`}
                                 className={cn(
-                                  "flex items-center justify-center w-full p-1.5 text-xs border rounded-md cursor-pointer transition-all",
+                                  "flex items-center justify-center w-full p-1.5 text-xs rounded-md cursor-pointer transition-all",
                                   "hover:bg-accent",
-                                  "peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground"
+                                  " peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground"
                                 )}
                               >
                                 {conf}

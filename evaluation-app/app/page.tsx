@@ -92,6 +92,36 @@ export default function Home() {
     loadData();
   }, [selectedRun]);
 
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Only handle arrow keys on evaluation tab
+      if (activeTab !== 'evaluation') return;
+      
+      // Don't trigger if user is typing in an input/textarea
+      if (event.target instanceof HTMLInputElement || 
+          event.target instanceof HTMLTextAreaElement ||
+          event.target instanceof HTMLSelectElement) {
+        return;
+      }
+
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        if (currentCandidateIndex > 0) {
+          navigateToCandidate(currentCandidateIndex - 1);
+        }
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        if (currentCandidateIndex < candidateIds.length - 1) {
+          navigateToCandidate(currentCandidateIndex + 1);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeTab, currentCandidateIndex, candidateIds.length]);
+
   const handleSaveHumanEvaluation = async (evaluation: HumanEvaluation) => {
     try {
       const response = await fetch('/api/ratings', {
@@ -146,14 +176,14 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-background">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="h-screen flex flex-col bg-background">
       {/* Header */}
-      <header className="border-b px-6 py-3">
+      <header className="py-4 px-8 border-b border-stone-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
             <div>
-              <h1 className="text-xl font-semibold">Portfolio Evaluation</h1>
-              <p className="text-sm text-muted-foreground">
+              <h1 className="text-xl font-semibold tracking-tight">Portfolio Evaluation</h1>
+              <p className="text-sm text-muted-foreground leading-normal">
                 {activeTab === 'evaluation' 
                   ? `Candidate ${currentCandidateId} of ${candidateIds.length}`
                   : 'Analytics Dashboard'
@@ -161,12 +191,16 @@ export default function Home() {
               </p>
             </div>
 
-            {activeTab === 'evaluation' && (
-              <div className="flex items-center gap-3">
-                <Progress value={progressPercentage} className="w-32" />
-                <span className="text-sm font-medium">{evaluatedCount}/{candidateIds.length}</span>
-              </div>
-            )}
+            {/* Tabs in header */}
+            <TabsList className="h-9">
+              <TabsTrigger value="evaluation">Evaluation</TabsTrigger>
+              <TabsTrigger value="analytics">
+                <BarChart className="h-4 w-4 mr-1" />
+                Analytics
+              </TabsTrigger>
+            </TabsList>
+
+
           </div>
 
           <div className="flex items-center gap-4">
@@ -175,15 +209,15 @@ export default function Home() {
               <div className="flex items-center gap-2">
                 <Label htmlFor="run-selector" className="text-sm">AI Run:</Label>
                 <Select value={selectedRun} onValueChange={setSelectedRun}>
-                  <SelectTrigger id="run-selector" className="w-48 h-8">
+                  <SelectTrigger id="run-selector" className="w-56 h-8">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {evaluationRuns.map(run => (
                       <SelectItem key={run.filename} value={run.filename}>
                         <div className="flex flex-col">
-                          <span className="text-sm">{run.model}</span>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-sm leading-tight">{run.model}</span>
+                          <span className="text-xs text-muted-foreground leading-tight">
                             {new Date(run.timestamp).toLocaleDateString()}
                           </span>
                         </div>
@@ -206,7 +240,7 @@ export default function Home() {
                     onChange={(e) => setJumpToCandidate(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleJumpToCandidate()}
                     placeholder="Jump to..."
-                    className="w-24 h-8"
+                    className="w-24"
                   />
                   <Button onClick={handleJumpToCandidate} size="sm" variant="outline">
                     <Search className="h-3 w-3" />
@@ -230,34 +264,79 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main content with tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-        <TabsList className="mx-6 mt-3 w-fit">
-          <TabsTrigger value="evaluation">Evaluation</TabsTrigger>
-          <TabsTrigger value="analytics">
-            <BarChart className="h-4 w-4 mr-1" />
-            Analytics
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Evaluation Tab */}
-        <TabsContent value="evaluation" className="flex-1 flex overflow-hidden mt-0">
-          <div className="flex-1 flex overflow-hidden">
+      {/* Main content */}
+      {/* Evaluation Tab */}
+      <TabsContent value="evaluation" className="flex-1 overflow-hidden">
+          <div className="flex h-full overflow-hidden px-8">
             {/* Left side - Image viewer (75%) */}
-            <div className="w-3/4 p-6">
-              <div className="h-full bg-muted/20 rounded-lg border overflow-hidden">
-                <ScrollArea className="h-full">
-                  <img
-                    src={`/api/image/${currentImageFilename}`}
-                    alt={`Candidate ${currentCandidateId}`}
-                    className="w-full h-auto"
-                  />
-                </ScrollArea>
-              </div>
+            <div className="w-3/4 py-5 pr-6 overflow-hidden">
+              <ScrollArea className="h-full w-full">
+                <img
+                  src={`/api/image/${currentImageFilename}`}
+                  alt={`Candidate ${currentCandidateId}`}
+                  className="w-full h-auto block"
+                />
+              </ScrollArea>
             </div>
 
             {/* Right side - Evaluations (25%) */}
-            <div className="w-1/4 p-6 pl-0 flex flex-col gap-4">
+            <div className="w-1/4 p-6 flex flex-col gap-4 h-full border-l border-stone-100">
+              {/* Navigation Controls */}
+              <div className="flex flex-col gap-4 pb-4">
+                {/* Previous/Next Buttons */}
+                <div className="flex items-center justify-between">
+                  <Button
+                    onClick={() => navigateToCandidate(currentCandidateIndex - 1)}
+                    disabled={currentCandidateIndex === 0}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    Previous
+                  </Button>
+                  <Button
+                    onClick={() => navigateToCandidate(currentCandidateIndex + 1)}
+                    disabled={currentCandidateIndex === candidateIds.length - 1}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Next
+                    <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
+
+                {/* Progress Indicators */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>Progress</span>
+                    <span className="font-medium">{evaluatedCount}/{candidateIds.length}</span>
+                  </div>
+                  <Progress value={progressPercentage} className="w-full" />
+                </div>
+
+                {/* Candidate Dots */}
+                <ScrollArea className="max-h-32">
+                  <div className="flex flex-wrap gap-1.5">
+                    {candidateIds.map((id, index) => (
+                      <button
+                        key={id}
+                        onClick={() => navigateToCandidate(index)}
+                        className={cn(
+                          "w-2 h-2 rounded-full transition-all",
+                          "hover:scale-125",
+                          index === currentCandidateIndex
+                            ? "w-6 bg-primary"
+                            : humanRatings[id]
+                            ? "bg-green-500"
+                            : "bg-muted-foreground/30"
+                        )}
+                        title={`Candidate ${id}${humanRatings[id] ? ' (Evaluated)' : ''}`}
+                      />
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+
               {/* AI Evaluation */}
               <div className="flex-1 min-h-0">
                 <EvaluationDisplay
@@ -278,68 +357,20 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </TabsContent>
+      </TabsContent>
 
-        {/* Analytics Tab */}
-        <TabsContent value="analytics" className="flex-1 overflow-hidden mt-0">
-          <div className="p-6 h-full overflow-y-auto">
-            <Analytics 
-              humanRatings={humanRatings}
-              aiRatings={aiRatings}
-              selectedRun={selectedRun}
-            />
-          </div>
-        </TabsContent>
-      </Tabs>
+      {/* Analytics Tab */}
+      <TabsContent value="analytics" className="flex-1 overflow-hidden">
+        <div className="container py-5 h-full overflow-y-auto">
+          <Analytics 
+            humanRatings={humanRatings}
+            aiRatings={aiRatings}
+            selectedRun={selectedRun}
+          />
+        </div>
+      </TabsContent>
 
-      {/* Footer - Navigation (only show in evaluation tab) */}
-      {activeTab === 'evaluation' && (
-        <footer className="border-t px-6 py-3">
-          <div className="flex items-center justify-between">
-            <Button
-              onClick={() => navigateToCandidate(currentCandidateIndex - 1)}
-              disabled={currentCandidateIndex === 0}
-              variant="outline"
-              size="sm"
-            >
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              Previous
-            </Button>
 
-            {/* Candidate dots */}
-            <ScrollArea className="max-w-xl">
-              <div className="flex items-center gap-1.5 px-4">
-                {candidateIds.map((id, index) => (
-                  <button
-                    key={id}
-                    onClick={() => navigateToCandidate(index)}
-                    className={cn(
-                      "w-2 h-2 rounded-full transition-all",
-                      "hover:scale-125",
-                      index === currentCandidateIndex
-                        ? "w-6 bg-primary"
-                        : humanRatings[id]
-                        ? "bg-green-500"
-                        : "bg-muted-foreground/30"
-                    )}
-                    title={`Candidate ${id}${humanRatings[id] ? ' (Evaluated)' : ''}`}
-                  />
-                ))}
-              </div>
-            </ScrollArea>
-
-            <Button
-              onClick={() => navigateToCandidate(currentCandidateIndex + 1)}
-              disabled={currentCandidateIndex === candidateIds.length - 1}
-              variant="outline"
-              size="sm"
-            >
-              Next
-              <ChevronRight className="h-4 w-4 ml-1" />
-            </Button>
-          </div>
-        </footer>
-      )}
-    </div>
+    </Tabs>
   );
 }

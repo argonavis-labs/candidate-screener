@@ -77,8 +77,8 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
       : 0;
 
     // Calculate correlation
-    const humanScores = validComparisons.map(d => d.humanScore);
-    const aiScores = validComparisons.map(d => d.aiScore);
+    const humanScores = validComparisons.map(d => d.humanScore ?? 0);
+    const aiScores = validComparisons.map(d => d.aiScore ?? 0);
     const correlation = calculateCorrelation(humanScores, aiScores);
 
     // Calculate bias (does AI consistently rate higher or lower?)
@@ -115,35 +115,35 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
   return (
     <div className="space-y-6">
       {/* Summary Statistics */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Average Gap</CardDescription>
-            <CardTitle className="text-2xl">
+          <CardHeader className="pb-1">
+            <CardDescription className="leading-tight">Average Gap</CardDescription>
+            <CardTitle className="text-2xl tracking-tight">
               {analytics.averageGap.toFixed(2)}
             </CardTitle>
           </CardHeader>
         </Card>
         <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Correlation</CardDescription>
-            <CardTitle className="text-2xl">
+          <CardHeader className="pb-1">
+            <CardDescription className="leading-tight">Correlation</CardDescription>
+            <CardTitle className="text-2xl tracking-tight">
               {analytics.correlation.toFixed(3)}
             </CardTitle>
           </CardHeader>
         </Card>
         <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>AI Bias</CardDescription>
-            <CardTitle className="text-2xl">
+          <CardHeader className="pb-1">
+            <CardDescription className="leading-tight">AI Bias</CardDescription>
+            <CardTitle className="text-2xl tracking-tight">
               {analytics.bias > 0 ? '+' : ''}{analytics.bias.toFixed(2)}
             </CardTitle>
           </CardHeader>
         </Card>
         <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Within ±0.5</CardDescription>
-            <CardTitle className="text-2xl">
+          <CardHeader className="pb-1">
+            <CardDescription className="leading-tight">Within ±0.5</CardDescription>
+            <CardTitle className="text-2xl tracking-tight">
               {analytics.accuracyRate.toFixed(0)}%
             </CardTitle>
           </CardHeader>
@@ -161,8 +161,8 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
         <TabsContent value="chart">
           <Card>
             <CardHeader>
-              <CardTitle>Human vs AI Scores</CardTitle>
-              <CardDescription>
+              <CardTitle className="tracking-tight">Human vs AI Scores</CardTitle>
+              <CardDescription className="leading-relaxed">
                 Each point represents a candidate. Points on the diagonal line indicate perfect agreement.
               </CardDescription>
             </CardHeader>
@@ -197,7 +197,7 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
                         if (active && payload && payload.length > 0) {
                           const data = payload[0].payload;
                           return (
-                            <div className="bg-background border rounded p-2 shadow-lg">
+                            <div className="bg-background rounded p-2 shadow-lg">
                               <p className="font-semibold">Candidate {data.candidate}</p>
                               <p className="text-sm">Human: {data.x.toFixed(2)}</p>
                               <p className="text-sm">AI: {data.y.toFixed(2)}</p>
@@ -232,7 +232,7 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
             <CardContent>
               <ScrollArea className="h-[400px]">
                 <table className="w-full">
-                  <thead className="border-b">
+                  <thead>
                     <tr>
                       <th className="text-left p-2">Candidate</th>
                       <th className="text-center p-2">Human Score</th>
@@ -243,7 +243,7 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
                   </thead>
                   <tbody>
                     {analytics.comparisonData.map(row => (
-                      <tr key={row.candidateId} className="border-b">
+                      <tr key={row.candidateId}>
                         <td className="p-2">{row.candidateId}</td>
                         <td className="text-center p-2">
                           {row.hasHuman ? row.humanScore?.toFixed(2) : '-'}
@@ -287,10 +287,10 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {['typography', 'layout', 'color'].map(dimension => {
+                {(['typography', 'layout', 'color'] as const).map(dimension => {
                   const dimData = analytics.validComparisons
-                    .filter(d => d[dimension])
-                    .map(d => d[dimension]);
+                    .filter(d => d[dimension as 'typography' | 'layout' | 'color'])
+                    .map(d => d[dimension as 'typography' | 'layout' | 'color']!);
                   
                   const avgGap = dimData.length > 0
                     ? dimData.reduce((sum, d) => sum + d.gap, 0) / dimData.length
