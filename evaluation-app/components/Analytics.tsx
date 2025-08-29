@@ -5,6 +5,8 @@ import { useState, useEffect, useMemo } from 'react';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import {
   ChartContainer,
   ChartTooltip,
@@ -20,6 +22,7 @@ interface AnalyticsProps {
 }
 
 export default function Analytics({ humanRatings, aiRatings, selectedRun }: AnalyticsProps) {
+  const [sortByGap, setSortByGap] = useState(false);
   const analytics = useMemo(() => {
     const candidateIds = [...new Set([
       ...Object.keys(humanRatings),
@@ -105,12 +108,66 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
     };
   }, [humanRatings, aiRatings]);
 
-  // Prepare scatter plot data
-  const scatterData = analytics.validComparisons.map(d => ({
-    x: d.humanScore,
-    y: d.aiScore,
-    candidate: d.candidateId,
-  }));
+  // Prepare scatter plot data - separate datasets for human and AI
+  const scatterPlotData = useMemo(() => {
+    let dataToUse = analytics.comparisonData;
+    let sortedCandidateIds: string[] = [];
+    
+    if (sortByGap) {
+      // Sort by gap (smallest to largest), but only include candidates with both ratings
+      const sortedData = analytics.validComparisons
+        .sort((a, b) => (a.gap || 0) - (b.gap || 0));
+      
+      sortedCandidateIds = sortedData.map(d => d.candidateId);
+      
+      dataToUse = sortedData.map((d, index) => ({ ...d, sortIndex: index + 1 }));
+    } else {
+      // For normal view, ensure we have all candidates 1-54
+      const allCandidateIds = Array.from({ length: 54 }, (_, i) => String(i + 1));
+      dataToUse = allCandidateIds.map(id => {
+        const existingData = analytics.comparisonData.find(d => d.candidateId === id);
+        if (existingData) {
+          return existingData;
+        }
+        // Create placeholder data for candidates without ratings
+        return {
+          candidateId: id,
+          humanScore: null,
+          aiScore: null,
+          gap: null,
+          hasHuman: false,
+          hasAi: false,
+        };
+      });
+    }
+    
+    const scatterDataHuman = dataToUse
+      .filter(d => d.hasHuman && d.humanScore !== null)
+      .map(d => ({
+        x: sortByGap ? (d as any).sortIndex || parseInt(d.candidateId) : parseInt(d.candidateId),
+        y: d.humanScore,
+        candidate: d.candidateId,
+        type: 'Human',
+        gap: d.gap
+      }));
+
+    const scatterDataAI = dataToUse
+      .filter(d => d.hasAi && d.aiScore !== null)
+      .map(d => ({
+        x: sortByGap ? (d as any).sortIndex || parseInt(d.candidateId) : parseInt(d.candidateId),
+        y: d.aiScore,
+        candidate: d.candidateId,
+        type: 'AI',
+        gap: d.gap
+      }));
+      
+    return { 
+      scatterDataHuman, 
+      scatterDataAI, 
+      maxX: sortByGap ? analytics.validComparisons.length : 54,
+      sortedCandidateIds
+    };
+  }, [analytics.comparisonData, analytics.validComparisons, sortByGap]);
 
   return (
     <div className="space-y-6">
@@ -160,58 +217,79 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
         {/* Scatter Plot */}
         <TabsContent value="chart">
           <div className="p-6 bg-card">
-            <div className="pb-4">
-              <h3 className="text-lg font-semibold tracking-tight">Human vs AI Scores</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Each point represents a candidate. Points on the diagonal line indicate perfect agreement.
-              </p>
+            <div className="pb-4 flex justify-between items-start">
+              <div>
+                <h3 className="text-lg font-semibold tracking-tight">Candidate Ratings Comparison</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Human and AI ratings for each candidate. {sortByGap ? 'Sorted by agreement (smallest to largest gap).' : 'X-axis shows candidate IDs, Y-axis shows ratings.'}
+                </p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="sort-by-gap"
+                  checked={sortByGap}
+                  onCheckedChange={setSortByGap}
+                />
+                <Label htmlFor="sort-by-gap" className="text-sm">
+                  Sort by gap
+                </Label>
+              </div>
             </div>
             <div>
-              <div className="h-[400px] w-full">
+              <div className="h-[500px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                  <ScatterChart margin={{ top: 20, right: 20, bottom: 60, left: 20 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis 
                       dataKey="x" 
                       type="number" 
-                      domain={[1, 4]} 
-                      name="Human Score"
-                      label={{ value: 'Human Score', position: 'insideBottom', offset: -10 }}
+                      domain={[1, scatterPlotData.maxX]} 
+                      name={sortByGap ? "Ranking by Gap" : "Candidate"}
+                      label={{ value: sortByGap ? 'Ranking by Gap (Low → High)' : 'Candidate', position: 'insideBottom', offset: -10 }}
+                      tickFormatter={(value) => {
+                        if (sortByGap) {
+                          const candidateId = scatterPlotData.sortedCandidateIds[value - 1];
+                          return candidateId ? `C${candidateId}` : `${value}`;
+                        }
+                        return `C${value}`;
+                      }}
+                      ticks={Array.from({ length: scatterPlotData.maxX }, (_, i) => i + 1)}
+                      interval={0}
                     />
                     <YAxis 
                       dataKey="y" 
                       type="number" 
                       domain={[1, 4]} 
-                      name="AI Score"
-                      label={{ value: 'AI Score', angle: -90, position: 'insideLeft' }}
-                    />
-                    <ReferenceLine 
-                      x={1} 
-                      y={1} 
-                      stroke="hsl(var(--muted-foreground))" 
-                      strokeDasharray="5 5"
-                      segment={[{ x: 1, y: 1 }, { x: 4, y: 4 }]}
+                      name="Rating"
+                      label={{ value: 'Rating', angle: -90, position: 'insideLeft' }}
                     />
                     <Tooltip 
                       content={({ active, payload }) => {
                         if (active && payload && payload.length > 0) {
                           const data = payload[0].payload;
                           return (
-                            <div className="bg-background rounded p-2 shadow-lg">
+                            <div className="bg-background rounded p-2 shadow-lg border">
                               <p className="font-semibold">Candidate {data.candidate}</p>
-                              <p className="text-sm">Human: {data.x.toFixed(2)}</p>
-                              <p className="text-sm">AI: {data.y.toFixed(2)}</p>
-                              <p className="text-sm">Gap: {Math.abs(data.x - data.y).toFixed(2)}</p>
+                              <p className="text-sm">{data.type}: {data.y.toFixed(2)}</p>
+                              {sortByGap && data.gap !== null && (
+                                <p className="text-sm text-muted-foreground">Gap: {data.gap.toFixed(2)}</p>
+                              )}
                             </div>
                           );
                         }
                         return null;
                       }}
                     />
+                    <Legend />
                     <Scatter 
-                      name="Candidates" 
-                      data={scatterData} 
-                      fill="hsl(var(--primary))"
+                      name="Human Ratings" 
+                      data={scatterPlotData.scatterDataHuman} 
+                      fill="#3b82f6"
+                    />
+                    <Scatter 
+                      name="AI Ratings" 
+                      data={scatterPlotData.scatterDataAI} 
+                      fill="#ef4444"
                     />
                   </ScatterChart>
                 </ResponsiveContainer>
@@ -224,55 +302,90 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
         <TabsContent value="table">
           <div className="p-6 bg-card">
             <div className="pb-4">
-              <h3 className="text-lg font-semibold">Detailed Comparison</h3>
+              <h3 className="text-lg font-semibold">Detailed Comparison - {selectedRun}</h3>
               <p className="text-sm text-muted-foreground">
-                All candidates with their human and AI scores
+                Comparison table with candidates as columns and evaluation types as rows
               </p>
             </div>
-            <div>
-              <ScrollArea className="h-[400px]">
-                <table className="w-full">
-                  <thead>
-                    <tr>
-                      <th className="text-left p-2">Candidate</th>
-                      <th className="text-center p-2">Human Score</th>
-                      <th className="text-center p-2">AI Score</th>
-                      <th className="text-center p-2">Gap</th>
-                      <th className="text-center p-2">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {analytics.comparisonData.map(row => (
-                      <tr key={row.candidateId}>
-                        <td className="p-2">{row.candidateId}</td>
-                        <td className="text-center p-2">
-                          {row.hasHuman ? row.humanScore?.toFixed(2) : '-'}
-                        </td>
-                        <td className="text-center p-2">
-                          {row.hasAi ? row.aiScore?.toFixed(2) : '-'}
-                        </td>
-                        <td className="text-center p-2">
-                          {row.gap !== null ? (
-                            <span className="text-sm">
-                              {row.gap.toFixed(2)}
-                            </span>
-                          ) : '-'}
-                        </td>
-                        <td className="text-center p-2">
-                          {!row.hasHuman ? (
-                            <span className="text-xs text-muted-foreground">No Human</span>
-                          ) : !row.hasAi ? (
-                            <span className="text-xs text-muted-foreground">No AI</span>
-                          ) : (
-                            <span className="text-xs text-green-600">Complete</span>
-                          )}
-                        </td>
+            <div className="overflow-auto max-h-[600px]">
+              <div className="min-w-max">
+                <table className="border-collapse" style={{ minWidth: `${120 + (analytics.comparisonData.length * 80)}px` }}>
+                    <thead>
+                      <tr>
+                        <th className="sticky left-0 bg-background border border-border p-3 text-left font-medium min-w-[120px]">
+                          Evaluation Type
+                        </th>
+                        {analytics.comparisonData.map(candidate => (
+                          <th key={candidate.candidateId} className="border border-border p-2 text-center font-medium min-w-[80px]">
+                            C{candidate.candidateId}
+                          </th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </ScrollArea>
-            </div>
+                    </thead>
+                    <tbody>
+                      {/* Human Ratings Row */}
+                      <tr>
+                        <td className="sticky left-0 bg-background border border-border p-3 font-medium">
+                          Human Rating
+                        </td>
+                        {analytics.comparisonData.map(candidate => (
+                          <td key={candidate.candidateId} className="border border-border p-2 text-center">
+                            {candidate.hasHuman ? (
+                              <span className="text-sm font-medium text-primary">
+                                {candidate.humanScore?.toFixed(2)}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">-</span>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                      
+                      {/* AI Ratings Row */}
+                      <tr>
+                        <td className="sticky left-0 bg-background border border-border p-3 font-medium">
+                          AI Rating
+                        </td>
+                        {analytics.comparisonData.map(candidate => (
+                          <td key={candidate.candidateId} className="border border-border p-2 text-center">
+                            {candidate.hasAi ? (
+                              <span className="text-sm font-medium">
+                                {candidate.aiScore?.toFixed(2)}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">-</span>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                      
+                      {/* Difference Row */}
+                      <tr>
+                        <td className="sticky left-0 bg-background border border-border p-3 font-medium">
+                          Difference (|Human - AI|)
+                        </td>
+                        {analytics.comparisonData.map(candidate => (
+                          <td key={candidate.candidateId} className="border border-border p-2 text-center">
+                            {candidate.gap !== null ? (
+                              <span className={`text-sm font-medium ${
+                                candidate.gap <= 0.5 
+                                  ? 'text-green-600' 
+                                  : candidate.gap <= 1.0 
+                                    ? 'text-yellow-600' 
+                                    : 'text-red-600'
+                              }`}>
+                                {candidate.gap.toFixed(2)}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">-</span>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
           </div>
         </TabsContent>
 

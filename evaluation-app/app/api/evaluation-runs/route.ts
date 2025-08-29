@@ -33,9 +33,20 @@ export async function GET() {
     );
 
     // Filter out failed reads and sort by timestamp (most recent first)
+    // Also prioritize 4-scale versions over 5-scale versions when timestamps are equal
     const validRuns = runs
       .filter(run => run !== null)
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      .sort((a, b) => {
+        const timeCompare = new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+        if (timeCompare !== 0) return timeCompare;
+        
+        // If timestamps are equal, prioritize files without "5scale" in the name
+        const aHas5Scale = a.filename.includes('5scale');
+        const bHas5Scale = b.filename.includes('5scale');
+        if (aHas5Scale && !bHas5Scale) return 1;  // b comes first
+        if (!aHas5Scale && bHas5Scale) return -1; // a comes first
+        return 0;
+      });
 
     return NextResponse.json(validRuns);
   } catch (error) {

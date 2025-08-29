@@ -6,12 +6,14 @@
         "weight": 0.35,
         "good_anchor": [
           "Uses few fonts and styles with clear intentionality",
-          "Achieves great visual hierchy and information architecture with a few well-chosing styles",
+          "Achieves great visual hierarchy and information architecture with a few well-chosen styles",
+          "Excellence through restraint - using single typeface with subtle weight/color variations shows sophistication",
           "Bonus points for creative and effective use of typography as signature design elements",
           "Alternatively, uses a lot of fonts but with a strong design intent and strategy (rare but possible)",
           "Use of paid typefaces from type foundries",
           "If combining multiple typefaces, they are choosing contrasting fonts that also have something to tie them together",
-          "If using google fonts they are using the good ones (IBM plex, Inter, Work, Fira, etc.)"
+          "If using google fonts they are using the good ones (IBM plex, Inter, Work, Fira, etc.)",
+          "Sophisticated use of minimal typography systems - achieving hierarchy through subtle techniques"
         ],
         "weak_anchor": [
           "Too many fonts, too many weights, sizes, styles where it's not needed or without a clear design intent",
@@ -31,8 +33,10 @@
         "good_anchor": [
           "Consistency: uses a few layout patterns judiciously.",
           "Intentional use of white space to create hierarchy and clarity",
-          "There is a vertical rythm where spacing is consistent",
-          "If there are screenshots of the work, they are laid out intentionally within the screenshot and the different screenshots have some elements visually tying them together (even if small like a shared color palette or corner radius) even as the work is distinct"
+          "There is a vertical rhythm where spacing is consistent",
+          "Innovative layouts: Creative approaches like chat interfaces, newspaper columns, or unique navigation patterns",
+          "If there are screenshots of the work, they are laid out intentionally within the screenshot and the different screenshots have some elements visually tying them together (even if small like a shared color palette or corner radius) even as the work is distinct",
+          "Achieving more with less - minimal layouts that are highly effective"
         ],
         "weak_anchor": [
           "Every section feels like it's different from the next, with no element tying them together",
@@ -48,9 +52,12 @@
         "id": "color",
         "weight": 0.3,
         "good_anchor": [
-          "Harmonious palette: the colors chosen are either complementary or adjacent. they share either intentional constrast or intentional similarity",
-          "There are few colours and their used with restraint in ways that are meaningful to the design.",
-          "The shadows are dialed in - using more than default css value. maybe they have a hue, or are very diffuse"
+          "Harmonious palette: the colors chosen are either complementary or adjacent. they share either intentional contrast or intentional similarity",
+          "There are few colours and they're used with restraint in ways that are meaningful to the design.",
+          "Monochrome mastery - all-grey/black/white palettes can be excellent when used with intentional variation",
+          "Less is more - restraint in color usage can demonstrate sophistication",
+          "The shadows are dialed in - using more than default css value. maybe they have a hue, or are very diffuse",
+          "Subtle color techniques: using shades of grey or minimal accent colors to create hierarchy"
         ],
         "weak_anchor": [
           "Too many colours that don't share a throughline or intentional contrast",
@@ -60,9 +67,9 @@
       }
     ],
     "red_flags": [
-      "template_scent_high: the site clearly feels like it was template",
-      "sloppy_images: they show their work, but it's sloppily laid out and you can't see what's going on.",
-      "process_soup: the case studies spend too much time a lot of time talking about process"
+      "template_scent_high: the site clearly feels like it was from a template - generic layouts, standard components, no customization",
+      "sloppy_images: they show their work, but it's sloppily laid out - wrong zoom level, generic device mockups without customization, inconsistent image treatments, poor quality/compression artifacts, can't see what's going on",
+      "process_soup: the case studies spend too much time talking about process rather than showing the work"
     ],
     "rating_scale": [
       "1: Terrible",

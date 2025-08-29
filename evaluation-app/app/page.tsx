@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Ratings, HumanRatings, HumanEvaluation, Rubric } from "@/lib/types";
 import EvaluationDisplay from "@/components/EvaluationDisplay";
 import HumanEvaluationForm from "@/components/HumanEvaluationForm";
@@ -51,9 +51,43 @@ export default function Home() {
   // New state for evaluation runs
   const [evaluationRuns, setEvaluationRuns] = useState<EvaluationRun[]>([]);
   const [selectedRun, setSelectedRun] = useState<string>("");
+  
+  // Sorting state
+  const [sortMode, setSortMode] = useState<"numerical" | "gap">("numerical");
 
-  // Generate list of all candidates (1-54)
-  const candidateIds = Array.from({ length: 54 }, (_, i) => String(i + 1));
+  // Generate sorted list of candidates based on sort mode
+  const candidateIds = useMemo(() => {
+    const allCandidates = Array.from({ length: 54 }, (_, i) => String(i + 1));
+    
+    if (sortMode === "numerical") {
+      return allCandidates.sort((a, b) => parseInt(a) - parseInt(b));
+    } else if (sortMode === "gap") {
+      // Sort by gap size (largest first), then by candidate ID
+      return allCandidates.sort((a, b) => {
+        const humanA = humanRatings[a];
+        const aiA = aiRatings[a];
+        const humanB = humanRatings[b];
+        const aiB = aiRatings[b];
+        
+        // Calculate gaps, only for candidates with both ratings
+        const gapA = (humanA && aiA) 
+          ? Math.abs((humanA.overall_weighted_score || 0) - (aiA.overall_weighted_score || 0))
+          : -1; // Put candidates without both ratings at the end
+        
+        const gapB = (humanB && aiB)
+          ? Math.abs((humanB.overall_weighted_score || 0) - (aiB.overall_weighted_score || 0))
+          : -1;
+        
+        // Sort by gap (largest first), then by candidate ID
+        if (gapA !== gapB) {
+          return gapB - gapA; // Larger gaps first
+        }
+        return parseInt(a) - parseInt(b); // Then by candidate ID
+      });
+    }
+    return allCandidates;
+  }, [sortMode, humanRatings, aiRatings]);
+  
   const currentCandidateId = candidateIds[currentCandidateIndex];
   const currentImageFilename = `candidate_${currentCandidateId}.jpg`;
 
@@ -104,6 +138,11 @@ export default function Home() {
 
     loadData();
   }, [selectedRun]);
+
+  // Reset to first candidate when sort mode changes
+  useEffect(() => {
+    setCurrentCandidateIndex(0);
+  }, [sortMode]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -210,7 +249,7 @@ export default function Home() {
             </TabsList>
             <h1 className="text-sm leading-normal font-medium">
               {activeTab === "evaluation"
-                ? `Evaluating Candidate ${currentCandidateId} of ${candidateIds.length}`
+                ? `Candidate ${currentCandidateId} (${currentCandidateIndex + 1}/${candidateIds.length}${sortMode === "gap" ? " - sorted by gap" : ""})`
                 : "Analytics Dashboard"}
             </h1>
           </div>
@@ -243,6 +282,19 @@ export default function Home() {
 
             {activeTab === "evaluation" && (
               <>
+                {/* Sort dropdown */}
+                <div className="flex items-center gap-2">
+                  <Select value={sortMode} onValueChange={(value: "numerical" | "gap") => setSortMode(value)}>
+                    <SelectTrigger className="w-32 h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="numerical">Numerical</SelectItem>
+                      <SelectItem value="gap">By Gap</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 {/* Jump to candidate */}
                 <div className="flex items-center gap-2">
                   <Input
@@ -397,7 +449,7 @@ export default function Home() {
 
       {/* Analytics Tab */}
       <TabsContent value="analytics" className="flex-1 overflow-hidden">
-        <div className="container py-5 h-full overflow-y-auto">
+        <div className="w-full px-8 py-5 h-full overflow-y-auto">
           <Analytics
             humanRatings={humanRatings}
             aiRatings={aiRatings}
