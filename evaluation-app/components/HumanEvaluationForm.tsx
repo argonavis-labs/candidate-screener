@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { HumanEvaluation, Rubric } from '@/lib/types';
-import { Save, Info, ChevronDown, ChevronUp } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Save } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
+
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -51,11 +51,6 @@ export default function HumanEvaluationForm({
   });
 
   const [saving, setSaving] = useState(false);
-  const [expandedCriteria, setExpandedCriteria] = useState<Record<string, boolean>>({
-    typography: false,
-    layout_composition: false,
-    color: false,
-  });
 
   // Update evaluation when candidateId changes
   useEffect(() => {
@@ -156,10 +151,19 @@ export default function HumanEvaluationForm({
   const handleSave = async () => {
     setSaving(true);
     try {
-      await onSave({
+      // Set all confidence scores to 4 for human evaluations
+      const evaluationWithConfidence = {
         ...evaluation,
         evaluated_at: new Date().toISOString(),
-      });
+        criteria: {
+          typography: { ...evaluation.criteria.typography, confidence: 4 },
+          layout_composition: { ...evaluation.criteria.layout_composition, confidence: 4 },
+          color: { ...evaluation.criteria.color, confidence: 4 },
+        },
+        overall_confidence: 4,
+      };
+      
+      await onSave(evaluationWithConfidence);
     } finally {
       setSaving(false);
     }
@@ -191,36 +195,88 @@ export default function HumanEvaluationForm({
     }));
   };
 
-  const getScoreBadgeVariant = (score: number): "default" | "secondary" | "destructive" | "outline" => {
-    if (score >= 3.5) return 'default';
-    if (score >= 2.5) return 'secondary';
-    if (score >= 1.5) return 'outline';
-    return 'destructive';
-  };
+
 
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-base tracking-tight">Human Evaluation</CardTitle>
-            <CardDescription className="text-xs leading-relaxed">
-              Score: {(evaluation.overall_weighted_score ?? 0).toFixed(2)} • Confidence: {(evaluation.overall_confidence ?? 0).toFixed(1)}
-            </CardDescription>
+    <div className="border-t border-stone-100 pt-4">
+      {/* Header */}
+      <div className="">
+        <div className="flex flex-row justify-between items-center px-4 pb-4">
+          <div className="flex flex-col">
+            <h2 className="text-base font-semibold tracking-tight">Human Evaluation</h2>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Category: {evaluation.portfolio_category} • {new Date().toLocaleDateString()}
+            </p>
           </div>
-          <Button onClick={handleSave} disabled={saving} size="sm" className="gap-1">
-            <Save className="h-3 w-3" />
-            {saving ? 'Saving...' : 'Save'}
-          </Button>
+          
+          <div className="flex items-center gap-2">
+            <div className="flex flex-col">
+              <span className="text-xs text-muted-foreground">Score</span>
+              <span className="text-base font-semibold">
+                {(evaluation.overall_weighted_score ?? 0).toFixed(2)}
+              </span>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div className="pt-2">
-          <Label htmlFor="category" className="text-xs">Portfolio Category</Label>
+      {/* Content */}
+      <div className="space-y-4 px-4">
+        {/* Show all criteria at once - no collapsing */}
+        {(['typography', 'layout_composition', 'color'] as const).map((criterion, index) => (
+          <div key={criterion} className="space-y-2">
+            {/* Single row: criterion name + 1-4 toggle */}
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-medium capitalize">
+                {criterion.replace('_', ' ')}
+              </h4>
+              
+              <RadioGroup
+                value={evaluation.criteria[criterion].score.toString()}
+                onValueChange={(value) => updateCriterion(criterion, 'score', value)}
+                className="flex gap-1"
+              >
+                {[1, 2, 3, 4].map(score => (
+                  <div key={score} className="flex items-center">
+                    <RadioGroupItem 
+                      value={score.toString()} 
+                      id={`${criterion}-${score}`}
+                      className="peer sr-only"
+                    />
+                    <Label
+                      htmlFor={`${criterion}-${score}`}
+                      className={cn(
+                        "flex items-center justify-center w-6 h-6 text-xs rounded-md cursor-pointer transition-all",
+                        "hover:bg-accent",
+                        " peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground"
+                      )}
+                    >
+                      <span className="font-bold">{score}</span>
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+
+            {/* Explanation */}
+            <div>
+              <Textarea
+                value={evaluation.criteria[criterion].explanation}
+                onChange={(e) => updateCriterion(criterion, 'explanation', e.target.value)}
+                className="min-h-[60px] text-xs"
+                placeholder={`Explain your ${criterion.replace('_', ' ')} score...`}
+              />
+            </div>
+          </div>
+        ))}
+
+        {/* Save Button */}
+        <div className="pt-4 flex items-center gap-2">
           <Select
             value={evaluation.portfolio_category}
             onValueChange={(value) => setEvaluation(prev => ({ ...prev, portfolio_category: value }))}
           >
-            <SelectTrigger id="category" className="h-8 mt-1">
+            <SelectTrigger id="category" className="h-9 w-32">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -229,160 +285,12 @@ export default function HumanEvaluationForm({
               ))}
             </SelectContent>
           </Select>
+          <Button onClick={handleSave} disabled={saving} className="flex-1 gap-2">
+            <Save className="h-4 w-4" />
+            {saving ? 'Saving...' : 'Save Evaluation'}
+          </Button>
         </div>
-      </CardHeader>
-
-      <CardContent className="flex-1 overflow-hidden pb-3">
-        <ScrollArea className="h-full pr-3">
-          <div className="space-y-3">
-            {/* Criteria Evaluations */}
-            {(['typography', 'layout_composition', 'color'] as const).map(criterion => (
-              <div key={criterion} className="space-y-2">
-                <div 
-                  className="flex items-center justify-between cursor-pointer"
-                  onClick={() => setExpandedCriteria(prev => ({ ...prev, [criterion]: !prev[criterion] }))}
-                >
-                  <h4 className="text-sm font-medium capitalize tracking-tight">
-                    {criterion.replace('_', ' ')}
-                  </h4>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={getScoreBadgeVariant(evaluation.criteria[criterion].score)}>
-                      {evaluation.criteria[criterion].score}
-                    </Badge>
-                    {expandedCriteria[criterion] ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                  </div>
-                </div>
-
-                {expandedCriteria[criterion] && (
-                  <div className="space-y-3 pl-2">
-                    {/* Score */}
-                    <div className="space-y-1">
-                      <Label className="text-xs">Score</Label>
-                      <RadioGroup
-                        value={evaluation.criteria[criterion].score.toString()}
-                        onValueChange={(value) => updateCriterion(criterion, 'score', value)}
-                      >
-                        <div className="grid grid-cols-4 gap-1">
-                          {[1, 2, 3, 4].map(score => (
-                            <div key={score} className="flex items-center">
-                              <RadioGroupItem 
-                                value={score.toString()} 
-                                id={`${criterion}-${score}`}
-                                className="peer sr-only"
-                              />
-                              <Label
-                                htmlFor={`${criterion}-${score}`}
-                                className={cn(
-                                  "flex flex-col items-center justify-center w-full p-2 text-xs rounded-md cursor-pointer transition-all",
-                                  "hover:bg-accent",
-                                  " peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground"
-                                )}
-                              >
-                                <span className="font-bold">{score}</span>
-                                <span className="text-[10px] leading-tight opacity-70">{SCORE_LABELS[score - 1].split(' ')[0]}</span>
-                              </Label>
-                            </div>
-                          ))}
-                        </div>
-                      </RadioGroup>
-                    </div>
-
-                    {/* Confidence */}
-                    <div className="space-y-1">
-                      <Label className="text-xs">Confidence</Label>
-                      <RadioGroup
-                        value={evaluation.criteria[criterion].confidence.toString()}
-                        onValueChange={(value) => updateCriterion(criterion, 'confidence', value)}
-                      >
-                        <div className="grid grid-cols-4 gap-1">
-                          {[1, 2, 3, 4].map(conf => (
-                            <div key={conf} className="flex items-center">
-                              <RadioGroupItem 
-                                value={conf.toString()} 
-                                id={`${criterion}-conf-${conf}`}
-                                className="peer sr-only"
-                              />
-                              <Label
-                                htmlFor={`${criterion}-conf-${conf}`}
-                                className={cn(
-                                  "flex items-center justify-center w-full p-1.5 text-xs rounded-md cursor-pointer transition-all",
-                                  "hover:bg-accent",
-                                  " peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground"
-                                )}
-                              >
-                                {conf}
-                              </Label>
-                            </div>
-                          ))}
-                        </div>
-                      </RadioGroup>
-                    </div>
-
-                    {/* Explanation */}
-                    <div className="space-y-1">
-                      <Label className="text-xs">Explanation</Label>
-                      <Textarea
-                        value={evaluation.criteria[criterion].explanation}
-                        onChange={(e) => updateCriterion(criterion, 'explanation', e.target.value)}
-                        className="min-h-[60px] text-xs"
-                        placeholder="Add your reasoning..."
-                      />
-                    </div>
-
-                    {/* Rubric Hints */}
-                    {rubric && (
-                      <div className="text-xs space-y-1 bg-muted/30 p-2 rounded">
-                        <details className="cursor-pointer">
-                          <summary className="font-medium text-green-700 dark:text-green-400">Good indicators</summary>
-                          <ul className="mt-1 space-y-0.5 text-muted-foreground">
-                            {rubric.rubric.dimensions.find(d => d.id === criterion)?.good_anchor.slice(0, 2).map((item, i) => (
-                              <li key={i} className="pl-3">• {item}</li>
-                            ))}
-                          </ul>
-                        </details>
-                        <details className="cursor-pointer">
-                          <summary className="font-medium text-red-700 dark:text-red-400">Weak indicators</summary>
-                          <ul className="mt-1 space-y-0.5 text-muted-foreground">
-                            {rubric.rubric.dimensions.find(d => d.id === criterion)?.weak_anchor.slice(0, 2).map((item, i) => (
-                              <li key={i} className="pl-3">• {item}</li>
-                            ))}
-                          </ul>
-                        </details>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
-
-            <Separator />
-
-            {/* Red Flags */}
-            {rubric && (
-              <div className="space-y-2">
-                <h4 className="text-sm font-medium">Red Flags</h4>
-                <div className="space-y-2">
-                  {rubric.rubric.red_flags.map(flag => (
-                    <div key={flag} className="flex items-start space-x-2">
-                      <Checkbox
-                        id={flag}
-                        checked={evaluation.red_flags.includes(flag)}
-                        onCheckedChange={() => toggleRedFlag(flag)}
-                      />
-                      <Label 
-                        htmlFor={flag}
-                        className="text-xs cursor-pointer leading-relaxed"
-                      >
-                        {flag.replace(/_/g, ' ')}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </ScrollArea>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

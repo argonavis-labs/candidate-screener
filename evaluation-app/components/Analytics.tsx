@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+
+
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -116,38 +116,38 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
     <div className="space-y-6">
       {/* Summary Statistics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-1">
-            <CardDescription className="leading-tight">Average Gap</CardDescription>
-            <CardTitle className="text-2xl tracking-tight">
+        <div className="p-6 bg-card">
+          <div className="pb-1">
+            <p className="text-sm text-muted-foreground leading-tight">Average Gap</p>
+            <h3 className="text-2xl font-semibold tracking-tight">
               {analytics.averageGap.toFixed(2)}
-            </CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-1">
-            <CardDescription className="leading-tight">Correlation</CardDescription>
-            <CardTitle className="text-2xl tracking-tight">
+            </h3>
+          </div>
+        </div>
+        <div className="p-6 bg-card">
+          <div className="pb-1">
+            <p className="text-sm text-muted-foreground leading-tight">Correlation</p>
+            <h3 className="text-2xl font-semibold tracking-tight">
               {analytics.correlation.toFixed(3)}
-            </CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-1">
-            <CardDescription className="leading-tight">AI Bias</CardDescription>
-            <CardTitle className="text-2xl tracking-tight">
+            </h3>
+          </div>
+        </div>
+        <div className="p-6 bg-card">
+          <div className="pb-1">
+            <p className="text-sm text-muted-foreground leading-tight">AI Bias</p>
+            <h3 className="text-2xl font-semibold tracking-tight">
               {analytics.bias > 0 ? '+' : ''}{analytics.bias.toFixed(2)}
-            </CardTitle>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-1">
-            <CardDescription className="leading-tight">Within ±0.5</CardDescription>
-            <CardTitle className="text-2xl tracking-tight">
+            </h3>
+          </div>
+        </div>
+        <div className="p-6 bg-card">
+          <div className="pb-1">
+            <p className="text-sm text-muted-foreground leading-tight">Within ±0.5</p>
+            <h3 className="text-2xl font-semibold tracking-tight">
               {analytics.accuracyRate.toFixed(0)}%
-            </CardTitle>
-          </CardHeader>
-        </Card>
+            </h3>
+          </div>
+        </div>
       </div>
 
       <Tabs defaultValue="chart" className="space-y-4">
@@ -159,14 +159,14 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
 
         {/* Scatter Plot */}
         <TabsContent value="chart">
-          <Card>
-            <CardHeader>
-              <CardTitle className="tracking-tight">Human vs AI Scores</CardTitle>
-              <CardDescription className="leading-relaxed">
+          <div className="p-6 bg-card">
+            <div className="pb-4">
+              <h3 className="text-lg font-semibold tracking-tight">Human vs AI Scores</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Each point represents a candidate. Points on the diagonal line indicate perfect agreement.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </p>
+            </div>
+            <div>
               <div className="h-[400px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
@@ -216,20 +216,20 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
                   </ScatterChart>
                 </ResponsiveContainer>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Comparison Table */}
         <TabsContent value="table">
-          <Card>
-            <CardHeader>
-              <CardTitle>Detailed Comparison</CardTitle>
-              <CardDescription>
+          <div className="p-6 bg-card">
+            <div className="pb-4">
+              <h3 className="text-lg font-semibold">Detailed Comparison</h3>
+              <p className="text-sm text-muted-foreground">
                 All candidates with their human and AI scores
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </p>
+            </div>
+            <div>
               <ScrollArea className="h-[400px]">
                 <table className="w-full">
                   <thead>
@@ -253,18 +253,18 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
                         </td>
                         <td className="text-center p-2">
                           {row.gap !== null ? (
-                            <Badge variant={row.gap <= 0.5 ? 'default' : row.gap <= 1 ? 'secondary' : 'destructive'}>
+                            <span className="text-sm">
                               {row.gap.toFixed(2)}
-                            </Badge>
+                            </span>
                           ) : '-'}
                         </td>
                         <td className="text-center p-2">
                           {!row.hasHuman ? (
-                            <Badge variant="outline">No Human</Badge>
+                            <span className="text-xs text-muted-foreground">No Human</span>
                           ) : !row.hasAi ? (
-                            <Badge variant="outline">No AI</Badge>
+                            <span className="text-xs text-muted-foreground">No AI</span>
                           ) : (
-                            <Badge variant="default">Complete</Badge>
+                            <span className="text-xs text-green-600">Complete</span>
                           )}
                         </td>
                       </tr>
@@ -272,20 +272,20 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
                   </tbody>
                 </table>
               </ScrollArea>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
 
         {/* Per-Dimension Analysis */}
         <TabsContent value="dimensions">
-          <Card>
-            <CardHeader>
-              <CardTitle>Per-Dimension Analysis</CardTitle>
-              <CardDescription>
+          <div className="p-6 bg-card">
+            <div className="pb-4">
+              <h3 className="text-lg font-semibold">Per-Dimension Analysis</h3>
+              <p className="text-sm text-muted-foreground">
                 Breaking down the comparison by evaluation criteria
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </p>
+            </div>
+            <div>
               <div className="space-y-4">
                 {(['typography', 'layout', 'color'] as const).map(dimension => {
                   const dimData = analytics.validComparisons
@@ -321,8 +321,8 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
                   );
                 })}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

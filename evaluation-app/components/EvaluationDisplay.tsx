@@ -1,69 +1,61 @@
-'use client';
+"use client";
 
-import { Evaluation } from '@/lib/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
+import { Evaluation } from "@/lib/types";
+
+import { Separator } from "@/components/ui/separator";
 
 interface EvaluationDisplayProps {
   evaluation: Evaluation | null;
   isVisible: boolean;
 }
 
-export default function EvaluationDisplay({ evaluation, isVisible }: EvaluationDisplayProps) {
+export default function EvaluationDisplay({
+  evaluation,
+  isVisible,
+}: EvaluationDisplayProps) {
   if (!isVisible) {
     return (
-      <Card className="h-full">
-        <CardContent className="h-full flex items-center justify-center">
-          <p className="text-muted-foreground text-sm">AI Evaluation Hidden</p>
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-center py-8">
+        <p className="text-muted-foreground text-sm">AI Evaluation Hidden</p>
+      </div>
     );
   }
 
   if (!evaluation) {
     return (
-      <Card className="h-full">
-        <CardContent className="h-full flex items-center justify-center">
-          <p className="text-muted-foreground text-sm">No AI evaluation available</p>
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-center py-8">
+        <p className="text-muted-foreground text-sm">
+          No AI evaluation available
+        </p>
+      </div>
     );
   }
 
-  const getScoreBadgeVariant = (score: number): "default" | "secondary" | "destructive" | "outline" => {
-    if (score >= 3.5) return 'default';
-    if (score >= 2.5) return 'secondary';
-    if (score >= 1.5) return 'outline';
-    return 'destructive';
-  };
-
-  const criteriaOrder = ['typography', 'layout_composition', 'color'] as const;
+  const criteriaOrder = ["typography", "layout_composition", "color"] as const;
 
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-2">
-        <div className="space-y-1">
-          <CardTitle className="text-base tracking-tight">AI Evaluation</CardTitle>
-          <CardDescription className="text-xs leading-relaxed">
-            {evaluation.portfolio_category} • {new Date(evaluation.evaluated_at).toLocaleDateString()}
-          </CardDescription>
-        </div>
-        
-        <div className="flex items-center gap-3 pt-2">
+    <div className="">
+      {/* Header */}
+      <div className="">
+        <div className="flex flex-row justify-between items-center px-4 pb-4">
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">Score</span>
-            <Badge variant={getScoreBadgeVariant(evaluation.overall_weighted_score)} className="mt-1">
-              {evaluation.overall_weighted_score.toFixed(2)}
-            </Badge>
+            <h2 className="text-base font-semibold tracking-tight">
+              AI Evaluation
+            </h2>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Category: {evaluation.portfolio_category} •{" "}
+              {new Date(evaluation.evaluated_at).toLocaleDateString()} •{" "}
+              Confidence: {evaluation.overall_confidence.toFixed(1)}
+            </p>
           </div>
-          <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">Confidence</span>
-            <Badge variant="outline" className="mt-1">
-              {evaluation.overall_confidence.toFixed(1)}
-            </Badge>
+
+          <div className="flex items-center gap-6 divide-gray-200 ">
+            <div className="flex flex-col">
+              <span className="text-xs text-muted-foreground">Score</span>
+              <span className="text-base font-semibold">
+                {evaluation.overall_weighted_score.toFixed(2)}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -74,56 +66,42 @@ export default function EvaluationDisplay({ evaluation, isVisible }: EvaluationD
               <p className="text-xs font-medium text-destructive">Red Flags</p>
               <div className="flex flex-wrap gap-1">
                 {evaluation.red_flags.map((flag, index) => (
-                  <Badge key={index} variant="destructive" className="text-xs py-0">
-                    {flag.replace(/_/g, ' ')}
-                  </Badge>
+                  <span key={index} className="text-xs text-destructive">
+                    {flag.replace(/_/g, " ")}
+                  </span>
                 ))}
               </div>
             </div>
           </>
         )}
-      </CardHeader>
+      </div>
 
-      <CardContent className="flex-1 overflow-hidden pb-3">
-        <Tabs defaultValue="typography" className="h-full flex flex-col">
-          <TabsList className="grid w-full grid-cols-3 h-8">
-            {criteriaOrder.map(criterion => (
-              <TabsTrigger key={criterion} value={criterion} className="text-xs py-1">
-                <span className="hidden sm:inline">{criterion.replace('_', ' ')}</span>
-                <span className="sm:hidden">{criterion.charAt(0).toUpperCase()}</span>
-                <Badge variant={getScoreBadgeVariant(evaluation.criteria[criterion].score)} className="ml-1 h-4 px-1 text-xs">
-                  {evaluation.criteria[criterion].score}
-                </Badge>
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          <ScrollArea className="flex-1 mt-3">
-            {criteriaOrder.map(criterion => (
-              <TabsContent key={criterion} value={criterion} className="mt-0 space-y-3">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-medium capitalize">
-                      {criterion.replace('_', ' ')}
-                    </h4>
-                    <div className="flex gap-2">
-                      <Badge variant={getScoreBadgeVariant(evaluation.criteria[criterion].score)}>
-                        Score: {evaluation.criteria[criterion].score}
-                      </Badge>
-                      <Badge variant="outline">
-                        Conf: {evaluation.criteria[criterion].confidence}
-                      </Badge>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {evaluation.criteria[criterion].explanation}
-                  </p>
+      {/* Content */}
+      <div className="space-y-4 px-4">
+        {/* Show all criteria at once */}
+        {criteriaOrder.map((criterion, index) => (
+          <div key={criterion}>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-medium capitalize">
+                  {criterion.replace("_", " ")}
+                </h4>
+                <div className="flex gap-2 text-sm items-center">
+                  <span className="text-xs text-muted-foreground">
+                    Confidence {evaluation.criteria[criterion].confidence}
+                  </span>
+                  <span className="font-semibold">
+                    Score: {evaluation.criteria[criterion].score}
+                  </span>
                 </div>
-              </TabsContent>
-            ))}
-          </ScrollArea>
-        </Tabs>
-      </CardContent>
-    </Card>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {evaluation.criteria[criterion].explanation}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
