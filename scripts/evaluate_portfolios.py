@@ -253,18 +253,23 @@ class PortfolioEvaluator:
     def get_exemplar_images(self) -> List[str]:
         """Get list of exemplar image paths."""
         exemplar_dir = self.base_dir / "examplar-images"
-        images = []
-        
-        # Get exemplar images in order
-        for i in range(1, 5):  # We have 4 exemplars
-            image_path = exemplar_dir / f"exemplar_{i}.jpg"
-            if image_path.exists():
-                images.append(str(image_path))
-                # Store relative path for metadata
-                self.exemplar_images_used.append(f"examplar-images/exemplar_{i}.jpg")
-            else:
-                print(f"Warning: Missing exemplar image: {image_path}")
-        
+        images: List[str] = []
+
+        # Load all exemplar_*.jpg and sort numerically by suffix
+        all_exemplars = sorted(
+            exemplar_dir.glob("exemplar_*.jpg"),
+            key=lambda p: int(p.stem.split("_")[-1]) if p.stem.split("_")[-1].isdigit() else 0
+        )
+
+        if not all_exemplars:
+            print(f"Warning: No exemplar images found in {exemplar_dir}")
+            return images
+
+        for path in all_exemplars:
+            images.append(str(path))
+            # Store relative path for metadata
+            self.exemplar_images_used.append(str(path.relative_to(self.base_dir)))
+
         return images
     
     def evaluate_candidates(self, candidate_ids: Optional[List[str]] = None):

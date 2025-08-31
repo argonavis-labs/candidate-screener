@@ -1,6 +1,4 @@
-# PORTFOLIO EVALUATION FRAMEWORK
-
-## Core Instructions
+# EVALUATION PROMPT
 
 You are a senior product design hiring manager evaluating portfolio websites based on **visual craft only**. You must strictly evaluate the visual design quality without considering the content, where the person worked, or what companies/products are shown.
 
@@ -72,11 +70,9 @@ Return **only** valid JSON matching this exact structure:
 - overall_weighted_score = base_score - penalty  // scores can go below 0
 - overall_confidence = average of individual dimension confidences
 
----
 
-## Evaluation Rubric
+# RUBRIC
 
-```json
 {
   "rubric": {
     "dimensions": [
@@ -158,15 +154,10 @@ Return **only** valid JSON matching this exact structure:
     ]
   }
 }
-```
 
----
 
-## Exemplar Portfolios with Ratings
+# EXEMPLAR RATINGS
 
-Use these exemplars to calibrate your scoring:
-
-```json
 {
   "1": {
     "exemplar_id": "1",
@@ -251,7 +242,7 @@ Use these exemplars to calibrate your scoring:
   "5": {
     "exemplar_id": "5",
     "portfolio_category": "Minimal",
-    "site_url": "candidate_8_original",
+    "site_url": "https://emilkowal.ski/",
     "image_filename": "exemplar_5.jpg",
     "criteria": {
       "typography": {
@@ -271,20 +262,20 @@ Use these exemplars to calibrate your scoring:
   "6": {
     "exemplar_id": "6",
     "portfolio_category": "Minimal",
-    "site_url": "candidate_45_original",
+    "site_url": "https://ryo.lu/",
     "image_filename": "exemplar_6.jpg",
     "criteria": {
       "typography": {
         "score": 5,
-        "comment": "Perfect execution of minimal typography with exceptional restraint and clarity."
+        "comment": "This is another example of a great minimalist typography system. Here are the signs why it's good:first, the site uses two typefaces from a relatively obscure but really high-quality foundry called NB International. I think this was a very intentional choice that works really well for the site in both the super large title case and also the small body case.It demonstrates a level of mastery of typefaces, even though there is not much going on. There's also a nice bit of detail where their age is displayed in a super rapidly shifting number with high decimals, which is a very subtle but good design choice."
       },
       "layout_composition": {
-        "score": 5,
-        "comment": "Flawless layout with perfect use of white space and visual hierarchy."
+        "score": 4,
+        "comment": "The composition here is simple yet makes great use of contrast.The title is really big and it really works here because there is a whole white space to frame it. The font is high quality and can hold up a large size. They also cleverly use a peel-back design at the top right to hint that there might be something more to this portfolio, which creates both Easter egg and visual focal point that lends subtle compositional interest."
       },
       "color": {
-        "score": 5,
-        "comment": "Masterful use of minimal color palette demonstrating perfect restraint."
+        "score": 4,
+        "comment": "There is not much going on in terms of color - mostly only one monochrome color and then two shades of it. But they use it effectively, and this is an example of less done well."
       }
     }
   },
@@ -296,15 +287,15 @@ Use these exemplars to calibrate your scoring:
     "criteria": {
       "typography": {
         "score": 1,
-        "comment": "Poor typography choices with inconsistent hierarchy and spacing. Template-like execution."
+        "comment": "The typography here is quite messy in a couple ways:one-line height for a lot of these elements is too wide, so for the header, there's too much line height, and then there's an equal amount of line height between the header and the body under it, and then the body and the buttons, which I think is a weird visual hierarchy.And then in the case studies, there's a ton of line height between every line, so it makes it almost seem like bullet points, but there's no bullets, so it's hard to tell whether it's bullet points or not.They've also just selected a really poorly designed serif font, which doesn't help."
       },
       "layout_composition": {
         "score": 1,
-        "comment": "Disjointed layout with no clear structure. Sections feel disconnected and poorly planned."
+        "comment": "There is no real rhyme or reason to the layout here. Every section feels like a different website. The cards are also really poorly done. They are overly rounded and I feel like they don't connect. "
       },
       "color": {
         "score": 2,
-        "comment": "Weak color usage with no cohesive palette. Random color choices that don't work together."
+        "comment": "There is sort of a theme going on here around a light purple, black, and white, but it's just really poorly executed.They use the color purple in a lot of places. That doesn't make a lot of sense and doesn't bring emphasis where it's important. For example, the secondary button outline is purple. Why? There's no reason.The labels on the case studies are also purple outline. Again, no reason and confuses them with the buttons as well.Some of the labels are also filled, whereas others are outlined. Again, not really a good reason for this change and adds visual noise. "
       }
     },
     "red_flags": [
@@ -319,26 +310,17 @@ Use these exemplars to calibrate your scoring:
     "image_filename": "exemplar_8.jpg",
     "criteria": {
       "typography": {
-        "score": 3,
-        "comment": "Competent typography that is functional but not exceptional. Clear hierarchy but lacks distinctive character."
+        "score": 2,
+        "comment": "The type of work here is okay, I'm sort of somewhere between a 2 and a 3, probably more of a 2 if I was honest.She has selected a pretty cool, unique display type for her main header, the design code art part. And then the words in her top left nav. But she unfortunately doesn't carry it through to the rest of her site, so that the case study titles go back to this generic sans-serif which is not as interesting.In the case study themselves, there's also a little bit of just messy font type usage. For example, \"Selected work\" is the same size as \"Introducing a new homepage\" underneath. \"Selected work\" is clearly a higher heading level and should probably be a little bigger or different, but it looks kind of the same as the case study titles. And then the case study title has sort of a two-line underneath one which is a body which is well done, but then the other one is sort of some key results which then is stronger than the body text and it's a little too close to the body text which deducts points for me.The labels needed a little bit more separation, so top padding, and probably needed to be a little smaller and not competing with the body. Right now the label is bigger than the body, which probably shouldn't be the case.There's also minor details that make the type not as good. For example, the vertical bar is a little too strong between the labels."
       },
       "layout_composition": {
         "score": 3,
-        "comment": "Solid layout with consistent structure. Well-organized but doesn't push any boundaries."
+        "comment": "The layout here doesn't do too much, but it's relatively decently executed. There's a little bit of awkwardness at the \"About me\" section which feels like there's too many cards right? It's a card inside of a card. The bio section is just a little wider than everything else, along with the footer, and there's not a really good reason for it. It doesn't feel super intentional to me, which is also not that great.But otherwise, I think the website pulls off an overall generally competent sort of like spacing, hierarchy, and clarity in terms of the layout. And sort of like I think that if you just look at the hero section at the top and the case studies, I think it's like decently executed. With sort of just like a little bit of lack of refinement around details like what I just mentioned."
       },
       "color": {
-        "score": 4,
-        "comment": "Good color usage with a harmonious palette. Shows restraint and intentionality."
+        "score": 3,
+        "comment": "They've done a decent job balancing a minimal website color palette with a few themes. So I see some mostly monochrome black and white here, but they've punctuated it with some blue and yellow. It's not super consistent, but it's consistent enough that there is a visual theme happening in general. There is also some use of background texture here. It's probably a little overdone, but the fact that it exists is a good sign, and it feels like they're able to use both color and texture. It's a little junior feeling, but not bad.They also have done some interesting gradient and noise work in the three little micro-images next to the words \"design\", \"code\", and \"art\". Again, this tells me that they have some experience working with color. They are not incredibly well done, but they show signs of promise. There are, however, still elements where I think there needs to be a little bit more refinement. For example, the divider line at the very end of her portfolio is too dark.And also, there are some awkward gradients at the car seller case study image that doesn't seem to match with the rest of the site, which is more flat. So minor mistakes, but overall I think it's showing promise in color usage."
       }
     }
   }
 }
-```
-
----
-
-## Your Task
-
-Evaluate the provided portfolio image using the rubric above.
-Be consistent with the exemplar ratings.
-Return your evaluation as a JSON object following the specified format.

@@ -46,14 +46,17 @@ def test_api_call():
     # Check exemplar images
     exemplar_dir = base_dir / "examplar-images"
     exemplar_images = []
-    for i in range(1, 5):
-        img_path = exemplar_dir / f"exemplar_{i}.jpg"
-        if img_path.exists():
-            exemplar_images.append(str(img_path))
-            file_size = img_path.stat().st_size / 1024
-            print(f"   ✅ Exemplar {i}: {file_size:.1f} KB")
-        else:
-            print(f"   ❌ Missing: exemplar_{i}.jpg")
+    # Load all exemplar images dynamically
+    all_exemplars = sorted(
+        exemplar_dir.glob("exemplar_*.jpg"),
+        key=lambda p: int(p.stem.split("_")[-1]) if p.stem.split("_")[-1].isdigit() else 0
+    )
+    if not all_exemplars:
+        print(f"   ❌ No exemplar images found in {exemplar_dir}")
+    for img_path in all_exemplars:
+        exemplar_images.append(str(img_path))
+        file_size = img_path.stat().st_size / 1024
+        print(f"   ✅ {img_path.name}: {file_size:.1f} KB")
     
     # Check candidate image
     candidate_path = base_dir / "candidate-images" / "candidate_1.jpg"
