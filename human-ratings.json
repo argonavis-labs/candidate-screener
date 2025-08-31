@@ -682,55 +682,55 @@
     "candidate_id": "25",
     "portfolio_category": "Minimal",
     "image_filename": "candidate_25.jpg",
-    "evaluated_at": "2025-08-29T21:19:46.066Z",
+    "evaluated_at": "2025-08-31T19:05:04.133Z",
     "criteria": {
       "typography": {
         "score": 2,
-        "explanation": "",
+        "explanation": "Typography here is sloppy. So you'll notice that they use all caps for the items in the nav bar where it's not necessary. You also notice that all the headers are sort of like different styles, so their name Matt is a different weight and size than the headers in their images (the AI data assistant). Even though they are very similar, and then the \"Open to chat\" is also a different style. They just seem very similar but also different, which adds visual noise. ",
         "confidence": 5
       },
       "layout_composition": {
-        "score": 1,
-        "explanation": "",
+        "score": 2,
+        "explanation": "The composition here is mostly awkward from the sloppy images. The image is just like there's no consistency in how they're laid out. ",
         "confidence": 5
       },
       "color": {
         "score": 2,
-        "explanation": "",
+        "explanation": "The colors here almost have a system, but not quite. The first two images have a multi-colored background that is in the same hue. It's not super but it's working-ish. But then they do something completely different in the third and fourth images where it's just a solid pastel background. They also use a laptop picture for the third image, which is a bit more realistic, but doesn't really work well with their more UI-driven stuff for the first, second, and fourth images. ",
         "confidence": 5
       }
     },
-    "overall_weighted_score": 1.35,
+    "overall_weighted_score": 1.7,
     "overall_confidence": 5,
     "red_flags": [
       "sloppy_images"
     ],
-    "base_weighted_score": 1.65,
+    "base_weighted_score": 2,
     "penalty_applied": 0.3
   },
   "26": {
     "candidate_id": "26",
     "portfolio_category": "Minimal",
     "image_filename": "candidate_26.jpg",
-    "evaluated_at": "2025-08-29T21:20:36.350Z",
+    "evaluated_at": "2025-08-31T19:10:30.317Z",
     "criteria": {
       "typography": {
         "score": 2,
-        "explanation": "",
+        "explanation": "The typography here is really bad. The navbar name is way too big, right? Like Melanie Cernak is huge compared to the rest of the site. It probably is not the most important thing on this page. And also it's in awkward all caps and a font that doesn't look very good all capped. \n\nAnd then the images - all the text is different sizes and different. Some of them even don't have a body, whereas others have a body and a title. They also kept the logos of the people that they work with really big, and every logo is a different type. Again, makes it really noisy. ",
         "confidence": 5
       },
       "layout_composition": {
         "score": 1,
-        "explanation": "",
+        "explanation": "The composition here is really bad.\n- The images are all cut off.\n- You'll notice that in the Masonry grid of images, the white space around all the images is very inconsistent.\n- The type size is inconsistent, and some of the images are even cut off, which is a big no-no.",
         "confidence": 5
       },
       "color": {
         "score": 1,
-        "explanation": "",
+        "explanation": "There are too many colors going on here, it's kind of a disaster.\n- There's an attempt at doing a pastel color background for all the images, but because there's so many colors in the UI in the foreground, it effectively loses the effect.\n- They also kept all the logos of the clients they work with really big, and because all the logos have different colors too, it just totally takes away from the intended effect of the pastel palette.\n- There's also some really awkward examples of color usage at the very bottom of the page where they've used full-color social logos (which is already a lot) and on top of it, they've chosen to use a colored outline in teal, which is like tons of color that doesn't mean anything and in a place where it's probably not very important to draw attention to. ",
         "confidence": 5
       }
     },
-    "overall_weighted_score": 1,
+    "overall_weighted_score": 0.55,
     "overall_confidence": 5,
     "red_flags": [
       "sloppy_images",
@@ -801,29 +801,31 @@
     "candidate_id": "29",
     "portfolio_category": "Minimal",
     "image_filename": "candidate_29.jpg",
-    "evaluated_at": "2025-08-29T21:28:17.082Z",
+    "evaluated_at": "2025-08-31T19:07:58.499Z",
     "criteria": {
       "typography": {
         "score": 1,
-        "explanation": "",
+        "explanation": "This is an example of minimalist typography done poorly. Right off the bat, they don't consistently capitalize their sentences. They do it in some places but not others. \n\nThey use emojis instead of bullet points which creates noise and adds a weird indent on the left. Emojis are not always bad, but they were using them pretty badly here. \n\nThere's missing spacing between the bolded three lines and the stuff underneath it. It needs a little bit more separation. \n\nThen there's too much spacing between the case study text, so there's like a title and then there's a lot of space and then there's a label and then there's a lot of space again. But because the label is so small that it makes the spacing look even bigger, so that I would have probably put the label on top of the header text in the case study sections. \n\nThey also use a completely different model space font for the button for no apparent reason. And then the button outline also doesn't match the stroke width of the text inside the button or frankly anything else on the page. ",
         "confidence": 5
       },
       "layout_composition": {
         "score": 2,
-        "explanation": "",
+        "explanation": "The layout is another one of those examples of just different for every section.\n- The navbar is super wide\n- It narrows down into the hero section (which is fine)\n- It broadens a little wider again in the body where there's like case studies\nI think that the hero and the case study section are technically the same width, but because the text on the hero doesn't run all the way to the right, it feels like it's not the same width. This creates this very awkward and inconsistent right rag.",
         "confidence": 5
       },
       "color": {
         "score": 2,
-        "explanation": "",
+        "explanation": "There is sort of like an attempt here at doing sort of like an electric blue driven theme here, but because the case studies are also that backgrounds are sort of completely different colors and then they are very loud.\n\nWe're seeing gradients, we're seeing orange, we're seeing very dark blacks. It just takes away from the overall power of the monochrome plus electric blue color palettes. ",
         "confidence": 5
       }
     },
-    "overall_weighted_score": 1.65,
+    "overall_weighted_score": 1.35,
     "overall_confidence": 5,
-    "red_flags": [],
+    "red_flags": [
+      "sloppy_images"
+    ],
     "base_weighted_score": 1.65,
-    "penalty_applied": 0
+    "penalty_applied": 0.3
   },
   "30": {
     "candidate_id": "30",
