@@ -309,11 +309,14 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
             </div>
             <div className="overflow-auto max-h-[600px]">
               <div className="min-w-max">
-                <table className="border-collapse" style={{ minWidth: `${120 + (analytics.comparisonData.length * 80)}px` }}>
+                <table className="border-collapse" style={{ minWidth: `${120 + 80 + (analytics.comparisonData.length * 80)}px` }}>
                     <thead>
                       <tr>
                         <th className="sticky left-0 bg-background border border-border p-3 text-left font-medium min-w-[120px]">
                           Evaluation Type
+                        </th>
+                        <th className="border border-border p-2 text-center font-medium min-w-[80px] bg-blue-50">
+                          Average
                         </th>
                         {analytics.comparisonData.map(candidate => (
                           <th key={candidate.candidateId} className="border border-border p-2 text-center font-medium min-w-[80px]">
@@ -327,6 +330,14 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
                       <tr>
                         <td className="sticky left-0 bg-background border border-border p-3 font-medium">
                           Human Rating
+                        </td>
+                        <td className="border border-border p-2 text-center bg-blue-50">
+                          <span className="text-sm font-medium text-primary">
+                            {analytics.validComparisons.length > 0 
+                              ? (analytics.validComparisons.reduce((sum, d) => sum + (d.humanScore || 0), 0) / analytics.validComparisons.length).toFixed(2)
+                              : '-'
+                            }
+                          </span>
                         </td>
                         {analytics.comparisonData.map(candidate => (
                           <td key={candidate.candidateId} className="border border-border p-2 text-center">
@@ -346,6 +357,14 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
                         <td className="sticky left-0 bg-background border border-border p-3 font-medium">
                           AI Rating
                         </td>
+                        <td className="border border-border p-2 text-center bg-blue-50">
+                          <span className="text-sm font-medium">
+                            {analytics.validComparisons.length > 0 
+                              ? (analytics.validComparisons.reduce((sum, d) => sum + (d.aiScore || 0), 0) / analytics.validComparisons.length).toFixed(2)
+                              : '-'
+                            }
+                          </span>
+                        </td>
                         {analytics.comparisonData.map(candidate => (
                           <td key={candidate.candidateId} className="border border-border p-2 text-center">
                             {candidate.hasAi ? (
@@ -363,6 +382,17 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
                       <tr>
                         <td className="sticky left-0 bg-background border border-border p-3 font-medium">
                           Difference (|Human - AI|)
+                        </td>
+                        <td className="border border-border p-2 text-center bg-blue-50">
+                          <span className={`text-sm font-medium ${
+                            analytics.averageGap <= 0.5 
+                              ? 'text-green-600' 
+                              : analytics.averageGap <= 1.0 
+                                ? 'text-yellow-600' 
+                                : 'text-red-600'
+                          }`}>
+                            {analytics.averageGap.toFixed(2)}
+                          </span>
                         </td>
                         {analytics.comparisonData.map(candidate => (
                           <td key={candidate.candidateId} className="border border-border p-2 text-center">

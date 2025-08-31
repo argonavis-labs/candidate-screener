@@ -247,6 +247,90 @@ Use these exemplars to calibrate your scoring:
         "comment": "There was some attempt at creating a cohesive pastel color system, however, the effect is defeated by: \n1. the strongly contrasting black and silver from the device mocks used in her screenshot, which distract from the pastelle\n2. the fact that there is a random darker colour used in the footer that is not cohesive with the softer, lighter pastelle used in the rest of the site"
       }
     }
+  },
+  "5": {
+    "exemplar_id": "5",
+    "portfolio_category": "Minimal",
+    "site_url": "candidate_8_original",
+    "image_filename": "exemplar_5.jpg",
+    "criteria": {
+      "typography": {
+        "score": 5,
+        "comment": "This is an example of a really well-executed minimal typography system. They use exactly one size across the entire website, but through the clever usage of just a slight difference in color between dark and gray, they managed to achieve all the hierarchy and visual distinction that they need. So really there is a level of restraint. Here that achieves all the goals it seeks out to achieve with very few elements which is elegant. They use shades of gray and then ample white space to create all the hierarchy that they need. The white space is also ample between elements, but it's not too much for the light height. Overall, really well done."
+      },
+      "layout_composition": {
+        "score": 5,
+        "comment": "The layout here is also very simple, but effective. They use white space in a very generous and confident way to create a hierarchy. It's very simple, but what it does it does very well."
+      },
+      "color": {
+        "score": 4,
+        "comment": "There is only one color here, but it doesn't mean that it's bad. The black and white here is well done. They chose a very slight shade of gray for the background which is intentional. They chose a contrasting color for the body text vs the title, but it's not too contrasting. They also didn't use pure black when they used a darker color. All of it is intentional, even if it's very minimal. Overall, I think this is a strong example of color usage even though it's all monochrome."
+      }
+    }
+  },
+  "6": {
+    "exemplar_id": "6",
+    "portfolio_category": "Minimal",
+    "site_url": "candidate_45_original",
+    "image_filename": "exemplar_6.jpg",
+    "criteria": {
+      "typography": {
+        "score": 5,
+        "comment": "Perfect execution of minimal typography with exceptional restraint and clarity."
+      },
+      "layout_composition": {
+        "score": 5,
+        "comment": "Flawless layout with perfect use of white space and visual hierarchy."
+      },
+      "color": {
+        "score": 5,
+        "comment": "Masterful use of minimal color palette demonstrating perfect restraint."
+      }
+    }
+  },
+  "7": {
+    "exemplar_id": "7",
+    "portfolio_category": "Minimal",
+    "site_url": "candidate_21_original",
+    "image_filename": "exemplar_7.jpg",
+    "criteria": {
+      "typography": {
+        "score": 1,
+        "comment": "Poor typography choices with inconsistent hierarchy and spacing. Template-like execution."
+      },
+      "layout_composition": {
+        "score": 1,
+        "comment": "Disjointed layout with no clear structure. Sections feel disconnected and poorly planned."
+      },
+      "color": {
+        "score": 2,
+        "comment": "Weak color usage with no cohesive palette. Random color choices that don't work together."
+      }
+    },
+    "red_flags": [
+      "template_scent_high",
+      "sloppy_images"
+    ]
+  },
+  "8": {
+    "exemplar_id": "8",
+    "portfolio_category": "Minimal",
+    "site_url": "candidate_30_original",
+    "image_filename": "exemplar_8.jpg",
+    "criteria": {
+      "typography": {
+        "score": 3,
+        "comment": "Competent typography that is functional but not exceptional. Clear hierarchy but lacks distinctive character."
+      },
+      "layout_composition": {
+        "score": 3,
+        "comment": "Solid layout with consistent structure. Well-organized but doesn't push any boundaries."
+      },
+      "color": {
+        "score": 4,
+        "comment": "Good color usage with a harmonious palette. Shows restraint and intentionality."
+      }
+    }
   }
 }
 ```
