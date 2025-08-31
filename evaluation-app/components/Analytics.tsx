@@ -96,6 +96,9 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
       ? (accurateWithinThreshold / validComparisons.length) * 100
       : 0;
 
+    // Calculate candidates with gap > 1
+    const candidatesWithLargeGap = validComparisons.filter(d => (d.gap || 0) > 1).length;
+
     return {
       comparisonData,
       validComparisons,
@@ -103,6 +106,7 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
       correlation,
       bias,
       accuracyRate,
+      candidatesWithLargeGap,
       totalCandidates: candidateIds.length,
       evaluatedByBoth: validComparisons.length,
     };
@@ -170,10 +174,10 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
   }, [analytics.comparisonData, analytics.validComparisons, sortByGap]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 border border-stone-200 rounded-lg">
       {/* Summary Statistics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-6 bg-card">
+      <div className="grid grid-cols-2 md:grid-cols-5 border-b divide-x divide-stone-200 border-stone-200">
+        <div className="p-4 ">
           <div className="pb-1">
             <p className="text-sm text-muted-foreground leading-tight">Average Gap</p>
             <h3 className="text-2xl font-semibold tracking-tight">
@@ -181,7 +185,7 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
             </h3>
           </div>
         </div>
-        <div className="p-6 bg-card">
+        <div className="p-4 ">
           <div className="pb-1">
             <p className="text-sm text-muted-foreground leading-tight">Correlation</p>
             <h3 className="text-2xl font-semibold tracking-tight">
@@ -189,7 +193,7 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
             </h3>
           </div>
         </div>
-        <div className="p-6 bg-card">
+        <div className="p-4 ">
           <div className="pb-1">
             <p className="text-sm text-muted-foreground leading-tight">AI Bias</p>
             <h3 className="text-2xl font-semibold tracking-tight">
@@ -197,7 +201,7 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
             </h3>
           </div>
         </div>
-        <div className="p-6 bg-card">
+        <div className="p-4 ">
           <div className="pb-1">
             <p className="text-sm text-muted-foreground leading-tight">Within ±0.5</p>
             <h3 className="text-2xl font-semibold tracking-tight">
@@ -205,9 +209,17 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
             </h3>
           </div>
         </div>
+        <div className="p-4 ">
+          <div className="pb-1">
+            <p className="text-sm text-muted-foreground leading-tight">Gap {'>'}  1</p>
+            <h3 className="text-2xl font-semibold tracking-tight text-red-600">
+              {analytics.candidatesWithLargeGap}
+            </h3>
+          </div>
+        </div>
       </div>
 
-      <Tabs defaultValue="chart" className="space-y-4">
+      <Tabs defaultValue="chart" className="space-y-4 px-4 relative">
         <TabsList>
           <TabsTrigger value="chart">Scatter Plot</TabsTrigger>
           <TabsTrigger value="table">Comparison Table</TabsTrigger>
@@ -216,15 +228,15 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
 
         {/* Scatter Plot */}
         <TabsContent value="chart">
-          <div className="p-6 bg-card">
+          <div className="">
             <div className="pb-4 flex justify-between items-start">
-              <div>
+              {/* <div>
                 <h3 className="text-lg font-semibold tracking-tight">Candidate Ratings Comparison</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   Human and AI ratings for each candidate. {sortByGap ? 'Sorted by agreement (smallest to largest gap).' : 'X-axis shows candidate IDs, Y-axis shows ratings.'}
                 </p>
-              </div>
-              <div className="flex items-center space-x-2">
+              </div> */}
+              <div className="flex items-center space-x-2 absolute top-2 right-4">
                 <Switch
                   id="sort-by-gap"
                   checked={sortByGap}
@@ -238,14 +250,13 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
             <div>
               <div className="h-[500px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <ScatterChart margin={{ top: 20, right: 20, bottom: 60, left: 20 }}>
+                  <ScatterChart margin={{ top: 40, right:20, bottom: 20, left: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis 
                       dataKey="x" 
                       type="number" 
                       domain={[1, scatterPlotData.maxX]} 
                       name={sortByGap ? "Ranking by Gap" : "Candidate"}
-                      label={{ value: sortByGap ? 'Ranking by Gap (Low → High)' : 'Candidate', position: 'insideBottom', offset: -10 }}
                       tickFormatter={(value) => {
                         if (sortByGap) {
                           const candidateId = scatterPlotData.sortedCandidateIds[value - 1];
@@ -261,7 +272,6 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
                       type="number" 
                       domain={[1, 4]} 
                       name="Rating"
-                      label={{ value: 'Rating', angle: -90, position: 'insideLeft' }}
                     />
                     <Tooltip 
                       content={({ active, payload }) => {
@@ -300,14 +310,8 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
 
         {/* Comparison Table */}
         <TabsContent value="table">
-          <div className="p-6 bg-card">
-            <div className="pb-4">
-              <h3 className="text-lg font-semibold">Detailed Comparison - {selectedRun}</h3>
-              <p className="text-sm text-muted-foreground">
-                Comparison table with candidates as columns and evaluation types as rows
-              </p>
-            </div>
-            <div className="overflow-auto max-h-[600px]">
+          <div className="">
+            <div className="overflow-auto">
               <div className="min-w-max">
                 <table className="border-collapse" style={{ minWidth: `${120 + 80 + (analytics.comparisonData.length * 80)}px` }}>
                     <thead>
@@ -421,15 +425,9 @@ export default function Analytics({ humanRatings, aiRatings, selectedRun }: Anal
 
         {/* Per-Dimension Analysis */}
         <TabsContent value="dimensions">
-          <div className="p-6 bg-card">
-            <div className="pb-4">
-              <h3 className="text-lg font-semibold">Per-Dimension Analysis</h3>
-              <p className="text-sm text-muted-foreground">
-                Breaking down the comparison by evaluation criteria
-              </p>
-            </div>
+          <div className="">
             <div>
-              <div className="space-y-4">
+              <div className="space-y-4 pb-4">
                 {(['typography', 'layout', 'color'] as const).map(dimension => {
                   const dimData = analytics.validComparisons
                     .filter(d => d[dimension as 'typography' | 'layout' | 'color'])
