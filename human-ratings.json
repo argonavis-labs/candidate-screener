@@ -171,29 +171,31 @@
     "candidate_id": "7",
     "portfolio_category": "Minimal",
     "image_filename": "candidate_7.jpg",
-    "evaluated_at": "2025-08-29T20:45:28.203Z",
+    "evaluated_at": "2025-08-31T19:13:49.456Z",
     "criteria": {
       "typography": {
         "score": 1,
-        "explanation": "",
+        "explanation": "The typography here is kind of a disaster:\n- The DM on the top left is way too big compared to the rest of the elements in the nav bar\n- There's not enough white space between the hello I'm Dorna and the content underneath it\n- The description of herself is right-aligned, which is almost always a mistake",
         "confidence": 5
       },
       "layout_composition": {
         "score": 1,
-        "explanation": "",
+        "explanation": "This is one of the word layouts I've seen. They are going for a left-right, left-right effect, but because the vertical space between the different cards is not the same as the horizontal space, it creates this awkward gap that takes away from the effectiveness of the design. \n\nAt the bottom of the page, you'll also see a section that says \"Like what you see?\" I think this is supposed to fit in the left-right, left-right grid, but because there's no card around it again, it doesn't seem like that. So if they had to either add a card in the background or have that happy its own section. It was a bad choice to put it in the zigzag layout because, really, this is almost like a different concept. All that everything in the zigzag layout is a case study, whereas this is a call to action. So it probably should have been its own layout. ",
         "confidence": 5
       },
       "color": {
-        "score": 2,
-        "explanation": "",
+        "score": 3,
+        "explanation": "The color here is a consistent cut pastel palette on top of a generally more monochrome website design with a slight highlight. It's mostly fine. It's not a particularly well-executed pastel color palette, but it's not bad either. ",
         "confidence": 5
       }
     },
     "overall_weighted_score": 1.3,
     "overall_confidence": 5,
-    "red_flags": [],
-    "base_weighted_score": 1.3,
-    "penalty_applied": 0
+    "red_flags": [
+      "sloppy_images"
+    ],
+    "base_weighted_score": 1.6,
+    "penalty_applied": 0.3
   },
   "8": {
     "candidate_id": "8",
@@ -283,29 +285,31 @@
     "candidate_id": "11",
     "portfolio_category": "Minimal",
     "image_filename": "candidate_11.jpg",
-    "evaluated_at": "2025-08-29T20:49:43.725Z",
+    "evaluated_at": "2025-08-31T19:25:05.515Z",
     "criteria": {
       "typography": {
         "score": 2,
-        "explanation": "",
+        "explanation": "The typography here is not terrible in the spacing, but it has some problems in terms of typesetting. A few examples in the navbar they use this all-caps, wide letter spacing design which is usually a bad sign. \n\nThey then use a different outline for the selected tab that makes it look like a button instead of a selected tab, which confuses two patterns. \n\nThey also selected a font that I think doesn't really work well at large sizes. It's fine as a body font, but it's not great and it's really not that good when it's used as a header. So when she says, \"Hello, I'm Hayley\" in that big font, it really doesn't work that well. \n\nThere's some random bolding right so like if you look at read the sentence I'm a multi-faceted UX designer based in the Bay Area. UX designer is bolded, there's not a really good reason why it should, but it is.\n\nUsing an emoji as a center of the site as a focal point is also poor taste. If we're going to make something really important in your site, it probably shouldn't be a default emoji. ",
         "confidence": 5
       },
       "layout_composition": {
         "score": 2,
-        "explanation": "",
+        "explanation": "The layout is trying to be relatively minimal but it's not really working that well because:\n- The navbar is super wide (takes up the whole width of the screen)\n- The content of the body is very narrow\n- The footer is wide again, but the footer is not as wide as the navbar\nInconsistent.\n\nAnd then speaking of the footer, you'll notice that it's this very strange layout where the work section is really long and the about section is really short. This creates a lot of white space towards the right side. Work and about are top-aligned, but then the social icons are center-aligned. This inconsistency creates some ugly white space. ",
         "confidence": 5
       },
       "color": {
         "score": 3,
-        "explanation": "",
+        "explanation": "The use of color here is fine. I think that keeping all the color in the middle is working well for her. And all the colors are sort of like a nice contrasting blue and red and various shades of it. So that's working fine.",
         "confidence": 5
       }
     },
-    "overall_weighted_score": 2.3,
+    "overall_weighted_score": 1.8,
     "overall_confidence": 5,
-    "red_flags": [],
+    "red_flags": [
+      "template_scent_high"
+    ],
     "base_weighted_score": 2.3,
-    "penalty_applied": 0
+    "penalty_applied": 0.5
   },
   "12": {
     "candidate_id": "12",
@@ -859,21 +863,21 @@
     "candidate_id": "31",
     "portfolio_category": "Minimal",
     "image_filename": "candidate_31.jpg",
-    "evaluated_at": "2025-08-29T21:29:15.797Z",
+    "evaluated_at": "2025-08-31T19:19:16.305Z",
     "criteria": {
       "typography": {
         "score": 1,
-        "explanation": "",
+        "explanation": "The typography here is kind of a disaster. If you just look at the header section, everything is almost too bold, she's using bold for everything. From Hey Natalia to Bridging the Gap to Product Designer, all of these are bold. When everything is bold, nothing is bold. \n\nIf you look at the navbar, you see that there's a classic example of super-wide letter space, all-caps design in the word Product Designer. This is another classic rookie mistake in typesetting. \n\nAnother example of a rookie mistake is if you go to her project section. There is a pattern where she uses a vertical divider line between every label for the case studies that she did, but the vertical line is way taller and also very dark, which instead makes the vertical line seem like it grabs too much attention. This is a common pattern of failure. \n\nAnother bad pattern here is if you look at the bottom where in her About Me section she has tons of random bolding in her paragraph text. It's like almost feels like every fifth word here is bolded. And then if you look at the bulleted list inside the body of the text, the bulleted list has too much left-side indent. \n\nAnd then she randomly switches from left-align text to center-align text when it comes to her email. ",
         "confidence": 5
       },
       "layout_composition": {
         "score": 1,
-        "explanation": "",
+        "explanation": "The layout in the beginning couplet section is not great, but it's not terrible. But then when you go into the \"My skills\" and \"About me\" section, it's really terrible, right? So if you look at the indent right after the title. There's a huge amount of white space. We're thinking that the things under the title start a little bit more to the right for no reason. It doesn't align with anything. And then there's this really strange triangular text pattern that serves no purpose In the skill section.",
         "confidence": 5
       },
       "color": {
         "score": 2,
-        "explanation": "",
+        "explanation": "There is a consistent attempt to add a color palette between shades of grey and then this blue-green thing. It's not bad, it's not done very well, but it's okay, I guess. ",
         "confidence": 5
       }
     },
@@ -1055,28 +1059,28 @@
     "candidate_id": "38",
     "portfolio_category": "Minimal",
     "image_filename": "candidate_38.jpg",
-    "evaluated_at": "2025-08-29T21:33:39.203Z",
+    "evaluated_at": "2025-08-31T19:28:31.909Z",
     "criteria": {
       "typography": {
-        "score": 2,
-        "explanation": "",
+        "score": 3,
+        "explanation": "The general type setting here is not bad - there's adequate amount of white space, and there is competent usage of the monochrome color scale to create hierarchy. The real problem here is that the font that she chose for the header just doesn't work super well. I think it's a little awkward looking. And then there's also that classic problem of the all caps top left name, right? The Priyanka Gupta is an all caps for no reason, and it's a little bigger than the right side nav items. \n\nHowever, I think that this is redeemed by the relatively competent typesetting in her case studies, where the bold is in fact working well. ",
         "confidence": 5
       },
       "layout_composition": {
-        "score": 3,
-        "explanation": "",
+        "score": 2,
+        "explanation": "The layout composition is suffering from several small mistakes:\n1. The nav is wider than the body content. It's not by much, but it's noticeable.\n2. The past projects section looks like a bug is left-shifted from the main content.",
         "confidence": 5
       },
       "color": {
-        "score": 3,
-        "explanation": "",
+        "score": 4,
+        "explanation": "The use of color here is quite effective. Everything is a very soft pastel, and the pastel is not too strong, so it doesn't compete with the content that's inside of these case studies. Overall, it achieves a good unifying effect across everything, creating a theme without competing with everything. ",
         "confidence": 5
       }
     },
-    "overall_weighted_score": 2.65,
+    "overall_weighted_score": 2.95,
     "overall_confidence": 5,
     "red_flags": [],
-    "base_weighted_score": 2.65,
+    "base_weighted_score": 2.95,
     "penalty_applied": 0
   },
   "39": {
@@ -1169,21 +1173,21 @@
     "candidate_id": "42",
     "portfolio_category": "Minimal",
     "image_filename": "candidate_42.jpg",
-    "evaluated_at": "2025-08-29T21:37:09.641Z",
+    "evaluated_at": "2025-08-31T19:20:34.106Z",
     "criteria": {
       "typography": {
         "score": 1,
-        "explanation": "",
+        "explanation": "The typography here uses just some really bad font choices. There's this pseudo-handwritten looking font for titles that's really awkward. And then the body is done in this rounded, playful font that's not very well done. ",
         "confidence": 5
       },
       "layout_composition": {
         "score": 2,
-        "explanation": "",
+        "explanation": "The layout is like almost a different width at every section in a way that doesn't lend anything to the design. ",
         "confidence": 5
       },
       "color": {
         "score": 2,
-        "explanation": "",
+        "explanation": "There's a consistent attempt at doing a taupe color here, but the problem is that they use a lot of stock photography that doesn't follow the taupe color theme, so it takes away from the color usage. Then they also use a lot of stark white images that have multiple colors on them, which again takes away from the overall taupe theme. ",
         "confidence": 5
       }
     },
@@ -1514,7 +1518,7 @@
     "candidate_id": "54",
     "portfolio_category": "Minimal",
     "image_filename": "candidate_54.jpg",
-    "evaluated_at": "2025-08-29T21:42:53.568Z",
+    "evaluated_at": "2025-08-31T19:29:26.994Z",
     "criteria": {
       "typography": {
         "score": 3,
@@ -1523,12 +1527,12 @@
       },
       "layout_composition": {
         "score": 2,
-        "explanation": "",
+        "explanation": "The layout here is another example of really strange horizontal sizing between every section. So navbar and then the case studies are the same width, but then the hero section is super wide. ",
         "confidence": 5
       },
       "color": {
         "score": 3,
-        "explanation": "",
+        "explanation": "The color here is a fine like just all monochrome. In fact, it's a little too monochrome. ",
         "confidence": 5
       }
     },
