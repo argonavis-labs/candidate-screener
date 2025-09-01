@@ -146,10 +146,10 @@ class OpenAIProvider(ModelProvider):
             }
             
             if self.model.startswith("gpt-5"):
-                # GPT-5 uses max_completion_tokens instead of max_tokens
-                completion_params["max_completion_tokens"] = 2000
+                # GPT-5 uses natural completion - no token limit needed
                 # GPT-5 only supports default temperature (1)
-                # Not setting temperature will use the default
+                # Not setting temperature or max_completion_tokens will use defaults
+                pass
             else:
                 completion_params["max_tokens"] = 2000
                 completion_params["temperature"] = 0.3  # Lower temperature for more consistent evaluations
@@ -160,8 +160,13 @@ class OpenAIProvider(ModelProvider):
                 print(f"\n   ✅ API Response Received:")
                 print(f"   - Model used: {response.model}")
                 print(f"   - Tokens used: {response.usage.total_tokens if response.usage else 'N/A'}")
+                print(f"   - Number of choices: {len(response.choices)}")
                 
-                content = response.choices[0].message.content
+                choice = response.choices[0]
+                print(f"   - Finish reason: {choice.finish_reason}")
+                print(f"   - Message role: {choice.message.role}")
+                
+                content = choice.message.content
                 if content:
                     print(f"   - Response length: {len(content)} chars")
                     # Show the raw response
@@ -169,6 +174,8 @@ class OpenAIProvider(ModelProvider):
                     print(f"   {content[:500]}...")
                 else:
                     print(f"   - Response content is None or empty")
+                    # Debug the entire message structure
+                    print(f"   - Full message dict: {choice.message.model_dump() if hasattr(choice.message, 'model_dump') else 'N/A'}")
             
             # Parse the JSON response
             content = response.choices[0].message.content
