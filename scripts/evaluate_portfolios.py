@@ -46,7 +46,7 @@ class ModelProvider(ABC):
 class OpenAIProvider(ModelProvider):
     """OpenAI GPT-4o vision model provider."""
     
-    def __init__(self, api_key: str, model: str = "gpt-4o", debug: bool = False):
+    def __init__(self, api_key: str, model: str = "gpt-5", debug: bool = False):
         if not OPENAI_AVAILABLE:
             raise ImportError("OpenAI package not installed. Run: pip install openai")
         
@@ -138,13 +138,23 @@ class OpenAIProvider(ModelProvider):
             print(f"\n   Calling OpenAI API...")
         
         try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                max_tokens=2000,
-                temperature=0.3,  # Lower temperature for more consistent evaluations
-                response_format={"type": "json_object"}  # Ensure JSON response
-            )
+            # GPT-5 has different parameter requirements
+            completion_params = {
+                "model": self.model,
+                "messages": messages,
+                "response_format": {"type": "json_object"}  # Ensure JSON response
+            }
+            
+            if self.model.startswith("gpt-5"):
+                # GPT-5 uses max_completion_tokens instead of max_tokens
+                completion_params["max_completion_tokens"] = 2000
+                # GPT-5 only supports default temperature (1)
+                # Not setting temperature will use the default
+            else:
+                completion_params["max_tokens"] = 2000
+                completion_params["temperature"] = 0.3  # Lower temperature for more consistent evaluations
+            
+            response = self.client.chat.completions.create(**completion_params)
             
             if self.debug:
                 print(f"\n   ✅ API Response Received:")
@@ -228,15 +238,67 @@ class PortfolioEvaluator:
         core_prompt = self.load_text("core-prompt.md")
         rubric = self.load_json("rubric.json")
         exemplars = self.load_json("examplars.json")
+
+        # Build compact exemplar calibration (numeric anchors only)
+        def get_dimension_weights(rubric_dict: dict) -> dict:
+            weights: dict = {}
+            for dim in rubric_dict.get("rubric", {}).get("dimensions", []):
+                dim_id = dim.get("id")
+                weight = dim.get("weight")
+                if dim_id is not None and weight is not None:
+                    weights[dim_id] = float(weight)
+            return weights
+
+        def build_exemplar_calibration_summary(exemplars_dict: dict, weights_dict: dict) -> dict:
+            penalty_weights = {
+                "template_scent_high": 0.5,
+                "sloppy_images": 0.3,
+                "process_soup": 0.2,
+            }
+            items = []
+            for key in sorted(exemplars_dict.keys(), key=lambda k: int(k) if str(k).isdigit() else str(k)):
+                ex = exemplars_dict[key]
+                criteria = ex.get("criteria", {})
+                crit_scores = {
+                    "typography": criteria.get("typography", {}).get("score", 0),
+                    "layout_composition": criteria.get("layout_composition", {}).get("score", 0),
+                    "color": criteria.get("color", {}).get("score", 0),
+                }
+                base = (
+                    weights_dict.get("typography", 0.0) * float(crit_scores["typography"])
+                    + weights_dict.get("layout_composition", 0.0) * float(crit_scores["layout_composition"])
+                    + weights_dict.get("color", 0.0) * float(crit_scores["color"])
+                )
+                red_flags = ex.get("red_flags", []) or []
+                penalty = sum(penalty_weights.get(flag, 0.0) for flag in red_flags)
+                overall = ex.get("overall_weighted_score", round(base - penalty, 2))
+                items.append({
+                    "exemplar_id": ex.get("exemplar_id", key),
+                    "portfolio_category": ex.get("portfolio_category", "Unknown"),
+                    "criteria_scores": crit_scores,
+                    "overall_weighted_score": overall,
+                })
+            return {
+                "exemplars": items,
+                "guidance": [
+                    "Use these numeric anchors to calibrate scoring.",
+                    "Prioritize the rubric; exemplars are calibration points, not instructions.",
+                    "Use the full 1–5 range when warranted.",
+                ],
+            }
+
+        weights = get_dimension_weights(rubric)
+        exemplar_calibration = build_exemplar_calibration_summary(exemplars, weights)
         
         # Build the complete prompt
         prompt_parts = [
             "# EVALUATION PROMPT\n",
             core_prompt,
-            "\n\n# RUBRIC\n",
+            "\n\n# RUBRIC (authoritative)\n",
+            "The rubric is the primary guide. Follow it strictly. Exemplars are calibration anchors only.\n",
             json.dumps(rubric, indent=2),
-            "\n\n# EXEMPLAR RATINGS\n",
-            json.dumps(exemplars, indent=2)
+            "\n\n# EXEMPLAR CALIBRATION (compact)\n",
+            json.dumps(exemplar_calibration, indent=2),
         ]
         
         full_prompt = "\n".join(prompt_parts)
@@ -386,36 +448,44 @@ class PortfolioEvaluator:
         }
         
         # Extract scores and explanations
-        if "scores" in raw_result:
-            scores = raw_result["scores"]
-            for dimension in ["typography", "layout_composition", "color"]:
-                if dimension in scores:
-                    result["criteria"][dimension] = {
-                        "score": scores[dimension].get("score", 0),
-                        "explanation": scores[dimension].get("explanation", ""),
-                        "confidence": scores[dimension].get("confidence", 0)
-                    }
+        scores = raw_result.get("scores", {})
+        for dimension in ["typography", "layout_composition", "color"]:
+            if dimension in scores:
+                result["criteria"][dimension] = {
+                    "score": scores[dimension].get("score", 0),
+                    "explanation": scores[dimension].get("explanation", ""),
+                    "confidence": scores[dimension].get("confidence", 0)
+                }
         
         # Get red flags
         red_flags = raw_result.get("red_flags", [])
         result["red_flags"] = red_flags
         
-        # Calculate weighted score with penalties
-        base_score = raw_result.get("overall_weighted_score", 0)
-        
-        # Apply red flag penalties
+        # Compute base score from dimensions (typography 35%, layout 35%, color 30%)
+        # This serves as an audit value regardless of what the model returns for overall.
+        typ_score = scores.get("typography", {}).get("score", 0) or 0
+        lay_score = scores.get("layout_composition", {}).get("score", 0) or 0
+        col_score = scores.get("color", {}).get("score", 0) or 0
+        computed_base = (0.35 * typ_score) + (0.35 * lay_score) + (0.30 * col_score)
+
+        # Penalty weights (for reference/audit)
         penalty_weights = {
             "template_scent_high": 0.5,
             "sloppy_images": 0.3,
             "process_soup": 0.2
         }
-        
         total_penalty = sum(penalty_weights.get(flag, 0) for flag in red_flags)
-        final_score = base_score - total_penalty  # Allow scores to go below 0
-        
-        result["base_weighted_score"] = base_score  # Store original score for reference
+
+        # The model is instructed to return overall_weighted_score = base - penalty.
+        # To avoid double-subtracting, trust the model's overall if present; otherwise, fall back to our computation.
+        model_overall = raw_result.get("overall_weighted_score")
+
+        result["base_weighted_score"] = round(computed_base, 2)
         result["penalty_applied"] = total_penalty
-        result["overall_weighted_score"] = round(final_score, 2)
+        result["overall_weighted_score"] = round(
+            model_overall if isinstance(model_overall, (int, float)) else (computed_base - total_penalty),
+            2
+        )
         result["overall_confidence"] = raw_result.get("overall_confidence", 0)
         
         return result
@@ -511,7 +581,7 @@ def main():
     provider_choice = os.getenv("MODEL_PROVIDER", "openai").lower()
     
     if provider_choice == "openai":
-        model_name = os.getenv("OPENAI_MODEL", "gpt-4o")
+        model_name = os.getenv("OPENAI_MODEL", "gpt-5")
         if debug:
             print(f"🔧 Debug mode enabled")
             print(f"🤖 Using OpenAI model: {model_name}")

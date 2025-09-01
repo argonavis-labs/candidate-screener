@@ -20,6 +20,62 @@ def load_text(filepath: Path) -> str:
         return f.read()
 
 
+def get_dimension_weights(rubric: dict) -> dict:
+    """Extract dimension weights from rubric.json structure."""
+    weights: dict = {}
+    for dimension in rubric.get("rubric", {}).get("dimensions", []):
+        dim_id = dimension.get("id")
+        weight = dimension.get("weight")
+        if dim_id is not None and weight is not None:
+            weights[dim_id] = float(weight)
+    return weights
+
+
+def build_exemplar_calibration_summary(exemplars: dict, weights: dict) -> dict:
+    """Create a compact calibration block: scores and overall only (no long comments)."""
+    penalty_weights = {
+        "template_scent_high": 0.5,
+        "sloppy_images": 0.3,
+        "process_soup": 0.2,
+    }
+
+    summary_items = []
+    for key in sorted(exemplars.keys(), key=lambda k: int(k) if str(k).isdigit() else str(k)):
+        ex = exemplars[key]
+        criteria = ex.get("criteria", {})
+        crit_scores = {
+            "typography": criteria.get("typography", {}).get("score", 0),
+            "layout_composition": criteria.get("layout_composition", {}).get("score", 0),
+            "color": criteria.get("color", {}).get("score", 0),
+        }
+
+        # Compute base/overall if missing
+        base = (
+            weights.get("typography", 0.0) * float(crit_scores["typography"])
+            + weights.get("layout_composition", 0.0) * float(crit_scores["layout_composition"])
+            + weights.get("color", 0.0) * float(crit_scores["color"])
+        )
+        red_flags = ex.get("red_flags", []) or []
+        penalty = sum(penalty_weights.get(flag, 0.0) for flag in red_flags)
+        overall = ex.get("overall_weighted_score", round(base - penalty, 2))
+
+        summary_items.append({
+            "exemplar_id": ex.get("exemplar_id", key),
+            "portfolio_category": ex.get("portfolio_category", "Unknown"),
+            "criteria_scores": crit_scores,
+            "overall_weighted_score": overall,
+        })
+
+    return {
+        "exemplars": summary_items,
+        "guidance": [
+            "Use these numeric anchors to calibrate scoring.",
+            "Prioritize the rubric; exemplars are calibration points, not instructions.",
+            "Use the full 1–5 range when warranted.",
+        ],
+    }
+
+
 def generate_prompt():
     """Generate the complete evaluation prompt."""
     
@@ -35,6 +91,10 @@ def generate_prompt():
     
     print("Loading exemplars...")
     exemplars = load_json(base_dir / "examplars.json")
+
+    # Build compact exemplar calibration block (scores only)
+    weights = get_dimension_weights(rubric)
+    exemplar_calibration = build_exemplar_calibration_summary(exemplars, weights)
     
     # Build the complete prompt
     prompt_parts = [
@@ -42,20 +102,21 @@ def generate_prompt():
         "## Core Instructions\n",
         core_prompt,
         "\n---\n",
-        "## Evaluation Rubric\n",
+        "## Evaluation Rubric (authoritative)\n",
+        "The rubric below is the primary guide. Follow it strictly. Exemplars are only calibration anchors.\n",
         "```json",
         json.dumps(rubric, indent=2),
         "```",
         "\n---\n",
-        "## Exemplar Portfolios with Ratings\n",
-        "Use these exemplars to calibrate your scoring:\n",
+        "## Exemplar Calibration (compact)\n",
+        "Numeric anchors only; no prose. Use these to calibrate your scores.\n",
         "```json",
-        json.dumps(exemplars, indent=2),
+        json.dumps(exemplar_calibration, indent=2),
         "```",
         "\n---\n",
         "## Your Task\n",
         "Evaluate the provided portfolio image using the rubric above.",
-        "Be consistent with the exemplar ratings.",
+        "Be consistent with the exemplar numeric anchors.",
         "Return your evaluation as a JSON object following the specified format."
     ]
     

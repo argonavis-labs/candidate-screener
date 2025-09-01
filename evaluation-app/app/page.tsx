@@ -50,7 +50,7 @@ export default function Home() {
 
   // New state for evaluation runs
   const [evaluationRuns, setEvaluationRuns] = useState<EvaluationRun[]>([]);
-  const [selectedRun, setSelectedRun] = useState<string>("");
+  const [allAiRatings, setAllAiRatings] = useState<Record<string, Ratings>>({});
   
   // Sorting state
   const [sortMode, setSortMode] = useState<"numerical" | "gap">("numerical");
@@ -98,9 +98,7 @@ export default function Home() {
         const response = await fetch("/api/evaluation-runs");
         const runs = await response.json();
         setEvaluationRuns(runs);
-        if (runs.length > 0) {
-          setSelectedRun(runs[0].filename); // Default to most recent
-        }
+        // No need to set selected run since we load all runs
       } catch (error) {
         console.error("Error loading evaluation runs:", error);
       }
@@ -108,27 +106,44 @@ export default function Home() {
     loadEvaluationRuns();
   }, []);
 
-  // Load data when selected run changes
+  // Load data for all evaluation runs
   useEffect(() => {
-    if (!selectedRun) return;
+    if (evaluationRuns.length === 0) return;
 
-    const loadData = async () => {
+    const loadAllRunData = async () => {
       try {
-        const [aiRes, humanRes, rubricRes] = await Promise.all([
-          fetch(`/api/ratings?type=ai&filename=${selectedRun}`),
+        // Load human ratings and rubric
+        const [humanRes, rubricRes] = await Promise.all([
           fetch("/api/ratings?type=human"),
           fetch("/api/rubric"),
         ]);
 
-        const [aiData, humanData, rubricData] = await Promise.all([
-          aiRes.json(),
+        const [humanData, rubricData] = await Promise.all([
           humanRes.json(),
           rubricRes.json(),
         ]);
 
-        setAiRatings(aiData);
         setHumanRatings(humanData);
         setRubric(rubricData);
+
+        // Load AI ratings for all runs
+        const aiRatingsPromises = evaluationRuns.map(run =>
+          fetch(`/api/ratings?type=ai&filename=${run.filename}`).then(res => res.json())
+        );
+
+        const aiRatingsData = await Promise.all(aiRatingsPromises);
+
+        const allRatings: Record<string, Ratings> = {};
+        evaluationRuns.forEach((run, index) => {
+          allRatings[run.filename] = aiRatingsData[index] || {};
+        });
+
+        setAllAiRatings(allRatings);
+
+        // Set the current AI ratings to the most recent run for evaluation tab
+        if (evaluationRuns.length > 0) {
+          setAiRatings(aiRatingsData[0] || {});
+        }
       } catch (error) {
         console.error("Error loading data:", error);
       } finally {
@@ -136,8 +151,8 @@ export default function Home() {
       }
     };
 
-    loadData();
-  }, [selectedRun]);
+    loadAllRunData();
+  }, [evaluationRuns]);
 
   // Reset to first candidate when sort mode changes
   useEffect(() => {
@@ -216,7 +231,7 @@ export default function Home() {
   const hasHumanEvaluation = currentCandidateId in humanRatings;
   const progressPercentage = (evaluatedCount / candidateIds.length) * 100;
 
-  const currentRun = evaluationRuns.find((run) => run.filename === selectedRun);
+
 
   if (loading) {
     return (
@@ -255,30 +270,7 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-4">
-            {/* AI Run Selector */}
-            {evaluationRuns.length > 0 && (
-              <div className="flex items-center gap-2">
-                <Select value={selectedRun} onValueChange={setSelectedRun}>
-                  <SelectTrigger id="run-selector" className="w-56 h-8">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {evaluationRuns.map((run) => (
-                      <SelectItem key={run.filename} value={run.filename}>
-                        <div className="flex flex-row gap-2">
-                          <span className="text-sm leading-tight">
-                            {run.model}
-                          </span>
-                          <span className="text-xs text-muted-foreground leading-tight">
-                            {new Date(run.timestamp).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+
 
             {activeTab === "evaluation" && (
               <>
@@ -452,8 +444,8 @@ export default function Home() {
         <div className="w-full px-8 py-5 h-full overflow-y-auto">
           <Analytics
             humanRatings={humanRatings}
-            aiRatings={aiRatings}
-            selectedRun={selectedRun}
+            allAiRatings={allAiRatings}
+            evaluationRuns={evaluationRuns}
           />
         </div>
       </TabsContent>
