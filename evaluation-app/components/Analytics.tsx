@@ -5,6 +5,7 @@ import { useEffect, useMemo } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { EyeOff, Eye } from "lucide-react";
 import {
   ChartContainer,
@@ -308,6 +309,16 @@ export default function Analytics({
                       {new Date(run.timestamp).toLocaleDateString()} •{" "}
                       {run.model}
                     </h2>
+                    {Object.values(allAiRatings[run.filename] || {}).some(
+                      (e: any) => e?.evaluation_metadata?.no_exemplars_mode
+                    ) && (
+                      <Badge
+                        variant="outline"
+                        className="text-xs bg-blue-50 text-blue-700 border-blue-200"
+                      >
+                        Rubric Only
+                      </Badge>
+                    )}
                     <p className="text-sm text-muted-foreground">
                       {run.total_candidates} candidates evaluated
                       {run.complete ? " (Complete)" : " (Incomplete)"}

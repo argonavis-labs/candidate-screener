@@ -41,13 +41,18 @@ export default function EvaluationDisplay({
       <div className="">
         <div className="flex flex-row justify-between items-center px-4 pb-4">
           <div className="flex flex-col">
-            <h2 className="text-base font-semibold tracking-tight">
-              AI Evaluation
-            </h2>
+            <div className="flex items-center gap-2 mb-1">
+              <h2 className="text-base font-semibold tracking-tight">
+                AI Evaluation
+              </h2>
+            </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
               Category: {evaluation.portfolio_category} •{" "}
               {new Date(evaluation.evaluated_at).toLocaleDateString()} •{" "}
               Confidence: {evaluation.overall_confidence.toFixed(1)}
+              {evaluation.evaluation_metadata?.model_used?.model && (
+                <> • Model: {evaluation.evaluation_metadata.model_used.model}</>
+              )}
             </p>
           </div>
 

@@ -227,9 +227,10 @@ class ClaudeProvider(ModelProvider):
 class PortfolioEvaluator:
     """Main evaluator class that coordinates the evaluation process."""
     
-    def __init__(self, provider: ModelProvider, base_dir: Path):
+    def __init__(self, provider: ModelProvider, base_dir: Path, no_exemplars: bool = False):
         self.provider = provider
         self.base_dir = base_dir
+        self.no_exemplars = no_exemplars
         self.start_time = None
         self.end_time = None
         self.full_prompt = None
@@ -303,19 +304,34 @@ class PortfolioEvaluator:
                 ],
             }
 
-        weights = get_dimension_weights(rubric)
-        exemplar_calibration = build_exemplar_calibration_summary(exemplars, weights)
-        
         # Build the complete prompt
-        prompt_parts = [
-            "# EVALUATION PROMPT\n",
-            core_prompt,
-            "\n\n# RUBRIC (authoritative)\n",
-            "The rubric is the primary guide. Follow it strictly. Exemplars are calibration anchors only.\n",
-            json.dumps(rubric, indent=2),
-            "\n\n# EXEMPLAR CALIBRATION (compact)\n",
-            json.dumps(exemplar_calibration, indent=2),
-        ]
+        if self.no_exemplars:
+            # Pure rubric-only mode - modify core prompt to remove exemplar references
+            modified_core_prompt = core_prompt.replace(
+                "4. **Be consistent with the exemplars:**\n   - Use the provided exemplar ratings as calibration for your scores\n   - Apply the same standards strictly across all evaluations",
+                "4. **Be consistent in your evaluations:**\n   - Apply the rubric standards strictly and consistently across all evaluations\n   - Use the full 1-5 rating scale when warranted"
+            )
+            prompt_parts = [
+                "# EVALUATION PROMPT\n",
+                modified_core_prompt,
+                "\n\n# RUBRIC (authoritative)\n",
+                "The rubric is the primary guide. Follow it strictly.\n",
+                json.dumps(rubric, indent=2),
+            ]
+        else:
+            # Include exemplar calibration
+            weights = get_dimension_weights(rubric)
+            exemplar_calibration = build_exemplar_calibration_summary(exemplars, weights)
+            
+            prompt_parts = [
+                "# EVALUATION PROMPT\n",
+                core_prompt,
+                "\n\n# RUBRIC (authoritative)\n",
+                "The rubric is the primary guide. Follow it strictly. Exemplars are calibration anchors only.\n",
+                json.dumps(rubric, indent=2),
+                "\n\n# EXEMPLAR CALIBRATION (compact)\n",
+                json.dumps(exemplar_calibration, indent=2),
+            ]
         
         full_prompt = "\n".join(prompt_parts)
         
@@ -364,9 +380,21 @@ class PortfolioEvaluator:
         print("Generating evaluation prompt...")
         prompt = self.generate_prompt()
         
-        # Get exemplar images
-        exemplar_images = self.get_exemplar_images()
-        print(f"Loaded {len(exemplar_images)} exemplar images")
+        # Get exemplar images (conditionally)
+        if self.no_exemplars:
+            exemplar_images = []
+            print("🚫 Skipping exemplar images (--no-exemplars flag set)")
+            print("📋 Running rubric-only evaluation for calibration")
+        else:
+            exemplar_images = self.get_exemplar_images()
+            print(f"Loaded {len(exemplar_images)} exemplar images")
+        
+        # Print the final prompt for verification
+        print("\n" + "="*80)
+        print("📝 FINAL EVALUATION PROMPT:")
+        print("="*80)
+        print(prompt)
+        print("="*80 + "\n")
         
         # Get candidate images
         candidate_dir = self.base_dir / "candidate-images"
@@ -531,7 +559,8 @@ class PortfolioEvaluator:
                 "exemplar_images": self.exemplar_images_used,
                 "total_candidates_evaluated": len(ratings),
                 "prompt_length_chars": len(self.full_prompt) if self.full_prompt else 0,
-                "evaluation_complete": final
+                "evaluation_complete": final,
+                "no_exemplars_mode": self.no_exemplars
             },
             "full_prompt_used": self.full_prompt,
             "candidate_ratings": ratings
@@ -582,6 +611,8 @@ def main():
     parser.add_argument('--debug', action='store_true', help='Enable debug mode with verbose output')
     parser.add_argument('--model', choices=['gpt-4o', 'gpt-5', 'o1'], 
                         help='Override model selection (gpt-4o, gpt-5, or o1)')
+    parser.add_argument('--no-exemplars', action='store_true', 
+                        help='Skip exemplar images - evaluate using rubric only (for calibration)')
     
     args = parser.parse_args()
     
@@ -627,7 +658,7 @@ def main():
         sys.exit(1)
     
     # Create evaluator
-    evaluator = PortfolioEvaluator(provider, base_dir)
+    evaluator = PortfolioEvaluator(provider, base_dir, no_exemplars=args.no_exemplars)
     
     # Run evaluation
     evaluator.evaluate_candidates()

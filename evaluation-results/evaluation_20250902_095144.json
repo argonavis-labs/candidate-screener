@@ -1,0 +1,1405 @@
+{
+  "evaluation_metadata": {
+    "timestamp": "2025-09-02T09:51:44.804424",
+    "end_time": "2025-09-02T10:01:52.622194",
+    "duration_seconds": 607.81777,
+    "model_used": {
+      "provider": "OpenAIProvider",
+      "model": "gpt-4o"
+    },
+    "exemplar_images": [],
+    "total_candidates_evaluated": 49,
+    "prompt_length_chars": 7834,
+    "evaluation_complete": true,
+    "no_exemplars_mode": true
+  },
+  "full_prompt_used": "# EVALUATION PROMPT\n\nYou are a senior product design hiring manager evaluating portfolio websites based on **visual craft only**. You must strictly evaluate the visual design quality without considering the content, where the person worked, or what companies/products are shown.\n\n## Evaluation Rules:\n\n1. **Score each dimension on a 1-5 scale** using the provided rubric anchors:\n   - 1: Terrible\n   - 2: Below average\n   - 3: Average\n   - 4: Above average\n   - 5: Fantastic\n\n2. **For each dimension, you MUST:**\n   - Provide a score (1-5)\n   - Write a detailed explanation of WHY you gave that score\n   - Cite specific visual evidence (e.g., \"inconsistent spacing between sections\", \"serif/sans-serif pairing creates strong hierarchy\")\n   - Rate your confidence in the score (1-5 scale where 1=very uncertain, 5=very confident)\n\n3. **Avoid context bias:**\n   - DO NOT be influenced by company names, logos, or prestigious brands shown\n   - DO NOT consider the actual content/copy of case studies\n   - DO NOT factor in where the person worked or what they worked on\n   - Focus ONLY on the visual execution and design craft\n\n4. **Be consistent in your evaluations:**\n   - Apply the rubric standards strictly and consistently across all evaluations\n   - Use the full 1-5 rating scale when warranted\n\n5. **Check for red flags** and list them if present:\n   - template_scent_high\n   - sloppy_images\n   - process_soup\n\n## Output Format:\n\nReturn **only** valid JSON matching this exact structure:\n```json\n{\n  \"candidate_id\": \"X\",\n  \"scores\": {\n    \"typography\": {\n      \"score\": 1-5,\n      \"explanation\": \"detailed reasoning with specific evidence\",\n      \"confidence\": 1-5\n    },\n    \"layout_composition\": {\n      \"score\": 1-5,\n      \"explanation\": \"detailed reasoning with specific evidence\", \n      \"confidence\": 1-5\n    },\n    \"color\": {\n      \"score\": 1-5,\n      \"explanation\": \"detailed reasoning with specific evidence\",\n      \"confidence\": 1-5\n    }\n  },\n  \"red_flags\": [\"list any that apply\"],\n  \"overall_weighted_score\": calculated_number,\n  \"overall_confidence\": calculated_number\n}\n```\n\n## Scoring Calculation:\n- base_score = (typography \u00d7 0.35) + (layout_composition \u00d7 0.35) + (color \u00d7 0.30)\n- penalty = sum of red flag penalties:\n  - template_scent_high: 0.5 points\n  - sloppy_images: 0.3 points\n  - process_soup: 0.2 points\n- overall_weighted_score = base_score - penalty  // scores can go below 0\n- overall_confidence = average of individual dimension confidences\n\n\n# RUBRIC (authoritative)\n\nThe rubric is the primary guide. Follow it strictly.\n\n{\n  \"rubric\": {\n    \"dimensions\": [\n      {\n        \"id\": \"typography\",\n        \"weight\": 0.35,\n        \"good_anchor\": [\n          \"Uses few fonts and styles with clear intentionality\",\n          \"Achieves great visual hierarchy and information architecture with a few well-chosen styles\",\n          \"Excellence through restraint - using single typeface with subtle weight/color variations shows sophistication\",\n          \"Bonus points for creative and effective use of typography as signature design elements\",\n          \"Alternatively, uses a lot of fonts but with a strong design intent and strategy (rare but possible)\",\n          \"Use of paid typefaces from type foundries\",\n          \"If combining multiple typefaces, they are choosing contrasting fonts that also have something to tie them together\",\n          \"If using google fonts they are using the good ones (IBM plex, Inter, Work, Fira, etc.)\",\n          \"Sophisticated use of minimal typography systems - achieving hierarchy through subtle techniques\"\n        ],\n        \"weak_anchor\": [\n          \"Too many fonts, too many weights, sizes, styles where it's not needed or without a clear design intent\",\n          \"Overly large type sizes for body text (18px+)\",\n          \"Excessive all-caps, letter-spacing\",\n          \"Different sections of the website change text alignment in an unintentional way e.g. left, center, then back to left\",\n          \"Type sizes don't have a scale and rythm. e.g. captions are 11px, body is 18px, and headers are 22px\",\n          \"Unconstrained line-width that make reading hard. Lines should be between 40 to 100 chars ish\",\n          \"Usage of common low quality free google fonts\",\n          \"Choosing a combination of typefaces that don't work well together either because they are too similar, or too contrasting with nothing to tie them together\",\n          \"Random, overly large, or overley small line-spacing that leads to poor hierarchy\"\n        ]\n      },\n      {\n        \"id\": \"layout_composition\",\n        \"weight\": 0.35,\n        \"good_anchor\": [\n          \"Consistency: uses a few layout patterns judiciously.\",\n          \"Intentional use of white space to create hierarchy and clarity\",\n          \"There is a vertical rhythm where spacing is consistent\",\n          \"Innovative layouts: Creative approaches like chat interfaces, newspaper columns, or unique navigation patterns\",\n          \"If there are screenshots of the work, they are laid out intentionally within the screenshot and the different screenshots have some elements visually tying them together (even if small like a shared color palette or corner radius) even as the work is distinct\",\n          \"Achieving more with less - minimal layouts that are highly effective\"\n        ],\n        \"weak_anchor\": [\n          \"Every section feels like it's different from the next, with no element tying them together\",\n          \"Inconsistent gutters\\u00a0\\u2013 different sections of the website have different widths in an unintentinal way\",\n          \"No clear structure; elements appear randomly placed with no alignment\",\n          \"Screenshots of the work are haphazardly presented. Generic device mocks are used. Nothing to tie the screenshots together to make them feel like they belong on the same site\",\n          \"Poor spacing: Cramped elements or excessive empty space that doesn't serve a purpose\",\n          \"Competing focal points: Everything tries to grab attention equally, creating visual noise.\"\n        ]\n      },\n      {\n        \"id\": \"color\",\n        \"weight\": 0.3,\n        \"good_anchor\": [\n          \"Harmonious palette: the colors chosen are either complementary or adjacent. they share either intentional contrast or intentional similarity\",\n          \"There are few colours and they're used with restraint in ways that are meaningful to the design.\",\n          \"Monochrome mastery - all-grey/black/white palettes can be excellent when used with intentional variation\",\n          \"Less is more - restraint in color usage can demonstrate sophistication\",\n          \"The shadows are dialed in - using more than default css value. maybe they have a hue, or are very diffuse\",\n          \"Subtle color techniques: using shades of grey or minimal accent colors to create hierarchy\"\n        ],\n        \"weak_anchor\": [\n          \"Too many colours that don't share a throughline or intentional contrast\",\n          \"Or, if the site is minimal greyscale, then there is lack of intentional use of different shades of grey. \",\n          \"Default looking shadows that look too dark for the site, or don't match the hue\"\n        ]\n      }\n    ],\n    \"red_flags\": [\n      \"template_scent_high: the site clearly feels like it was from a template - generic layouts, standard components, no customization\",\n      \"sloppy_images: they show their work, but it's sloppily laid out - wrong zoom level, generic device mockups without customization, inconsistent image treatments, poor quality/compression artifacts, can't see what's going on\",\n      \"process_soup: the case studies spend too much time talking about process rather than showing the work\"\n    ],\n    \"rating_scale\": [\n      \"1: Terrible\",\n      \"2: Below average\",\n      \"3: Average\",\n      \"4: Above average\",\n      \"5: Fantastic\"\n    ]\n  }\n}",
+  "candidate_ratings": {
+    "1": {
+      "candidate_id": "1",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_1.jpg",
+      "evaluated_at": "2025-09-02T09:51:55.864980",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography uses a few fonts with clear intentionality. The serif typeface provides a sophisticated look, and the use of blue color for emphasis creates a strong hierarchy. The line spacing and alignment are consistent, enhancing readability.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is minimal and effective, with intentional use of white space that creates a clear hierarchy. The vertical alignment of the text and navigation elements is consistent, contributing to a clean and organized appearance.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is restrained, using primarily black, white, and a single accent color (blue) effectively. This choice enhances the overall sophistication and readability of the design.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 5.0
+    },
+    "10": {
+      "candidate_id": "10",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_10.jpg",
+      "evaluated_at": "2025-09-02T09:52:07.166731",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography is clean and uses a limited number of styles, which helps maintain clarity. However, the font choices are quite standard and do not exhibit a strong design intent or creativity. The hierarchy is clear but not particularly sophisticated.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is straightforward and functional, with consistent spacing and alignment. However, it lacks innovation and feels somewhat generic. The use of white space is adequate but could be more intentional to enhance hierarchy.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal and harmonious, using mostly neutral tones with occasional blue accents. While this is effective, it does not demonstrate a high level of sophistication or creativity in color use.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.35,
+      "overall_confidence": 4
+    },
+    "11": {
+      "candidate_id": "11",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_11.jpg",
+      "evaluated_at": "2025-09-02T09:52:19.750135",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and consistent, using a minimal number of fonts and styles. The hierarchy is clear, with a strong use of weight and size to differentiate headings from body text. The use of a single typeface with subtle variations shows sophistication.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is well-structured, with consistent spacing and alignment. The grid layout for the portfolio pieces is visually appealing and easy to navigate. There is intentional use of white space, creating a clear hierarchy.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 5,
+          "explanation": "The color palette is vibrant yet harmonious, with complementary colors that enhance the visual appeal. The use of color is restrained and meaningful, adding to the overall sophistication of the design.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.3,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.3,
+      "overall_confidence": 5
+    },
+    "12": {
+      "candidate_id": "12",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_12.jpg",
+      "evaluated_at": "2025-09-02T09:52:31.754659",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography uses a minimal number of fonts with clear hierarchy. The use of different weights and colors helps in distinguishing different sections, and the typeface choice is modern and readable.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 5,
+          "explanation": "The layout is innovative, resembling a chat interface, which is both unique and functional. The use of white space is intentional, creating a clean and organized look.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, using a few colors with restraint. The use of blue accents draws attention without overwhelming the design.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.35,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.5,
+      "overall_confidence": 5
+    },
+    "13": {
+      "candidate_id": "13",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_13.jpg",
+      "evaluated_at": "2025-09-02T09:52:43.342977",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography uses a limited number of fonts with clear intentionality. The hierarchy is well-established through size and weight variations, particularly with the large, bold header contrasting with the smaller body text. The serif/sans-serif pairing creates a strong visual hierarchy.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent, using a grid structure that aligns elements neatly. There is intentional use of white space, creating clarity and focus. The sections are visually tied together with consistent spacing and alignment.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, using a few complementary colors with restraint. The use of accent colors in the icons adds interest without overwhelming the design.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 5.0
+    },
+    "14": {
+      "candidate_id": "14",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_14.jpg",
+      "evaluated_at": "2025-09-02T09:53:01.042467",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and minimal, using a single typeface with subtle weight variations. This creates a clear hierarchy and a sophisticated look. The line spacing and alignment are consistent, enhancing readability.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is simple and consistent, with clear sections and adequate white space. However, it lacks innovative elements or unique compositions that could elevate the design further.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal, primarily using black and white with subtle variations. While this creates a clean look, it lacks the use of accent colors or contrasts that could add more visual interest.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.35,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.45,
+      "overall_confidence": 4.33
+    },
+    "15": {
+      "candidate_id": "15",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_15.jpg",
+      "evaluated_at": "2025-09-02T09:53:12.201332",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and consistent, using a limited number of fonts with clear hierarchy. The use of serif and sans-serif fonts creates a strong visual contrast that enhances readability and aesthetic appeal.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is generally well-organized with intentional use of white space. However, some sections feel slightly disconnected, lacking a cohesive flow between them.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, with complementary colors used effectively to highlight different sections. The use of bold colors in certain areas adds visual interest without overwhelming the design.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.65,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.65,
+      "overall_confidence": 4.67
+    },
+    "16": {
+      "candidate_id": "16",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_16.jpg",
+      "evaluated_at": "2025-09-02T09:53:24.798695",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and consistent, using a single sans-serif typeface with variations in weight to create hierarchy. The large, bold headings effectively draw attention without overwhelming the design. The body text is appropriately sized, maintaining readability.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 5,
+          "explanation": "The layout is well-structured with a clear hierarchy. The use of white space is intentional, providing clarity and focus. The alignment is consistent across sections, and the project images are neatly organized, creating a cohesive visual flow.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is minimal and sophisticated, primarily using black, white, and grey tones with subtle accents. This restraint in color usage enhances the overall design sophistication.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.35,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.4,
+      "overall_confidence": 5
+    },
+    "17": {
+      "candidate_id": "17",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_17.jpg",
+      "evaluated_at": "2025-09-02T09:53:37.713037",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography uses a limited number of fonts and styles, maintaining consistency and clarity. The hierarchy is clear, with effective use of weight and size variations to distinguish sections. The choice of typefaces is modern and professional, contributing to a clean aesthetic.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent and well-organized, with a clear structure that guides the viewer's eye. White space is used effectively to separate sections and create a sense of hierarchy. The grid system is apparent and supports the content well.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal and restrained, primarily using neutral tones with occasional accents. While this creates a professional look, there is limited use of color to enhance hierarchy or draw attention to key areas.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.7,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.75,
+      "overall_confidence": 4.67
+    },
+    "18": {
+      "candidate_id": "18",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_18.jpg",
+      "evaluated_at": "2025-09-02T09:53:48.554873",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography is consistent with a clear hierarchy, using a limited number of fonts and styles. However, the body text size appears slightly large, which can affect readability. The use of serif and sans-serif fonts creates a decent contrast, but it lacks a unique typographic signature.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is clean and structured, with consistent spacing and alignment. However, it lacks innovative elements and feels somewhat generic. The sections are distinct but could benefit from more visual ties to create a cohesive flow.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal and harmonious, primarily using black, white, and subtle pastels. While this creates a clean look, it lacks distinctive color usage that could enhance the design's visual impact.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.35,
+      "overall_confidence": 4
+    },
+    "19": {
+      "candidate_id": "19",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_19.jpg",
+      "evaluated_at": "2025-09-02T09:53:58.832616",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography uses a limited number of fonts with clear intentionality. The hierarchy is well established through size and weight variations, and the use of color in the text adds emphasis without overwhelming the design. The choice of typeface is modern and clean, contributing to a professional appearance.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent and uses white space effectively to create hierarchy and clarity. The sections are well-organized, and the use of visual elements like icons and images is intentional and cohesive. There is a clear structure that guides the viewer's eye through the content.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, with a few well-chosen colors that complement each other. The use of gradients and accent colors is tasteful and adds visual interest without being distracting. The overall color scheme is modern and aligns with the design's aesthetic.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 5.0
+    },
+    "2": {
+      "candidate_id": "2",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_2.jpg",
+      "evaluated_at": "2025-09-02T09:54:12.484926",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography is clean and minimal, using a single typeface with subtle variations in weight and size. However, the hierarchy could be improved with more distinct size differences between headings and body text.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent with a clear grid structure. Icons are evenly spaced and aligned, creating a cohesive look. However, the page could benefit from more creative layout elements to enhance visual interest.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, with a good balance of vibrant and neutral tones. The use of color is restrained and intentional, enhancing the visual appeal of the icons.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.65,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.65,
+      "overall_confidence": 4.33
+    },
+    "20": {
+      "candidate_id": "20",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_20.jpg",
+      "evaluated_at": "2025-09-02T09:54:25.926600",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography is clean and legible, using a limited number of fonts. However, there is no strong hierarchy or creative use of typography that stands out.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout is very grid-like and lacks innovation. The sections feel disconnected, and there is no clear structure tying them together.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is varied but not overwhelming. However, it lacks a cohesive theme or sophisticated use of color to enhance the design.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.65,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.2,
+      "overall_confidence": 4
+    },
+    "22": {
+      "candidate_id": "22",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_22.jpg",
+      "evaluated_at": "2025-09-02T09:54:40.364385",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and consistent, using a limited number of fonts and styles. The hierarchy is clear, with effective use of weight and size variations to distinguish different sections. The use of a single typeface with subtle variations shows sophistication.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent and well-structured, with intentional use of white space to create hierarchy and clarity. The grid system is evident, and the elements are aligned properly, providing a cohesive look.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, using a restrained selection of colors that complement each other well. The use of minimal accent colors helps in creating hierarchy without overwhelming the design.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 5.0
+    },
+    "23": {
+      "candidate_id": "23",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_23.jpg",
+      "evaluated_at": "2025-09-02T09:54:53.477114",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and minimal, using a limited number of fonts and styles. There is a clear hierarchy with the use of size and weight variations, particularly in the headings and body text. The choice of fonts appears intentional and contributes to a sophisticated look.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent and uses white space effectively to create a clear hierarchy. The sections are well-organized, and there is a consistent vertical rhythm. However, some sections could benefit from more visual connection.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, using a few complementary colors with restraint. The use of color is meaningful and adds to the overall design without overwhelming it.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 4.33
+    },
+    "24": {
+      "candidate_id": "24",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_24.jpg",
+      "evaluated_at": "2025-09-02T09:55:08.429762",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography is clean and consistent, using a limited number of fonts and styles. However, the body text size appears slightly large, which can affect readability. The hierarchy is clear, but there is room for more sophistication in typeface selection.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is structured and follows a consistent pattern. However, it lacks innovation and feels somewhat generic. The use of white space is adequate but could be more intentional to enhance hierarchy.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is harmonious with a restrained use of colors. The background wave graphic adds a nice touch, but overall, the color usage is safe and could be more daring to add visual interest.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.45,
+      "overall_confidence": 4
+    },
+    "25": {
+      "candidate_id": "25",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_25.jpg",
+      "evaluated_at": "2025-09-02T09:55:19.845601",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and consistent, using a limited number of fonts and styles. The hierarchy is clear, with appropriate use of size and weight to differentiate sections. The use of sans-serif fonts contributes to a modern and professional look.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent and uses white space effectively to create a clear hierarchy. Each project section is distinct yet cohesive, with intentional alignment and spacing. The use of color blocks helps to separate sections without overwhelming the viewer.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, with complementary colors used to differentiate sections. The use of bold colors for project backgrounds adds vibrancy without being distracting. The overall color usage is restrained and purposeful.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 5.0
+    },
+    "26": {
+      "candidate_id": "26",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_26.jpg",
+      "evaluated_at": "2025-09-02T09:55:31.049433",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography is generally consistent, using a limited number of fonts with clear hierarchy. However, the size of the body text could be slightly smaller for better readability. The use of bold and regular weights helps in differentiating sections, but there is room for more sophistication in typeface selection.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is clean and organized, with a clear structure. However, the sections feel somewhat disconnected, lacking a cohesive element that ties them together. The use of white space is effective, but the alignment could be more consistent across sections.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, using complementary colors effectively to create a pleasant visual experience. The use of color is restrained and meaningful, enhancing the overall design without overwhelming it.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.3,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.35,
+      "overall_confidence": 4.33
+    },
+    "27": {
+      "candidate_id": "27",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_27.jpg",
+      "evaluated_at": "2025-09-02T09:55:44.281160",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography is clean and minimal, using a consistent sans-serif font throughout. However, there is limited variation in weight and style, which results in a somewhat flat hierarchy. The font size is appropriate, but there is room for more creative use of typography to enhance visual interest.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is straightforward and consistent, with a clear vertical rhythm. However, it lacks innovation and feels somewhat templated, with each section following the same pattern without much variation. The use of white space is adequate but could be more intentional to create a stronger hierarchy.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal, primarily using black, white, and grey. This creates a clean look but lacks vibrancy and does not leverage color to create hierarchy or emphasis. The restrained use of color is sophisticated but could benefit from more intentional accent colors.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.55,
+      "overall_confidence": 4
+    },
+    "28": {
+      "candidate_id": "28",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_28.jpg",
+      "evaluated_at": "2025-09-02T09:55:58.143560",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and consistent, using a limited number of fonts and styles. The hierarchy is clear, with larger, bold type for headings and smaller, lighter type for body text. The use of sans-serif fonts contributes to a modern and professional aesthetic.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is well-structured, with clear sections and consistent spacing. The use of white space helps create a clear hierarchy and guides the viewer's eye through the content. The alignment is consistent, contributing to a cohesive design.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal, primarily using black, white, and a subtle gradient. While this creates a clean look, it lacks a bit of vibrancy or contrast that could enhance visual interest. The gradient adds a touch of color but is used sparingly.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.7,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.65,
+      "overall_confidence": 4.67
+    },
+    "29": {
+      "candidate_id": "29",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_29.jpg",
+      "evaluated_at": "2025-09-02T09:56:09.562378",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography uses a limited number of fonts with clear intentionality. The hierarchy is well established through size and weight variations, particularly in the headings and body text. The use of color in the text adds a subtle but effective emphasis. However, some sections have slightly inconsistent spacing, which could be improved.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent and uses white space effectively to create a clear hierarchy. The sections are well-aligned, and the use of images is intentional and cohesive. However, the layout could benefit from slightly more innovative approaches to stand out further.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 5,
+          "explanation": "The color palette is harmonious and used with restraint. The use of blue as an accent color is effective and consistent throughout the design, creating a cohesive look. The minimal use of color demonstrates sophistication and enhances the overall design.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.3,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.3,
+      "overall_confidence": 4.33
+    },
+    "3": {
+      "candidate_id": "3",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_3.jpg",
+      "evaluated_at": "2025-09-02T09:56:17.934298",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and minimal, using a single typeface with subtle weight variations. This creates a clear visual hierarchy and sophistication. The alignment and spacing are consistent throughout.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is simple and consistent, but lacks any innovative or creative approaches. The use of white space is adequate but could be more intentional to enhance clarity.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal and restrained, primarily using black and white. While this is effective, it lacks any distinctive or creative use of color to enhance the design.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.35,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.45,
+      "overall_confidence": 4.33
+    },
+    "31": {
+      "candidate_id": "31",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_31.jpg",
+      "evaluated_at": "2025-09-02T09:56:29.074933",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography is clean and consistent, using a limited number of fonts and styles. However, there is a lack of strong visual hierarchy, as the type sizes and weights do not vary significantly to guide the viewer's eye effectively. The use of sans-serif fonts is appropriate but lacks creativity or distinctiveness.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is structured and maintains consistency across sections. There is a clear use of white space, but it does not always contribute to a strong visual hierarchy. The sections are distinct, but they lack innovative layout techniques that could enhance engagement.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal and cohesive, primarily using black, white, and blue accents. While this creates a clean look, it lacks the sophistication that could be achieved with more intentional use of color variations or accents.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 4.0
+    },
+    "32": {
+      "candidate_id": "32",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_32.jpg",
+      "evaluated_at": "2025-09-02T09:56:41.528483",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The portfolio uses a minimal typographic system with a single typeface and subtle variations in weight, which creates a clean and sophisticated look. The hierarchy is clear, with the designer's name and role standing out appropriately.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is simple and consistent, but lacks innovative elements. The use of white space is effective in creating clarity, though the overall composition feels somewhat plain and could benefit from more visual interest.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal, primarily black and white, which is executed well but lacks any accent colors that could add depth or highlight key information.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.35,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.35,
+      "overall_confidence": 4.33
+    },
+    "33": {
+      "candidate_id": "33",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_33.jpg",
+      "evaluated_at": "2025-09-02T09:56:50.921116",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and minimal, using a single typeface with subtle variations in weight and size, which creates a clear hierarchy. The use of serif fonts adds sophistication and aligns well with the overall aesthetic.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is well-structured with consistent spacing and alignment. The use of white space effectively creates clarity and focus. The grid layout for images is balanced, contributing to a cohesive visual experience.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, using a few complementary colors with restraint. The subtle use of color enhances the design without overpowering it. The monochrome elements are well-executed.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 5.0
+    },
+    "34": {
+      "candidate_id": "34",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_34.jpg",
+      "evaluated_at": "2025-09-02T09:57:02.529175",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and consistent, using a limited number of fonts and styles. The hierarchy is clear, with headings and body text well-differentiated. The use of a single typeface with variations in weight and size shows sophistication.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent and uses white space effectively to create a clear hierarchy. Sections are well-aligned and maintain a consistent rhythm. The use of device mockups is intentional and ties the sections together.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, using a minimal number of colors with intentional contrast. The use of accent colors is restrained and adds to the design's sophistication.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 5.0
+    },
+    "35": {
+      "candidate_id": "35",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_35.jpg",
+      "evaluated_at": "2025-09-02T09:57:12.743879",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is minimalistic and sophisticated, using a single typeface with subtle variations in weight and style. The hierarchy is clear, and the use of italics adds emphasis without overwhelming the design. The line spacing and alignment are consistent, enhancing readability.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is clean and consistent, with intentional use of white space that creates a clear hierarchy. The sections are well-organized, and the alignment is precise. The design achieves more with less, maintaining a minimalistic yet effective approach.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal, primarily monochrome, which works well for the overall design. However, there is a lack of variation in shades that could enhance the visual interest and hierarchy further.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.7,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.75,
+      "overall_confidence": 4.67
+    },
+    "36": {
+      "candidate_id": "36",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_36.jpg",
+      "evaluated_at": "2025-09-02T09:57:24.983451",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography uses a single typeface with subtle weight variations, achieving a clean and sophisticated look. The hierarchy is clear, with headers and body text differentiated effectively. The serif typeface adds a classic touch, enhancing readability.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is minimal and consistent, with a clear structure and intentional use of white space. The sections are well-aligned, and the vertical rhythm is maintained throughout. The simplicity of the layout enhances the focus on content.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 5,
+          "explanation": "The color palette is harmonious, using a monochrome scheme with subtle variations in shades of grey. This restraint in color usage demonstrates sophistication and enhances the overall aesthetic.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.3,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.3,
+      "overall_confidence": 5
+    },
+    "37": {
+      "candidate_id": "37",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_37.jpg",
+      "evaluated_at": "2025-09-02T09:57:42.155652",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography uses a few fonts with clear intentionality, creating a strong visual hierarchy. The use of bold and regular weights effectively distinguishes sections and emphasizes key points. The font choice is modern and clean, contributing to the overall aesthetic.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent and uses white space effectively to create hierarchy and clarity. The sections are well-organized, and the spacing between elements is consistent, contributing to a clean and professional look.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, using a minimal number of colors with restraint. The use of accent colors is intentional and adds to the design without overwhelming it. The overall effect is sophisticated and cohesive.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 5
+    },
+    "38": {
+      "candidate_id": "38",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_38.jpg",
+      "evaluated_at": "2025-09-02T09:57:55.953562",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and consistent, using a limited number of fonts and styles. The hierarchy is clear, with larger, bold text for headings and smaller, lighter text for body copy. The use of a single typeface with variations in weight and size shows sophistication.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent and uses white space effectively to create a clear hierarchy. The sections are well-organized, and the alignment is precise. The use of grid layout for project showcases adds to the overall clarity.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, using soft pastels that complement each other. The restraint in color usage demonstrates sophistication, with minimal accent colors used to highlight important elements.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 5.0
+    },
+    "39": {
+      "candidate_id": "39",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_39.jpg",
+      "evaluated_at": "2025-09-02T09:58:06.606737",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and intentional, using a limited number of fonts and styles. The hierarchy is clear, with effective use of weight and color to differentiate sections. The use of color in the text adds a subtle emphasis without overpowering the design.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent and uses white space effectively to create a clear hierarchy. The sections are distinct yet tied together through consistent spacing and alignment. The design feels cohesive and intentional.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, using complementary colors with restraint. The use of accent colors for emphasis is effective and does not overwhelm the overall design. The subtle variations in shades add depth.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 5
+    },
+    "4": {
+      "candidate_id": "4",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_4.jpg",
+      "evaluated_at": "2025-09-02T09:58:28.389498",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography uses a single serif typeface with subtle variations in weight and size, creating a clean and professional appearance. The hierarchy is clear, with job titles and company names in bold, while the body text is lighter, aiding readability.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent and uses white space effectively to separate sections. The alignment is precise, and the use of a single-column layout ensures clarity. The sections are well-organized, contributing to an overall cohesive design.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal, primarily black and white, with a subtle use of grey. While this is effective for a clean look, there is a lack of variation or accent colors that could enhance visual interest.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.7,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.75,
+      "overall_confidence": 4.67
+    },
+    "40": {
+      "candidate_id": "40",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_40.jpg",
+      "evaluated_at": "2025-09-02T09:58:37.839063",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and uses a limited number of fonts and styles, creating a clear hierarchy. The use of bold and regular weights adds emphasis where needed, and the large type size for the introduction is effective for drawing attention.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is generally consistent, but there are areas where spacing could be improved. The sections are distinct, but the alignment of elements feels slightly off in some areas, such as the placement of the 'Creative Canvas' section.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, using a limited range of colors effectively. The red accents are used to highlight important areas, and the overall palette is cohesive.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.65,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.65,
+      "overall_confidence": 4.67
+    },
+    "41": {
+      "candidate_id": "41",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_41.jpg",
+      "evaluated_at": "2025-09-02T09:58:48.506687",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and consistent, using a limited number of fonts and styles. The hierarchy is clear, with a good balance between headings and body text. The use of serif fonts for the main text adds a touch of elegance and sophistication.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is generally consistent, but there are areas where the spacing feels slightly cramped, such as the footer section. The use of white space is effective in most parts, but some sections could benefit from more breathing room.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, with a good use of complementary colors. The use of vibrant backgrounds for project showcases adds visual interest without overwhelming the viewer.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.65,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.65,
+      "overall_confidence": 4.67
+    },
+    "42": {
+      "candidate_id": "42",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_42.jpg",
+      "evaluated_at": "2025-09-02T09:58:59.747774",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography uses a limited number of fonts, which helps maintain consistency. However, the script font for headings may not be the best choice for readability and doesn't strongly contribute to hierarchy. The body text size is appropriate, but the hierarchy could be improved with more distinct variations in weight or style.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is clean and consistent, with a clear structure and intentional use of white space. The sections are well-defined, and the visual hierarchy is maintained throughout. However, some elements, like the process diagrams, could be better integrated into the overall design.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious and restrained, using soft, neutral tones that create a calming effect. The use of color is consistent and supports the overall design aesthetic. However, there could be more contrast in certain areas to enhance readability.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.65,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.65,
+      "overall_confidence": 4
+    },
+    "43": {
+      "candidate_id": "43",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_43.jpg",
+      "evaluated_at": "2025-09-02T09:59:10.396904",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography uses a limited number of fonts and styles with clear intentionality. The hierarchy is well-established with a larger, bold heading and smaller, lighter body text. The alignment is consistent, and the text is easy to read.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is clean and consistent, with intentional use of white space creating a clear hierarchy. The sections are well-aligned, and the image placement complements the text without overwhelming it.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal, primarily using black, white, and a hint of blue in the image. While this is effective, it lacks a bit of vibrancy or contrast that could enhance the design further.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.7,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.75,
+      "overall_confidence": 4.67
+    },
+    "44": {
+      "candidate_id": "44",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_44.jpg",
+      "evaluated_at": "2025-09-02T09:59:21.415472",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography uses a minimal number of fonts with clear intentionality. The use of a single typeface with variations in weight and size creates a strong hierarchy. The choice of a clean sans-serif font contributes to a modern and sophisticated look.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent with a clear structure. The use of white space effectively separates sections, creating clarity and hierarchy. The grid layout with two columns is well-executed, providing balance and organization.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal, primarily using black, white, and grey, with a subtle orange accent. While the restraint is commendable, the use of color could be more intentional to enhance visual interest and hierarchy.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.7,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.65,
+      "overall_confidence": 4.67
+    },
+    "46": {
+      "candidate_id": "46",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_46.jpg",
+      "evaluated_at": "2025-09-02T09:59:34.955461",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and consistent, using a limited number of fonts with clear hierarchy. The use of bold and regular weights helps in creating a visual structure. However, some sections could benefit from more variation in size to enhance readability.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is generally consistent with a clear grid structure. However, some sections feel cramped, and the spacing between elements could be more uniform to improve clarity and flow.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, with effective use of complementary colors to highlight key areas. The restraint in color usage demonstrates sophistication, though some areas could benefit from more contrast to draw attention.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.65,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.65,
+      "overall_confidence": 4.67
+    },
+    "47": {
+      "candidate_id": "47",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_47.jpg",
+      "evaluated_at": "2025-09-02T09:59:41.115366",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The portfolio uses a limited number of fonts and styles, which helps maintain consistency. However, the hierarchy is not very strong, with similar font sizes and weights across different sections, making it harder to distinguish between headings and body text.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout lacks consistency, with different sections feeling disconnected. The use of white space is inconsistent, leading to cramped sections and excessive empty spaces in others. The alignment of elements is not always clear, which affects the overall structure.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal, mostly relying on black, white, and a few accent colors. While this restraint is generally positive, the lack of intentional contrast or harmony between colors makes the design feel flat.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.65,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 1.95,
+      "overall_confidence": 3.67
+    },
+    "49": {
+      "candidate_id": "49",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_49.jpg",
+      "evaluated_at": "2025-09-02T09:59:51.765699",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and minimal, using a limited number of fonts and styles. The hierarchy is clear with well-chosen sizes and weights that guide the viewer's eye effectively.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is consistent with a simple grid structure. However, it lacks innovative elements and the use of white space could be more intentional to enhance visual interest.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal and harmonious, primarily using neutral tones. However, it could benefit from more intentional use of accent colors to create hierarchy and focus.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.35,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.35,
+      "overall_confidence": 4.33
+    },
+    "5": {
+      "candidate_id": "5",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_5.jpg",
+      "evaluated_at": "2025-09-02T10:00:01.955213",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography uses a clean, modern sans-serif font with clear hierarchy. The large headings and smaller body text create a strong visual structure. The use of bold for emphasis is effective and not overdone.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is straightforward and consistent, with clear sections and adequate white space. However, it lacks innovative elements and feels somewhat standard. The alignment is consistent, but the overall composition could be more dynamic.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is minimal and effective, using mostly neutral tones with occasional accents. The restraint in color usage adds sophistication, and the colors complement the imagery well.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.65,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.65,
+      "overall_confidence": 4.67
+    },
+    "50": {
+      "candidate_id": "50",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_50.jpg",
+      "evaluated_at": "2025-09-02T10:00:23.101175",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography is generally consistent with a limited number of fonts used. However, there are some instances of overly large type sizes and inconsistent spacing, particularly in the lower section with the black and white image.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout lacks consistency, with different sections feeling disconnected. The placement of images and text does not follow a clear structure, leading to a somewhat chaotic appearance.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is mostly harmonious, with a restrained use of colors. However, some sections, like the orange app screens, use colors that don't integrate well with the rest of the portfolio.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.65,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 2.3,
+      "overall_confidence": 4
+    },
+    "51": {
+      "candidate_id": "51",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_51.jpg",
+      "evaluated_at": "2025-09-02T10:00:35.188388",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography uses a limited number of fonts with clear intentionality, creating a strong visual hierarchy. The use of different weights and sizes is subtle yet effective, enhancing readability and structure. The choice of fonts complements the overall design aesthetic.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 5,
+          "explanation": "The layout is consistent and well-organized, with intentional use of white space to create clarity and hierarchy. The grid system is evident, and elements are aligned properly, contributing to a cohesive visual flow. The presentation of projects is uniform, with each section tied together visually.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, using a few colors with restraint. The colors are complementary and used meaningfully to highlight different sections. The minimal use of color demonstrates sophistication and enhances the overall design.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.35,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.45,
+      "overall_confidence": 5
+    },
+    "52": {
+      "candidate_id": "52",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_52.jpg",
+      "evaluated_at": "2025-09-02T10:00:45.795665",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography is clean with a limited number of fonts, which helps maintain clarity. However, there is a lack of hierarchy in the text, as the size and weight variations are minimal, making it hard to distinguish between different sections at a glance.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is consistent with a clear structure, but it lacks innovation. The use of white space is decent, but the sections feel somewhat disconnected due to the varying background patterns.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, with a good balance of muted tones and accents. The use of color in backgrounds adds personality without overwhelming the content.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.3,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.35,
+      "overall_confidence": 4.33
+    },
+    "53": {
+      "candidate_id": "53",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_53.jpg",
+      "evaluated_at": "2025-09-02T10:01:01.403254",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography is clean and uses a limited number of styles, which helps maintain clarity. However, there is nothing particularly innovative or distinctive about the type choices. The font sizes and line spacing are consistent, but the hierarchy could be more pronounced.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is straightforward and functional, with a clear structure. However, it lacks creativity and does not utilize white space as effectively as it could to create a more dynamic composition. The sections are distinct but could be tied together more cohesively.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal and consistent, which helps maintain a professional appearance. However, it lacks depth and could benefit from more intentional contrast or variation to add interest and highlight key elements.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 4.0
+    },
+    "54": {
+      "candidate_id": "54",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_54.jpg",
+      "evaluated_at": "2025-09-02T10:01:16.181285",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and consistent, using a limited number of fonts and styles. There is a clear hierarchy with well-chosen sizes and weights. The use of sans-serif fonts provides a modern and professional look, and the spacing is well-controlled.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent and uses white space effectively to create a clear hierarchy. The grid system is well-implemented, and the alignment of elements is precise. The project thumbnails are well-organized, contributing to a cohesive presentation.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, with a restrained use of colors that complement each other. The dark background contrasts well with the lighter text and images, enhancing readability and focus.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 5.0
+    },
+    "6": {
+      "candidate_id": "6",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_6.jpg",
+      "evaluated_at": "2025-09-02T10:01:28.946407",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is sophisticated, with a restrained use of fonts and styles. The use of a single typeface with subtle variations in weight and color demonstrates sophistication. The hierarchy is clear, and the typography contributes to the overall aesthetic of the portfolio.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent and uses white space effectively to create hierarchy and clarity. There is a clear vertical rhythm, and the sections are tied together with a cohesive design language. The intentional placement of elements contributes to a clean and organized appearance.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious, with a restrained use of colors that are meaningful to the design. The minimal use of accent colors helps create hierarchy without overwhelming the viewer. The colors are complementary and contribute to the overall aesthetic.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 5.0
+    },
+    "7": {
+      "candidate_id": "7",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_7.jpg",
+      "evaluated_at": "2025-09-02T10:01:38.844738",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography is clean and consistent, using a limited number of fonts and styles. The hierarchy is clear with a good use of weight and size variations to differentiate headings from body text. The alignment is consistent throughout the page.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is well-organized with consistent spacing and alignment. The use of white space is effective in creating a clear hierarchy and guiding the viewer's eye through the content. The placement of project cards is intentional and visually appealing.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious and used with restraint. Each project card has a distinct background color that complements the overall design without overwhelming it. The use of color helps in differentiating sections and maintaining visual interest.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4,
+      "overall_confidence": 5
+    },
+    "9": {
+      "candidate_id": "9",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_9.jpg",
+      "evaluated_at": "2025-09-02T10:01:51.619269",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The typography uses a limited number of fonts with clear intentionality, creating a strong visual hierarchy. The choice of typefaces is modern and professional, with well-considered weight variations. The alignment is consistent throughout the portfolio.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The layout is consistent, with a clear structure and intentional use of white space. The sections are well-organized, and the spacing between elements is consistent, creating a clean and professional appearance.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color palette is harmonious and restrained, with a few accent colors used effectively to highlight important elements. The use of color is subtle and sophisticated, contributing to a cohesive design.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 5.0
+    }
+  }
+}

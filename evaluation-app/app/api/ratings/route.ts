@@ -29,7 +29,17 @@ export async function GET(request: NextRequest) {
           const filePath = path.join(EVALUATION_RESULTS_PATH, mostRecentFile);
           const data = await fs.readFile(filePath, 'utf-8');
           const parsed = JSON.parse(data);
-          return NextResponse.json(parsed.candidate_ratings || {});
+          
+          // Add metadata to each candidate rating
+          const candidateRatings = parsed.candidate_ratings || {};
+          const metadata = parsed.evaluation_metadata;
+          
+          // Attach metadata to each evaluation
+          Object.keys(candidateRatings).forEach(candidateId => {
+            candidateRatings[candidateId].evaluation_metadata = metadata;
+          });
+          
+          return NextResponse.json(candidateRatings);
         } catch (error: any) {
           console.error('Error reading most recent AI ratings:', error);
           return NextResponse.json({});
@@ -40,7 +50,17 @@ export async function GET(request: NextRequest) {
           const filePath = path.join(EVALUATION_RESULTS_PATH, filename);
           const data = await fs.readFile(filePath, 'utf-8');
           const parsed = JSON.parse(data);
-          return NextResponse.json(parsed.candidate_ratings || {});
+          
+          // Add metadata to each candidate rating
+          const candidateRatings = parsed.candidate_ratings || {};
+          const metadata = parsed.evaluation_metadata;
+          
+          // Attach metadata to each evaluation
+          Object.keys(candidateRatings).forEach(candidateId => {
+            candidateRatings[candidateId].evaluation_metadata = metadata;
+          });
+          
+          return NextResponse.json(candidateRatings);
         } catch (error: any) {
           console.error(`Error reading AI ratings from ${filename}:`, error);
           return NextResponse.json({});
