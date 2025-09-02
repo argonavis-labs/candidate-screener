@@ -24,6 +24,7 @@ export async function GET() {
             model: parsed.evaluation_metadata?.model_used?.model || 'unknown',
             total_candidates: parsed.evaluation_metadata?.total_candidates_evaluated || 0,
             complete: parsed.evaluation_metadata?.evaluation_complete || false,
+            hideFromDashboard: parsed.evaluation_metadata?.hideFromDashboard || false,
           };
         } catch (error) {
           console.error(`Error reading ${filename}:`, error);

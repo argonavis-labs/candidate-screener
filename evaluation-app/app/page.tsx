@@ -36,6 +36,7 @@ interface EvaluationRun {
   model: string;
   total_candidates: number;
   complete: boolean;
+  hideFromDashboard: boolean;
 }
 
 export default function Home() {
@@ -54,6 +55,10 @@ export default function Home() {
   
   // Sorting state
   const [sortMode, setSortMode] = useState<"numerical" | "gap">("numerical");
+  
+  // Analytics controls
+  const [showHiddenRuns, setShowHiddenRuns] = useState(false);
+  const [sortByGap, setSortByGap] = useState(false);
 
   // Generate sorted list of candidates based on sort mode
   const candidateIds = useMemo(() => {
@@ -270,8 +275,6 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-4">
-
-
             {activeTab === "evaluation" && (
               <>
                 {/* Sort dropdown */}
@@ -308,6 +311,39 @@ export default function Home() {
                   >
                     <Search className="h-3 w-3" />
                   </Button>
+                </div>
+              </>
+            )}
+
+            {activeTab === "analytics" && (
+              <>
+                {/* Show hidden runs toggle */}
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="show-hidden-runs"
+                    checked={showHiddenRuns}
+                    onCheckedChange={setShowHiddenRuns}
+                  />
+                  <Label htmlFor="show-hidden-runs" className="text-sm">
+                    Show hidden runs
+                  </Label>
+                  {showHiddenRuns && (
+                    <div className="text-sm text-muted-foreground ml-2">
+                      ({evaluationRuns.filter(r => r.hideFromDashboard).length} hidden)
+                    </div>
+                  )}
+                </div>
+
+                {/* Sort by gap toggle */}
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="sort-by-gap"
+                    checked={sortByGap}
+                    onCheckedChange={setSortByGap}
+                  />
+                  <Label htmlFor="sort-by-gap" className="text-sm">
+                    Sort by gap
+                  </Label>
                 </div>
               </>
             )}
@@ -446,6 +482,8 @@ export default function Home() {
             humanRatings={humanRatings}
             allAiRatings={allAiRatings}
             evaluationRuns={evaluationRuns}
+            showHiddenRuns={showHiddenRuns}
+            sortByGap={sortByGap}
           />
         </div>
       </TabsContent>

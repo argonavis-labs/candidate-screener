@@ -1,11 +1,11 @@
 {
   "evaluation_metadata": {
-    "timestamp": "2025-09-01T14:41:24.879171",
+    "timestamp": "2025-09-01T16:22:10.345854",
     "end_time": null,
     "duration_seconds": null,
     "model_used": {
       "provider": "OpenAIProvider",
-      "model": "gpt-5"
+      "model": "gpt-4o"
     },
     "exemplar_images": [
       "examplar-images/exemplar_1.jpg",
@@ -17,7 +17,7 @@
       "examplar-images/exemplar_7.jpg",
       "examplar-images/exemplar_8.jpg"
     ],
-    "total_candidates_evaluated": 1,
+    "total_candidates_evaluated": 2,
     "prompt_length_chars": 9962,
     "evaluation_complete": false,
     "hideFromDashboard": true
@@ -28,29 +28,57 @@
       "candidate_id": "1",
       "portfolio_category": "Unknown",
       "image_filename": "candidate_1.jpg",
-      "evaluated_at": "2025-09-01T14:42:14.385286",
+      "evaluated_at": "2025-09-01T16:22:25.758088",
       "criteria": {
         "typography": {
-          "score": 5,
-          "explanation": "Highly intentional typographic voice: a single elegant italic serif is used at display sizes with strong rhythm and restraint. The left-aligned block has consistent weight, tight but controlled leading, and clean rag. Hierarchy is created via subtle techniques—accent color on key words and small superscript-style numerals—without introducing extra fonts or noisy styling. While an all-italic block can risk readability in longer passages, here it works as a hero statement and feels sophisticated.",
+          "score": 4,
+          "explanation": "The typography uses a limited selection of fonts with clear intentionality. The serif typeface adds elegance, and the use of color in the name creates a strong focal point. The hierarchy is well-established through size and color variations.",
           "confidence": 4
         },
         "layout_composition": {
           "score": 4,
-          "explanation": "Minimal, focused composition with generous white space creates a clear focal area. The text block sits on a consistent left edge within a wide canvas, and the rotated right-side navigation provides a distinctive secondary anchor without competing for attention. Spacing between lines and the overall block is even. Minor nit: the measure of each line appears slightly long for comfortable reading on large screens, and the top whitespace may feel a touch excessive, but overall the structure is deliberate and cohesive.",
-          "confidence": 3
+          "explanation": "The layout is clean and minimal, with a strong use of white space that enhances readability. The vertical navigation on the right is unobtrusive and maintains the minimalist aesthetic.",
+          "confidence": 4
         },
         "color": {
-          "score": 5,
-          "explanation": "Refined, restrained palette: a soft light-grey background paired with deep navy text reduces glare while maintaining strong contrast. A saturated royal blue is used sparingly for emphasis/links, creating a crisp hierarchy and interactive cue. No unnecessary colors or heavy shadows; the scheme feels harmonious and premium.",
+          "score": 4,
+          "explanation": "The color palette is restrained, with a focus on black, white, and a single accent color. This creates a harmonious and sophisticated look.",
           "confidence": 4
         }
       },
       "red_flags": [],
-      "base_weighted_score": 4.65,
+      "base_weighted_score": 4,
       "penalty_applied": 0,
-      "overall_weighted_score": 4.65,
-      "overall_confidence": 3.67
+      "overall_weighted_score": 4,
+      "overall_confidence": 4
+    },
+    "10": {
+      "candidate_id": "10",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_10.jpg",
+      "evaluated_at": "2025-09-01T16:22:42.509795",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography is clean and legible, using a limited number of fonts and styles. However, the hierarchy could be improved with more variation in weight or size to better differentiate sections.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout is straightforward and functional, with clear sections. However, there is a lack of innovative layout patterns or creative use of space.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal and consistent, primarily using white and blue. While this creates a clean look, it lacks the sophistication or creativity seen in higher-scoring portfolios.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3,
+      "overall_confidence": 4
     }
   }
 }

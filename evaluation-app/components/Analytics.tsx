@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { EyeOff, Eye } from "lucide-react";
 import {
   ChartContainer,
   ChartTooltip,
@@ -33,7 +33,10 @@ interface AnalyticsProps {
     model: string;
     total_candidates: number;
     complete: boolean;
+    hideFromDashboard: boolean;
   }>;
+  showHiddenRuns: boolean;
+  sortByGap: boolean;
 }
 
 // Helper function to calculate analytics for a single run
@@ -150,19 +153,56 @@ export default function Analytics({
   humanRatings,
   allAiRatings,
   evaluationRuns,
+  showHiddenRuns,
+  sortByGap,
 }: AnalyticsProps) {
-  const [sortByGap, setSortByGap] = useState(false);
 
-  // Calculate analytics for each run
+  // Filter runs based on hideFromDashboard flag and showHiddenRuns toggle
+  const filteredRuns = useMemo(() => {
+    return evaluationRuns.filter(run => {
+      if (showHiddenRuns) {
+        return true; // Show all runs when toggle is on
+      }
+      return !run.hideFromDashboard; // Only show non-hidden runs by default
+    });
+  }, [evaluationRuns, showHiddenRuns]);
+
+  // Calculate analytics for filtered runs
   const allRunAnalytics = useMemo(() => {
-    return evaluationRuns.map((run) => ({
+    return filteredRuns.map((run) => ({
       run,
       analytics: calculateRunAnalytics(
         humanRatings,
         allAiRatings[run.filename] || {}
       ),
     }));
-  }, [humanRatings, allAiRatings, evaluationRuns]);
+  }, [humanRatings, allAiRatings, filteredRuns]);
+
+  // Function to toggle hide status of a run
+  const toggleHideRun = async (filename: string, currentHideStatus: boolean) => {
+    try {
+      const response = await fetch(`/api/evaluation-runs/${filename}/hide`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          hideFromDashboard: !currentHideStatus,
+        }),
+      });
+
+      if (response.ok) {
+        // Force a page refresh to reload the evaluation runs
+        // This is a simple approach - in a more complex app you might want to 
+        // update state locally and re-fetch just the runs data
+        window.location.reload();
+      } else {
+        console.error('Failed to toggle hide status');
+      }
+    } catch (error) {
+      console.error('Error toggling hide status:', error);
+    }
+  };
 
   // Prepare scatter plot data for each run
   const scatterPlotData = useMemo(() => {
@@ -243,18 +283,6 @@ export default function Analytics({
 
   return (
     <div className="space-y-8">
-      {/* Global Controls */}
-      <div className="flex items-center space-x-2 justify-end">
-        <Switch
-          id="sort-by-gap"
-          checked={sortByGap}
-          onCheckedChange={setSortByGap}
-        />
-        <Label htmlFor="sort-by-gap" className="text-sm">
-          Sort by gap
-        </Label>
-      </div>
-
       {/* Display each run's analytics sequentially */}
       {scatterPlotData.map((runData, runIndex) => {
         const {
@@ -284,6 +312,31 @@ export default function Analytics({
                       {run.total_candidates} candidates evaluated
                       {run.complete ? " (Complete)" : " (Incomplete)"}
                     </p>
+                    {run.hideFromDashboard && (
+                      <div className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded">
+                        Hidden
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => toggleHideRun(run.filename, run.hideFromDashboard)}
+                      className="flex items-center gap-1"
+                    >
+                      {run.hideFromDashboard ? (
+                        <>
+                          <Eye className="h-3 w-3" />
+                          Show
+                        </>
+                      ) : (
+                        <>
+                          <EyeOff className="h-3 w-3" />
+                          Hide
+                        </>
+                      )}
+                    </Button>
                   </div>
                 </div>
               </div>

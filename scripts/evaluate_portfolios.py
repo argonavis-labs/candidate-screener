@@ -8,6 +8,7 @@ import os
 import json
 import base64
 import sys
+import argparse
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from abc import ABC, abstractmethod
@@ -150,7 +151,15 @@ class OpenAIProvider(ModelProvider):
                 # GPT-5 only supports default temperature (1)
                 # Not setting temperature or max_completion_tokens will use defaults
                 pass
+            elif self.model.startswith("o1"):
+                # o1 reasoning models have specific requirements
+                # No temperature or max_tokens supported - uses reasoning approach
+                # Remove response_format for o1 as it may not support structured output
+                if "response_format" in completion_params:
+                    del completion_params["response_format"]
+                    print("   ⚠️  Note: o1 model may not support structured JSON output")
             else:
+                # GPT-4o and other models
                 completion_params["max_tokens"] = 2000
                 completion_params["temperature"] = 0.3  # Lower temperature for more consistent evaluations
             
@@ -568,8 +577,16 @@ class PortfolioEvaluator:
 def main():
     """Main execution function."""
     
-    # Check for debug flag
-    debug = '--debug' in sys.argv or os.getenv('DEBUG', '').lower() in ('true', '1', 'yes')
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Evaluate portfolio candidates using AI vision models')
+    parser.add_argument('--debug', action='store_true', help='Enable debug mode with verbose output')
+    parser.add_argument('--model', choices=['gpt-4o', 'gpt-5', 'o1'], 
+                        help='Override model selection (gpt-4o, gpt-5, or o1)')
+    
+    args = parser.parse_args()
+    
+    # Check for debug flag (command line or environment variable)
+    debug = args.debug or os.getenv('DEBUG', '').lower() in ('true', '1', 'yes')
     
     # Load environment variables
     load_dotenv()
@@ -588,7 +605,13 @@ def main():
     provider_choice = os.getenv("MODEL_PROVIDER", "openai").lower()
     
     if provider_choice == "openai":
-        model_name = os.getenv("OPENAI_MODEL", "gpt-5")
+        # Model selection priority: command line > environment variable > default
+        if args.model:
+            model_name = args.model
+            print(f"🔄 Command line override: using {model_name}")
+        else:
+            model_name = os.getenv("OPENAI_MODEL", "gpt-5")
+        
         if debug:
             print(f"🔧 Debug mode enabled")
             print(f"🤖 Using OpenAI model: {model_name}")
