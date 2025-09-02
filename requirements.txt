@@ -6,7 +6,7 @@ requests==2.31.0
 
 # Model provider SDKs (install based on which provider you use)
 openai==1.12.0  # For OpenAI GPT-4o
-# anthropic==0.21.0  # For Claude (uncomment if using Claude)
+anthropic==0.65.0  # For Claude (Sonnet 4, Opus 4.1)
 
 # Image processing
 Pillow==10.2.0  # For compressing candidate images

@@ -1,0 +1,1529 @@
+{
+  "evaluation_metadata": {
+    "timestamp": "2025-09-02T11:16:33.615673",
+    "end_time": "2025-09-02T11:38:08.259736",
+    "duration_seconds": 1294.644063,
+    "model_used": {
+      "provider": "ClaudeProvider",
+      "model": "claude-sonnet-4-20250514"
+    },
+    "exemplar_images": [
+      "examplar-images/exemplar_1.jpg",
+      "examplar-images/exemplar_2.jpg",
+      "examplar-images/exemplar_3.jpg",
+      "examplar-images/exemplar_4.jpg",
+      "examplar-images/exemplar_5.jpg",
+      "examplar-images/exemplar_6.jpg",
+      "examplar-images/exemplar_7.jpg",
+      "examplar-images/exemplar_8.jpg"
+    ],
+    "total_candidates_evaluated": 50,
+    "prompt_length_chars": 9962,
+    "evaluation_complete": true,
+    "no_exemplars_mode": false
+  },
+  "full_prompt_used": "# EVALUATION PROMPT\n\nYou are a senior product design hiring manager evaluating portfolio websites based on **visual craft only**. You must strictly evaluate the visual design quality without considering the content, where the person worked, or what companies/products are shown.\n\n## Evaluation Rules:\n\n1. **Score each dimension on a 1-5 scale** using the provided rubric anchors:\n   - 1: Terrible\n   - 2: Below average\n   - 3: Average\n   - 4: Above average\n   - 5: Fantastic\n\n2. **For each dimension, you MUST:**\n   - Provide a score (1-5)\n   - Write a detailed explanation of WHY you gave that score\n   - Cite specific visual evidence (e.g., \"inconsistent spacing between sections\", \"serif/sans-serif pairing creates strong hierarchy\")\n   - Rate your confidence in the score (1-5 scale where 1=very uncertain, 5=very confident)\n\n3. **Avoid context bias:**\n   - DO NOT be influenced by company names, logos, or prestigious brands shown\n   - DO NOT consider the actual content/copy of case studies\n   - DO NOT factor in where the person worked or what they worked on\n   - Focus ONLY on the visual execution and design craft\n\n4. **Be consistent with the exemplars:**\n   - Use the provided exemplar ratings as calibration for your scores\n   - Apply the same standards strictly across all evaluations\n\n5. **Check for red flags** and list them if present:\n   - template_scent_high\n   - sloppy_images\n   - process_soup\n\n## Output Format:\n\nReturn **only** valid JSON matching this exact structure:\n```json\n{\n  \"candidate_id\": \"X\",\n  \"scores\": {\n    \"typography\": {\n      \"score\": 1-5,\n      \"explanation\": \"detailed reasoning with specific evidence\",\n      \"confidence\": 1-5\n    },\n    \"layout_composition\": {\n      \"score\": 1-5,\n      \"explanation\": \"detailed reasoning with specific evidence\", \n      \"confidence\": 1-5\n    },\n    \"color\": {\n      \"score\": 1-5,\n      \"explanation\": \"detailed reasoning with specific evidence\",\n      \"confidence\": 1-5\n    }\n  },\n  \"red_flags\": [\"list any that apply\"],\n  \"overall_weighted_score\": calculated_number,\n  \"overall_confidence\": calculated_number\n}\n```\n\n## Scoring Calculation:\n- base_score = (typography \u00d7 0.35) + (layout_composition \u00d7 0.35) + (color \u00d7 0.30)\n- penalty = sum of red flag penalties:\n  - template_scent_high: 0.5 points\n  - sloppy_images: 0.3 points\n  - process_soup: 0.2 points\n- overall_weighted_score = base_score - penalty  // scores can go below 0\n- overall_confidence = average of individual dimension confidences\n\n\n# RUBRIC (authoritative)\n\nThe rubric is the primary guide. Follow it strictly. Exemplars are calibration anchors only.\n\n{\n  \"rubric\": {\n    \"dimensions\": [\n      {\n        \"id\": \"typography\",\n        \"weight\": 0.35,\n        \"good_anchor\": [\n          \"Uses few fonts and styles with clear intentionality\",\n          \"Achieves great visual hierarchy and information architecture with a few well-chosen styles\",\n          \"Excellence through restraint - using single typeface with subtle weight/color variations shows sophistication\",\n          \"Bonus points for creative and effective use of typography as signature design elements\",\n          \"Alternatively, uses a lot of fonts but with a strong design intent and strategy (rare but possible)\",\n          \"Use of paid typefaces from type foundries\",\n          \"If combining multiple typefaces, they are choosing contrasting fonts that also have something to tie them together\",\n          \"If using google fonts they are using the good ones (IBM plex, Inter, Work, Fira, etc.)\",\n          \"Sophisticated use of minimal typography systems - achieving hierarchy through subtle techniques\"\n        ],\n        \"weak_anchor\": [\n          \"Too many fonts, too many weights, sizes, styles where it's not needed or without a clear design intent\",\n          \"Overly large type sizes for body text (18px+)\",\n          \"Excessive all-caps, letter-spacing\",\n          \"Different sections of the website change text alignment in an unintentional way e.g. left, center, then back to left\",\n          \"Type sizes don't have a scale and rythm. e.g. captions are 11px, body is 18px, and headers are 22px\",\n          \"Unconstrained line-width that make reading hard. Lines should be between 40 to 100 chars ish\",\n          \"Usage of common low quality free google fonts\",\n          \"Choosing a combination of typefaces that don't work well together either because they are too similar, or too contrasting with nothing to tie them together\",\n          \"Random, overly large, or overley small line-spacing that leads to poor hierarchy\"\n        ]\n      },\n      {\n        \"id\": \"layout_composition\",\n        \"weight\": 0.35,\n        \"good_anchor\": [\n          \"Consistency: uses a few layout patterns judiciously.\",\n          \"Intentional use of white space to create hierarchy and clarity\",\n          \"There is a vertical rhythm where spacing is consistent\",\n          \"Innovative layouts: Creative approaches like chat interfaces, newspaper columns, or unique navigation patterns\",\n          \"If there are screenshots of the work, they are laid out intentionally within the screenshot and the different screenshots have some elements visually tying them together (even if small like a shared color palette or corner radius) even as the work is distinct\",\n          \"Achieving more with less - minimal layouts that are highly effective\"\n        ],\n        \"weak_anchor\": [\n          \"Every section feels like it's different from the next, with no element tying them together\",\n          \"Inconsistent gutters\\u00a0\\u2013 different sections of the website have different widths in an unintentinal way\",\n          \"No clear structure; elements appear randomly placed with no alignment\",\n          \"Screenshots of the work are haphazardly presented. Generic device mocks are used. Nothing to tie the screenshots together to make them feel like they belong on the same site\",\n          \"Poor spacing: Cramped elements or excessive empty space that doesn't serve a purpose\",\n          \"Competing focal points: Everything tries to grab attention equally, creating visual noise.\"\n        ]\n      },\n      {\n        \"id\": \"color\",\n        \"weight\": 0.3,\n        \"good_anchor\": [\n          \"Harmonious palette: the colors chosen are either complementary or adjacent. they share either intentional contrast or intentional similarity\",\n          \"There are few colours and they're used with restraint in ways that are meaningful to the design.\",\n          \"Monochrome mastery - all-grey/black/white palettes can be excellent when used with intentional variation\",\n          \"Less is more - restraint in color usage can demonstrate sophistication\",\n          \"The shadows are dialed in - using more than default css value. maybe they have a hue, or are very diffuse\",\n          \"Subtle color techniques: using shades of grey or minimal accent colors to create hierarchy\"\n        ],\n        \"weak_anchor\": [\n          \"Too many colours that don't share a throughline or intentional contrast\",\n          \"Or, if the site is minimal greyscale, then there is lack of intentional use of different shades of grey. \",\n          \"Default looking shadows that look too dark for the site, or don't match the hue\"\n        ]\n      }\n    ],\n    \"red_flags\": [\n      \"template_scent_high: the site clearly feels like it was from a template - generic layouts, standard components, no customization\",\n      \"sloppy_images: they show their work, but it's sloppily laid out - wrong zoom level, generic device mockups without customization, inconsistent image treatments, poor quality/compression artifacts, can't see what's going on\",\n      \"process_soup: the case studies spend too much time talking about process rather than showing the work\"\n    ],\n    \"rating_scale\": [\n      \"1: Terrible\",\n      \"2: Below average\",\n      \"3: Average\",\n      \"4: Above average\",\n      \"5: Fantastic\"\n    ]\n  }\n}\n\n\n# EXEMPLAR CALIBRATION (compact)\n\n{\n  \"exemplars\": [\n    {\n      \"exemplar_id\": \"1\",\n      \"portfolio_category\": \"Minimal\",\n      \"criteria_scores\": {\n        \"typography\": 4,\n        \"layout_composition\": 4,\n        \"color\": 4\n      },\n      \"overall_weighted_score\": 4.0\n    },\n    {\n      \"exemplar_id\": \"2\",\n      \"portfolio_category\": \"Minimal\",\n      \"criteria_scores\": {\n        \"typography\": 5,\n        \"layout_composition\": 4,\n        \"color\": 5\n      },\n      \"overall_weighted_score\": 4.65\n    },\n    {\n      \"exemplar_id\": \"3\",\n      \"portfolio_category\": \"Minimal\",\n      \"criteria_scores\": {\n        \"typography\": 2,\n        \"layout_composition\": 2,\n        \"color\": 1\n      },\n      \"overall_weighted_score\": 1.7\n    },\n    {\n      \"exemplar_id\": \"4\",\n      \"portfolio_category\": \"Minimal\",\n      \"criteria_scores\": {\n        \"typography\": 2,\n        \"layout_composition\": 1,\n        \"color\": 2\n      },\n      \"overall_weighted_score\": 1.65\n    },\n    {\n      \"exemplar_id\": \"5\",\n      \"portfolio_category\": \"Minimal\",\n      \"criteria_scores\": {\n        \"typography\": 5,\n        \"layout_composition\": 5,\n        \"color\": 4\n      },\n      \"overall_weighted_score\": 4.7\n    },\n    {\n      \"exemplar_id\": \"6\",\n      \"portfolio_category\": \"Minimal\",\n      \"criteria_scores\": {\n        \"typography\": 5,\n        \"layout_composition\": 4,\n        \"color\": 4\n      },\n      \"overall_weighted_score\": 4.35\n    },\n    {\n      \"exemplar_id\": \"7\",\n      \"portfolio_category\": \"Minimal\",\n      \"criteria_scores\": {\n        \"typography\": 1,\n        \"layout_composition\": 1,\n        \"color\": 2\n      },\n      \"overall_weighted_score\": 0.5\n    },\n    {\n      \"exemplar_id\": \"8\",\n      \"portfolio_category\": \"Minimal\",\n      \"criteria_scores\": {\n        \"typography\": 2,\n        \"layout_composition\": 3,\n        \"color\": 3\n      },\n      \"overall_weighted_score\": 2.65\n    }\n  ],\n  \"guidance\": [\n    \"Use these numeric anchors to calibrate scoring.\",\n    \"Prioritize the rubric; exemplars are calibration points, not instructions.\",\n    \"Use the full 1\\u20135 range when warranted.\"\n  ]\n}",
+  "candidate_ratings": {
+    "1": {
+      "candidate_id": "1",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_1.jpg",
+      "evaluated_at": "2025-09-02T11:16:56.544656",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several significant issues. The main text uses an italic serif font that creates poor readability for body text, particularly at this size. There's inconsistent styling with 'Minjong Lee' in blue while other names like 'Zip', 'Instagram', 'Facebook' and 'SigFig' are in black, creating visual confusion. The line spacing appears cramped, and the italic treatment makes the text harder to scan. The subscript numbers (2022, 2019-2022, 2019) are inconsistently applied and create visual clutter. While there's an attempt at hierarchy, the execution feels amateurish with the heavy reliance on italics for body text.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 1,
+          "explanation": "The layout is extremely poor with text appearing to float in the center of a vast white space with no clear structure or intentional use of whitespace. There's no grid system, no alignment principles, and the content feels randomly placed. The vertical navigation text on the right ('Work', 'Play', 'Contact') appears disconnected from the main content with poor spacing and positioning. The composition lacks any sense of hierarchy or visual organization, creating a disjointed and unprofessional appearance. The blue arrow button in the top right feels like an afterthought with no relationship to the overall composition.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely limited - essentially just blue accents on a white background with black text. While restraint can be sophisticated, this feels more like a lack of intentional color strategy. The blue used for 'Minjong Lee' and 'Zip' creates inconsistency rather than meaningful hierarchy since other company names remain black. The blue arrow button doesn't tie into the overall color system meaningfully. There's no evidence of subtle color techniques or intentional monochrome mastery - it appears more like default styling than deliberate design choice.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 1.65,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 1.15,
+      "overall_confidence": 4.33
+    },
+    "10": {
+      "candidate_id": "10",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_10.jpg",
+      "evaluated_at": "2025-09-02T11:17:17.427196",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several weaknesses that indicate below-average craft. The body text appears to be around 18px which is overly large for comfortable reading, falling into the rubric's weak anchor of 'overly large type sizes for body text (18px+)'. The site uses what appears to be system fonts or basic web fonts rather than carefully selected typefaces. There's inconsistent hierarchy - the main heading and body text don't establish a clear typographic scale or rhythm. The line spacing appears loose and contributes to poor visual hierarchy. While readable, the typography lacks the intentionality and sophistication expected of strong design craft.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout demonstrates poor composition and spacing consistency. The site appears to use a basic centered layout without sophisticated grid usage or intentional white space management. Elements feel randomly placed rather than following a clear structural system. The spacing between sections varies inconsistently, and there's no clear vertical rhythm or alignment strategy. The two blue call-to-action boxes on the right side feel disconnected from the main content and poorly integrated into the overall composition. The layout lacks the sophisticated use of white space and consistent patterns that would indicate strong craft.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color usage is minimal but lacks intentional sophistication. The palette consists primarily of black text on white background with blue accent colors for links and CTAs. While restraint can be good, this implementation shows little evidence of thoughtful color strategy. The blue used for links and buttons appears to be a default web blue rather than a carefully selected brand color. There's no evidence of subtle color techniques like varied grays for hierarchy or considered shade variations. The color implementation feels default rather than designed, missing opportunities for sophisticated monochromatic treatments.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 1.5,
+      "overall_confidence": 4.0
+    },
+    "11": {
+      "candidate_id": "11",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_11.jpg",
+      "evaluated_at": "2025-09-02T11:17:39.904464",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography is functional but unremarkable. Uses what appears to be a standard sans-serif system font throughout with adequate hierarchy between the main heading 'Hello, I'm Haley!' and body text. The type sizing is appropriate - not overly large for body text. However, there's no evidence of sophisticated typographic choices, paid typefaces, or creative use of typography as a design element. The navigation uses all-caps which creates some visual hierarchy but feels generic. Line spacing and text alignment are consistent and readable.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout follows a predictable grid-based approach with project thumbnails arranged in a 2x3 then 3x1 pattern. The composition is clean and organized with consistent spacing between elements. The header navigation is well-positioned and the introductory text is properly centered. However, the layout lacks innovation or memorable compositional choices - it's essentially a standard portfolio grid that could be found on many designer websites. The thumbnails are well-aligned and sized consistently, showing attention to basic layout principles, but there's nothing that elevates it beyond competent execution of conventional patterns.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The color strategy shows restraint and sophistication. The site itself uses a minimal monochromatic palette - primarily black text on white background with subtle grey accents in the footer. This restraint allows the colorful project thumbnails to serve as the primary color elements, creating an effective gallery-like presentation. Each project thumbnail uses distinct, vibrant color palettes (blue gradients, orange/red gradients, turquoise, etc.) that are well-executed and harmonious within each individual piece. The overall effect creates visual interest while maintaining professional clarity through the minimal base palette.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.3,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.3,
+      "overall_confidence": 4.0
+    },
+    "12": {
+      "candidate_id": "12",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_12.jpg",
+      "evaluated_at": "2025-09-02T11:17:57.471680",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography uses a standard system font with reasonable hierarchy between headings and body text. The conversational format creates clear distinction between questions and responses through size and weight variations. However, the typography lacks sophistication - it appears to use default system fonts without intentional selection of typefaces. The text sizes are appropriate and readable, but there's no evidence of a refined typographic system or creative use of typography as a design element.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "The chat interface layout is creative and well-executed, using a conversational format that's both engaging and functional. The centered column with consistent spacing creates good vertical rhythm. The alternating left/right alignment of chat bubbles creates visual interest while maintaining readability. Product showcases are well-positioned with appropriate white space. The layout feels intentional rather than template-based, with the chat format serving as a distinctive design choice that unifies the entire experience.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Excellent use of a restrained color palette focused primarily on blues and grays with strategic accent colors. The blue gradient chat bubbles create visual hierarchy and brand consistency. The monochromatic approach with selective color usage (social media icons, product highlights) shows sophistication. The background remains clean while the blue tones create warmth and personality. Color is used meaningfully to guide attention and create visual flow rather than decoration.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.65,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.65,
+      "overall_confidence": 4.0
+    },
+    "13": {
+      "candidate_id": "13",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_13.jpg",
+      "evaluated_at": "2025-09-02T11:18:19.032611",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several concerning issues. The main headline 'User Researcher + Designer' uses an overly heavy serif font that feels dated and lacks sophistication. Body text appears to be around 18px which is too large per the rubric guidelines. The monospace font used for descriptive text ('Hi, I'm Josh! Empathy and data...') creates awkward hierarchy and readability issues. Typography lacks intentional restraint - mixing serif headlines, sans-serif navigation, monospace body text, and additional weights without clear design strategy. The type scale feels inconsistent with no clear rhythm between sizes.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout demonstrates basic competency but lacks sophistication. The three-column icon grid (UNDERSTAND, ITERATE, REFINE) shows intentional structure and consistent spacing. However, the overall composition feels static and template-like. White space usage is adequate but not particularly purposeful or hierarchical. The centered layout with symmetrical elements works functionally but doesn't demonstrate innovative thinking. Vertical rhythm is present but not particularly refined. The 'See my work' button placement feels disconnected from the content flow above it.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette shows restraint with a limited scheme of teal/green accent colors against neutral backgrounds. The illustrated icons use consistent teal coloring which creates some visual cohesion. However, the color application lacks sophistication - the teal feels somewhat generic and the cream/beige backgrounds in the icon containers don't add meaningful visual hierarchy. The color choices are safe but unremarkable, showing basic competency without demonstrating advanced color sensibility or intentional contrast strategies.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.65,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.15,
+      "overall_confidence": 3.67
+    },
+    "14": {
+      "candidate_id": "14",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_14.jpg",
+      "evaluated_at": "2025-09-02T11:18:41.473814",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several weak characteristics from the rubric. The site uses what appears to be a default system font without intentional selection. There's poor hierarchy - the body text appears overly large (around 16-18px) while headers like 'Selected work' are barely larger, creating minimal contrast. The line spacing appears inconsistent across sections. Text alignment shifts randomly between sections without clear intent - left-aligned in some areas, then varying in others. The typography lacks the restraint and intentionality that would demonstrate sophistication, instead feeling like default styling without thoughtful consideration.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout lacks consistency and intentional structure. Each section feels disconnected from the next with no unifying visual elements. The spacing is inconsistent - different sections have different widths and gutters without clear intention. The large hero image is positioned awkwardly with no clear relationship to surrounding elements. The Notes, Posts, and Photos sections each use different layout approaches that don't relate to each other. There's no clear grid system or vertical rhythm. The overall composition feels like elements were placed randomly rather than following a cohesive layout strategy. The contact form at the bottom uses a completely different visual treatment that doesn't connect to the rest of the design.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 1,
+          "explanation": "The color usage is extremely limited and shows no intentional strategy. The site is essentially monochrome black text on white background with no purposeful use of color hierarchy or accent colors. Even the hero image, while containing warm orange tones, doesn't inform any color decisions elsewhere on the site. There's no use of different shades of grey to create subtle hierarchy - everything is stark black on white. The complete absence of any color strategy or even subtle tonal variations demonstrates a lack of sophistication in color application. This represents the most basic possible color approach without any design consideration.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 1.7,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 1.15,
+      "overall_confidence": 4.33
+    },
+    "15": {
+      "candidate_id": "15",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_15.jpg",
+      "evaluated_at": "2025-09-02T11:19:06.462641",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several problematic patterns. The main body text appears to be around 18px which falls into the 'overly large' category from the rubric. There's inconsistent text alignment - some sections are left-aligned while others appear centered without clear intentionality. The type hierarchy lacks sophistication, with jarring jumps between sizes (small captions to very large body text to medium headers). The typeface selection appears to be a basic system font without the refinement of quality paid typefaces or even good Google Fonts like Inter or IBM Plex. Line spacing appears inconsistent across sections, and there's no evidence of a cohesive typographic system or scale.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout lacks consistency and intentional structure. Each section feels disconnected from the next with no unifying elements tying them together - the purple Twitch section, the office photo, the black 'Incomplete Closure' section, and the colorful collage section all feel like separate websites. There's inconsistent use of whitespace and gutters throughout. The screenshots and images are presented without intentional layout consideration - some are full-width, others are contained, with no apparent system. The spacing between elements varies randomly rather than following a vertical rhythm. While there are some interesting individual sections, they don't cohere into a unified composition.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color usage is inconsistent but not entirely unsuccessful. Each section seems to have its own color palette - bright purple/blue gradients for Twitch, warm office lighting, stark red and black, then a vibrant multi-colored collage. While this creates variety, there's no overarching color strategy or throughline connecting the sections. The individual palettes aren't bad (the red/black section has strong contrast, the collage shows color awareness), but the lack of restraint and cohesion across the portfolio prevents this from being above average. The colors don't feel intentionally curated as a unified system.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.3,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 2.05,
+      "overall_confidence": 4.0
+    },
+    "16": {
+      "candidate_id": "16",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_16.jpg",
+      "evaluated_at": "2025-09-02T11:19:27.531154",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography uses a clear hierarchy with large display text for the hero section and consistent body text throughout. The bold sans-serif headings create good contrast with the regular weight body text. However, the typography lacks sophistication - it appears to use a standard system font or basic web font rather than a carefully chosen typeface. The hero text uses inconsistent punctuation (periods after some words but not others) which creates visual inconsistency. Line spacing and sizing follow web standards but don't demonstrate particular craft or intentionality beyond functional requirements.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout follows a standard portfolio grid pattern with consistent margins and spacing. The hero section has good proportions with the large text balanced by the portrait photo. The project showcase uses a clean card-based layout with consistent gutters between elements. However, the composition lacks innovation - it's a very conventional portfolio layout that doesn't demonstrate unique design thinking. The 'Selected Projects' and 'Latest' sections use identical grid structures, showing some consistency but also monotony. The overall structure is functional but unremarkable, fitting squarely into average portfolio conventions.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely limited, relying almost entirely on black text on white backgrounds with minimal accent colors. While restraint can demonstrate sophistication, this feels more like a lack of color consideration than intentional minimalism. The project images provide the only color variation, but there's no evidence of intentional color curation or harmony between the showcase items. The site lacks any signature color treatment, branded accent colors, or thoughtful use of subtle grays to create hierarchy. This represents a missed opportunity to demonstrate color expertise through either bold choices or sophisticated restraint.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.7,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.15,
+      "overall_confidence": 4.33
+    },
+    "17": {
+      "candidate_id": "17",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_17.jpg",
+      "evaluated_at": "2025-09-02T11:19:51.506527",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows poor hierarchy and inconsistent implementation. The name 'GADZHI KHARCHAROV' uses all caps with excessive letter spacing, which feels heavy-handed. Body text appears to be around 14-15px which is acceptable, but there's no clear typographic scale or rhythm. Section headers like 'WORK' and 'PROJECTS' use all caps with letter spacing but lack sophistication. The mix of font weights and sizes doesn't create meaningful hierarchy - project titles, descriptions, and metadata all blend together visually. Line spacing appears default and unconsidered. This appears to use system fonts or basic web fonts without intentional selection.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout lacks cohesion and intentional structure. The work section uses a basic 3-column grid with inconsistent spacing - gaps between columns appear uneven. Project showcase is poorly organized with a chaotic mix of rectangular thumbnails of varying sizes that don't align to any clear grid system. Vertical spacing between sections feels arbitrary rather than rhythmic. The overall composition lacks visual hierarchy - everything competes for attention equally. White space usage is minimal and doesn't serve to create breathing room or guide the eye. The layout feels like default HTML styling with minimal design consideration.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely limited, relying primarily on black text on white background with minimal intentional color usage. The few colors that appear are mostly in the project screenshots themselves (blues, greens, oranges) rather than being part of a cohesive site palette. There's no evidence of a considered color strategy - no accent colors, no use of grays for hierarchy, no subtle color variations to create depth. The one blue link color appears to be default browser styling. This represents a missed opportunity to use even subtle color techniques to enhance hierarchy and visual interest.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.2,
+      "overall_confidence": 4.3
+    },
+    "18": {
+      "candidate_id": "18",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_18.jpg",
+      "evaluated_at": "2025-09-02T11:20:11.578770",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several problematic choices. The body text appears to be overly large (likely 18px+ based on visual proportions), which is a key weakness noted in the rubric. The site uses what appears to be a generic sans-serif font throughout without clear hierarchy or intentional variation. The headings and body text don't demonstrate a clear typographic scale or rhythm - there's insufficient contrast between different text levels. Line spacing appears inconsistent across sections, and the overall type treatment lacks the sophistication expected from a designer's portfolio.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from significant inconsistencies that hurt the overall composition. Each project section follows a rigid, repetitive pattern with no visual elements tying them together - every section feels disconnected from the next. The spacing and gutters appear inconsistent throughout, with some sections feeling cramped while others have excessive white space that doesn't serve a clear purpose. The project screenshots are presented in generic device mockups without customization or thoughtful integration. The layout lacks innovation and feels formulaic rather than intentionally designed.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is extremely minimal, primarily using black, white, and light mint green accents. While restraint can demonstrate sophistication, this implementation lacks intentional variation in the grayscale tones that could create better hierarchy. The mint green accent color is used sparingly but doesn't feel particularly strategic in its application. The overall approach is safe but doesn't show mastery of subtle color techniques or sophisticated use of monochromatic palettes that would elevate the design.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.3,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.55,
+      "overall_confidence": 3.67
+    },
+    "19": {
+      "candidate_id": "19",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_19.jpg",
+      "evaluated_at": "2025-09-02T11:20:34.946624",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography shows reasonable hierarchy with clear size differentiation between headings and body text. The main headline uses appropriate weight and sizing. However, there are some inconsistencies - the body text appears to be on the larger side (potentially 18px+) which falls into the rubric's weak anchor territory. The typeface choices appear to be standard system fonts or common Google fonts rather than showing sophisticated selection. The 'Get in touch' and 'Let's connect' links use blue accent color effectively for hierarchy, but overall the typography system lacks the refinement and intentionality seen in higher-scoring examples.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout shows significant inconsistencies that detract from the overall composition. Different sections use varying approaches - the top section is left-aligned, the Framer showcase section is more centered, the timeline section uses a different alignment pattern, and the bottom section returns to left-alignment without clear intentionality. The spacing between sections lacks consistent rhythm, with some areas feeling cramped while others have excessive white space that doesn't serve a clear purpose. The Framer screenshot presentation is generic and doesn't show thoughtful integration with the overall design. The layout feels like different components assembled together rather than a cohesive composition.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette shows restraint with primarily blue accents against a neutral background, which demonstrates some sophistication. The gradient background in the 'building something new' section adds visual interest. However, the blue accent appears to be a fairly standard web blue without particular thoughtfulness in selection. The colored circles in the timeline section (blue, black, orange, yellow) introduce additional colors that don't feel intentionally connected to the main palette. The overall color usage is functional but lacks the harmonious palette or intentional restraint that would elevate it to higher scores.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.65,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.15,
+      "overall_confidence": 4.0
+    },
+    "2": {
+      "candidate_id": "2",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_2.jpg",
+      "evaluated_at": "2025-09-02T11:20:58.477141",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography is problematic in several ways. The body text appears to be set at an overly large size (likely 18px+ based on visual assessment), which violates the rubric guidance against excessive body text sizing. The type hierarchy is weak - there's minimal differentiation between different levels of information, with most text appearing at similar weights and sizes. The line spacing appears random and inconsistent throughout, particularly noticeable in the project descriptions where some blocks have tight spacing while others are more generous. The font choice appears to be a standard system font without intentional selection. There's no clear typographic scale or rhythm - the jump from body text to the small year labels (2024, 2023, etc.) lacks intermediate sizing steps.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 1,
+          "explanation": "The layout is extremely simplistic and shows no intentional composition principles. It's essentially a single-column list of app icons with minimal text, resembling more of a basic inventory list than a designed portfolio. There's no visual hierarchy beyond the chronological ordering, no intentional use of white space to create relationships between elements, and no layout patterns that demonstrate design thinking. The spacing between elements appears arbitrary - some icons have more breathing room while others are cramped together. Each app icon section feels disconnected from the others with no visual elements tying them together. The overall structure lacks any sophisticated grid system or compositional framework. This represents the most basic possible layout approach with no evidence of design craft.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color usage is minimal to the point of being problematic. While the background appears to be a neutral tone, there's no intentional color strategy visible in the portfolio design itself. The only colors present come from the app icons being displayed, which are not part of the portfolio's design decisions. The text appears to be basic black on the neutral background with no exploration of grey tones, accent colors, or subtle color variations that could create hierarchy or visual interest. There's no evidence of a curated color palette or sophisticated color relationships. Even for a minimal approach, this lacks the intentional restraint and subtle color variations that characterize good monochromatic design.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 1.65,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 0.85,
+      "overall_confidence": 4.33
+    },
+    "20": {
+      "candidate_id": "20",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_20.jpg",
+      "evaluated_at": "2025-09-02T11:21:20.187849",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several weaknesses that align with the rubric's weak anchors. The header uses a sans-serif font that appears to be a standard system font without clear intentionality. The navigation text is small and lacks hierarchy - all items appear at the same weight and size. The footer text is extremely small and hard to read. There's no clear typographic system or scale evident across the portfolio. The project titles within the grid aren't visible in this view, but the overall typographic treatment lacks the sophistication and intentional restraint described in the good anchors.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout follows a basic 3-column grid pattern that feels generic and template-like. While there is consistency in the grid structure, it lacks the intentional use of white space and innovative approaches mentioned in the good anchors. The spacing appears uniform throughout without creating meaningful hierarchy. The portfolio pieces are presented as simple thumbnails in device mockups without any visual elements tying them together beyond the basic grid structure. The layout feels like a standard portfolio template rather than a thoughtfully composed presentation of work.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is quite restrained, using primarily white background with a teal accent color in the logo and navigation. This restraint aligns somewhat with the 'less is more' approach mentioned in good anchors. However, the execution feels more like a default choice rather than an intentional design decision. The teal color appears to be used sparingly and appropriately, and there don't appear to be too many competing colors. The individual portfolio pieces show various color schemes, but they're presented neutrally within the overall site design.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.3,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.75,
+      "overall_confidence": 3.67
+    },
+    "22": {
+      "candidate_id": "22",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_22.jpg",
+      "evaluated_at": "2025-09-02T11:22:11.307584",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography shows mixed execution. The site uses what appears to be a simple sans-serif font (likely system font) with reasonable hierarchy between headers and body text. The main headline 'Marco is building Turf' has good weight contrast, and the philosophical statements below maintain readable line spacing. However, there are several weaknesses: the body text appears to be around 16-18px which is on the larger side, and the overall typographic treatment lacks sophistication. The navigation uses standard web typography without any distinctive character. While functional and readable, it doesn't demonstrate advanced typographic craft or intentional font selection that would elevate the design.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout composition has significant issues with consistency and intentionality. The page feels like a collection of disparate elements without a unifying grid system. The left column contains philosophical text, while the right side shows various screenshots and mockups that appear randomly placed without consistent spacing or alignment. The device mockups (iPhone, desktop) are inconsistently sized and positioned. Different sections have varying gutters and spacing - some elements are tightly packed while others have excessive whitespace. The overall composition lacks vertical rhythm, and there's no clear visual hierarchy tying the various project screenshots together. The layout feels more like a mood board than a carefully composed portfolio page.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely limited, consisting primarily of grays, whites, and blacks with minimal accent colors. While restraint can be sophisticated, this feels more like a lack of color strategy rather than intentional minimalism. The few colored elements (red accents in some mockups, blue Twitter element) appear disconnected from any cohesive color system. The overall impression is bland rather than elegantly minimal. The shadows and interface elements use default-looking treatments without any custom color consideration. There's no evidence of thoughtful color relationships or intentional monochromatic variations that would demonstrate color craft.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.35,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 2.05,
+      "overall_confidence": 4.33
+    },
+    "23": {
+      "candidate_id": "23",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_23.jpg",
+      "evaluated_at": "2025-09-02T11:22:35.657592",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography shows mixed execution. The site uses what appears to be a single sans-serif typeface with reasonable hierarchy between the main heading, subheadings, and body text. However, there are some issues: the main heading 'Marvin Schwaibold' feels slightly oversized for the layout, and the line spacing in the body text section ('I'm a product and web designer...') appears cramped. The type scale shows some inconsistencies - the project card titles vary in size without clear intentionality. The typography is functional but lacks the sophistication and intentional restraint seen in higher-scoring examples.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout shows significant weaknesses in composition and consistency. The three project cards at the top use different corner radius treatments - some appear more rounded than others, creating visual inconsistency. The spacing between sections feels arbitrary rather than following a consistent vertical rhythm. The project cards themselves lack visual cohesion - while they share a similar size, the content within them (icons, text placement) doesn't follow consistent internal spacing rules. The 'Latest Projects' section at the bottom shows thumbnails that appear to have inconsistent treatments and don't feel unified as a collection. The overall layout lacks the intentional structure and systematic approach expected at higher levels.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color usage is average with both strengths and weaknesses. The three main project cards use a distinct color palette - purple/pink gradient, blue, and orange - which creates visual interest and distinction. However, the color choices feel somewhat arbitrary rather than following a cohesive color strategy. The blue and orange are quite saturated and don't have clear relationships to each other beyond high contrast. The monochromatic treatment of the rest of the page (black text on white) is appropriate but doesn't demonstrate sophisticated color handling. The shadows appear to be standard CSS defaults without any color considerations.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.65,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 2.35,
+      "overall_confidence": 4.33
+    },
+    "24": {
+      "candidate_id": "24",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_24.jpg",
+      "evaluated_at": "2025-09-02T11:22:55.101791",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several concerning issues. The body text appears overly large (likely 18px+) which violates readability best practices. The site uses multiple font weights and styles without clear intentionality - mixing regular and bold weights inconsistently across sections. The line spacing appears cramped in the about section, creating poor vertical rhythm. The heading hierarchy is unclear with similar-sized text used for different content levels. Text alignment switches from center to left without apparent design logic, creating visual inconsistency.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout lacks consistency and intentional structure. Each section feels disconnected - the centered about section, followed by a completely different portfolio grid layout, then another centered contact form. The portfolio grid appears haphazardly arranged with inconsistent spacing between images and no clear visual hierarchy. The decorative wave element feels randomly placed and doesn't integrate meaningfully with the overall composition. White space usage is inconsistent - some sections are cramped while others have excessive empty space without purpose.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette lacks intentionality and restraint. The site uses too many colors without a clear system - the purple/pink wave graphic, various colors in the portfolio thumbnails, and the purple accent button don't share a coherent throughline. The decorative wave uses a gradient that feels arbitrary rather than purposeful. The portfolio section shows multiple competing colors from different projects without any unifying visual treatment to make them feel cohesive on the same site.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.2,
+      "overall_confidence": 4.0
+    },
+    "25": {
+      "candidate_id": "25",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_25.jpg",
+      "evaluated_at": "2025-09-02T11:23:18.269752",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several weak points. The main heading 'Matt Kabus' uses a reasonable weight, but the body text appears to be around 18px which is overly large according to the rubric. The project titles like 'AI Data Assistant', 'Visual Labeling' use inconsistent styling - some are bold, others aren't, without clear hierarchy. The intro paragraph has awkward line spacing and the text alignment shifts between centered and left-aligned sections without intentional purpose. The typography lacks a clear system or scale, and there's no evidence of sophisticated font choices or paid typefaces.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from inconsistency issues. Each project section uses different compositional approaches - the first two projects have colored background blocks with screenshots, the third has a light gray background with right-aligned imagery, and the fourth uses a yellow gradient. There's no unifying grid system or visual elements tying the sections together. The spacing between sections varies significantly, and the overall vertical rhythm is inconsistent. While individual sections aren't poorly composed, the lack of cohesion across the entire page creates a disjointed experience that feels like different templates were used.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color usage shows some restraint but lacks intentional harmony. Each project section uses different color schemes - turquoise/blue, purple/blue, neutral gray, and yellow/orange gradients. While individual sections maintain color consistency, there's no overarching color strategy connecting the portfolio as a whole. The colors aren't jarring or poorly chosen individually, but they don't create a cohesive palette. The neutral gray section provides some balance, but overall the approach feels more like isolated color experiments rather than a unified color system.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.3,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 1.85,
+      "overall_confidence": 4.0
+    },
+    "26": {
+      "candidate_id": "26",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_26.jpg",
+      "evaluated_at": "2025-09-02T11:23:45.172290",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows inconsistent hierarchy and style choices. The main heading 'MELANIE CERNAK' uses a bold sans-serif, while project titles like 'Checkr' use a serif font, creating an unintentional clash. Body text sizes appear inconsistent across sections - some areas have overly large text (18px+ body text in descriptions) while others seem cramped. The mix of all-caps treatments ('LEADING THROUGH DESIGN', 'PRODUCT STRATEGY', 'MOBILE UX / UI') feels excessive and creates visual noise rather than clear hierarchy. Line spacing appears tight in some areas, particularly in the project descriptions, making readability poor.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from inconsistent gutters and spacing throughout. Each project section uses different background colors and layouts with no unifying design system - the Checkr sections have different background treatments (blue vs pink), TopHatter uses purple, GoodHire uses green, etc. The screenshots are presented inconsistently - some are device mockups, others are floating browser windows, with no cohesive treatment. Vertical rhythm is poor with inconsistent spacing between elements. The overall composition feels like separate blocks stitched together rather than a cohesive portfolio experience. Elements don't align properly across sections, creating a disjointed visual flow.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette lacks cohesion and restraint. Each project section uses completely different color schemes (light blue, pink, purple, green, white) with no connecting visual thread. The colors don't share intentional contrast or similarity principles - they appear randomly chosen per project rather than part of a unified system. The shadows and borders use default-looking treatments without consideration for the overall color harmony. The yellow accent in the intro ('I'm a curious Product Designer...') doesn't relate to any other colors used throughout the site. This creates a fragmented visual experience rather than a sophisticated, restrained color approach.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 1.7,
+      "overall_confidence": 4.0
+    },
+    "27": {
+      "candidate_id": "27",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_27.jpg",
+      "evaluated_at": "2025-09-02T11:24:07.719274",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography demonstrates average craft with some inconsistencies. The site uses a clean sans-serif typeface with reasonable hierarchy between project titles and descriptions. However, there are notable issues: the main heading 'I'm Meredith, a visual & interaction designer' uses a relatively small size that doesn't establish strong visual presence, and the navigation text appears cramped with inconsistent letter-spacing. Project descriptions use varying text treatments without clear intentional hierarchy. The typography system lacks the sophistication and intentionality seen in higher-scoring portfolios.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout shows below-average composition skills with several structural weaknesses. While the portfolio attempts a clean, minimal approach, the execution is flawed: project images are inconsistently sized and aligned, creating visual discord rather than rhythm. The vertical spacing between sections feels arbitrary rather than systematic. Most critically, the portfolio relies heavily on generic device mockups (laptops, phones, desktop monitors) without customization or intentional presentation. Each project feels disconnected from the others, lacking visual elements that would tie them together as a cohesive body of work. The layout appears more accidental than designed.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color approach is conservative and generally functional but lacks sophistication. The portfolio uses a restrained monochrome palette with grey text on white backgrounds, which is safe but uninspiring. The project screenshots show various color schemes, but there's no intentional color strategy to unify them within the portfolio presentation. The grey used for secondary text appears to be a standard web-safe color rather than a carefully chosen shade. While not offensive, the color treatment misses opportunities to create hierarchy, mood, or visual interest that would elevate the overall design.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.65,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 2.35,
+      "overall_confidence": 4.33
+    },
+    "28": {
+      "candidate_id": "28",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_28.jpg",
+      "evaluated_at": "2025-09-02T11:24:32.848911",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several weaknesses that detract from the overall design quality. The site uses what appears to be a basic sans-serif font throughout without much sophistication in the typographic hierarchy. The main headline 'Creating delightful user experiences through research + strategy' uses overly large text that feels disproportionate to the content below it. Body text appears to be around 16-18px which is on the larger side but acceptable. However, there's inconsistent text alignment - the main content is left-aligned while some sections appear center-aligned without clear intention. The typography lacks the refinement seen in higher-scoring portfolios, with no evidence of thoughtful font pairing or advanced typographic techniques. Line spacing appears default and there's no clear typographic scale or rhythm throughout the design.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from significant compositional issues. The hero section feels unbalanced with the large headline taking up excessive vertical space while the gradient background element appears disconnected and arbitrary. The Experience and Education sections use a basic two-column layout that lacks sophistication - it's functional but shows no design craft or intentional spacing relationships. White space usage is inconsistent throughout, with some sections feeling cramped while others have excessive empty space that doesn't serve a clear purpose. The vertical rhythm is poor, with inconsistent spacing between sections and elements. Each section feels disconnected from the next, with no clear visual thread tying the composition together. The overall structure appears to follow a basic template pattern rather than showing thoughtful layout design.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely limited and shows little sophistication. The design relies heavily on black, white, and a single blue gradient element in the hero section. While restraint can be effective, this feels more like a lack of color consideration rather than intentional minimalism. The blue gradient appears disconnected from the rest of the design and doesn't serve a clear functional purpose. The black background section creates harsh contrast without thoughtful transition. There's no evidence of subtle color variations or intentional use of different shades to create hierarchy. The overall color treatment feels default and basic, lacking the nuanced approach seen in higher-scoring portfolios. The shadows and other UI elements appear to use default styling rather than custom color work.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 1.5,
+      "overall_confidence": 4.0
+    },
+    "29": {
+      "candidate_id": "29",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_29.jpg",
+      "evaluated_at": "2025-09-02T11:24:58.098603",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several concerning issues. The body text appears to be quite large (likely 18px+ based on visual assessment), which violates best practices for readability. The type hierarchy is weak - headings like 'LeanData Journey Tracker' and 'Adobe Express Search' don't create sufficient contrast with body text. The site uses what appears to be a basic sans-serif font without sophisticated weight or size variations to create proper hierarchy. Line spacing appears inconsistent across sections, and the overall typographic system lacks the restraint and intentionality seen in strong portfolios.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout demonstrates basic competency with consistent card-based layouts for case studies and reasonable alignment. The two-column grid in the 'Additional Work' section shows some organizational thinking. However, the composition lacks sophistication - screenshots are presented in generic device mockups without intentional styling or visual connection between projects. The spacing appears somewhat inconsistent between sections, and the overall layout feels predictable rather than thoughtfully crafted. The blue footer section breaks from the established pattern without clear design intent.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette shows restraint with primarily grayscale content and strategic use of blue accents in project thumbnails and the footer. The colored backgrounds for case study images (light blue, dark navy, orange) provide some visual interest and differentiation. However, the color choices feel somewhat arbitrary rather than part of a cohesive system. The blue footer section uses a vibrant blue that doesn't clearly relate to the other blue tones used throughout. The overall approach is safe but lacks the intentional color strategy seen in stronger portfolios.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.65,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 2.35,
+      "overall_confidence": 4.0
+    },
+    "3": {
+      "candidate_id": "3",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_3.jpg",
+      "evaluated_at": "2025-09-02T11:25:45.949981",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography is functional but unremarkable. Uses what appears to be a standard system font with basic weight variations. The hierarchy is clear with the name as a header, body text at readable size, and smaller metadata text. However, there's no sophisticated typographic treatment - no use of premium typefaces, no creative hierarchy techniques, and no typographic personality. The line spacing and measure appear adequate for readability. This represents competent but average typography execution.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout is extremely basic and lacks intentional design composition. Content is simply stacked vertically with minimal consideration for visual rhythm or spatial relationships. The project list with years and titles uses a basic two-column approach but without sophisticated alignment or spacing considerations. There's excessive white space that doesn't serve a clear hierarchical purpose. The 'Letting time pass...' element feels randomly placed. Overall, this feels like default browser styling with minimal layout consideration rather than intentional composition design.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely limited, appearing to use only blue for links and black/gray for text on a white background. While restraint can demonstrate sophistication, this goes beyond minimalism into lack of intentional color design. The blue links appear to be default browser blue without custom color consideration. There's no evidence of a thoughtful color strategy, tonal variations, or subtle color hierarchy techniques that would elevate the design. This represents the bare minimum color treatment rather than intentional design.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.35,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 1.85,
+      "overall_confidence": 4.67
+    },
+    "31": {
+      "candidate_id": "31",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_31.jpg",
+      "evaluated_at": "2025-09-02T11:26:10.053453",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several concerning weaknesses. The body text appears to be set at an overly large size (likely 18px+) which falls directly into the weak anchor criteria. There's inconsistent text alignment throughout - some sections are left-aligned while others appear centered without clear intentionality. The type hierarchy is poorly executed with awkward size relationships (headers don't create strong enough contrast with body text). The site appears to use basic system fonts or common Google fonts without sophistication. Line spacing appears inconsistent across sections, and the overall typographic system lacks the restraint and intentionality seen in strong portfolios.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from significant consistency issues. Each portfolio section feels disconnected from the others with different background treatments (alternating light/dark sections) that appear arbitrary rather than intentional. The screenshots are presented in generic device mockups without customization or thoughtful presentation. There's no clear grid system or consistent spacing - gutters and margins vary throughout the page. The 'About' section breaks into an inconsistent multi-column layout that doesn't align with the rest of the site's structure. White space usage is inconsistent and doesn't create meaningful hierarchy. The overall composition lacks the cohesive visual thread that ties stronger portfolios together.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely limited, relying primarily on black, white, and grey with minimal accent colors. While restraint can be sophisticated, this execution lacks intentional variation in the grey tones - most text appears to use similar grey values without creating meaningful hierarchy. The alternating light/dark section backgrounds feel arbitrary rather than purposeful. The few accent colors that appear (like in the mobile app mockups) don't seem to be part of a cohesive palette strategy. The overall color treatment feels more like a default template approach than a considered design decision.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.2,
+      "overall_confidence": 4.0
+    },
+    "32": {
+      "candidate_id": "32",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_32.jpg",
+      "evaluated_at": "2025-09-02T11:26:31.388885",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows basic competency but lacks sophistication. Uses what appears to be system fonts (likely SF Pro or similar) which is safe but unremarkable. The hierarchy is functional with clear distinction between name, title, navigation, and project titles, but the execution is quite plain. Body text sizing appears appropriate, but there's no evidence of intentional typographic character or personality. The styling feels default and doesn't demonstrate advanced understanding of typography as a design tool. No creative use of typography as signature design elements.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout is extremely basic and feels like a default template structure. Simple center-aligned content with uniform spacing throughout - no evidence of intentional white space usage or sophisticated compositional thinking. The project list is just a plain vertical stack with no visual hierarchy beyond text size. No innovative layout approaches, no use of grids or compositional techniques to create visual interest. The spacing appears consistent but in a mechanical, undesigned way rather than intentional rhythm. This feels like a starting point rather than a finished design.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 1,
+          "explanation": "The color palette is essentially non-existent - just basic black text on white background with gray text for meta information. While monochrome can be sophisticated when used intentionally with varied shades and subtle techniques, this appears to be more about lack of color decisions rather than intentional restraint. No evidence of thoughtful use of different grays to create hierarchy or visual interest. The orange avatar is the only color element and appears to be an uploaded photo rather than a design choice. This represents the most minimal possible approach without demonstrating mastery of monochrome design.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 1.7,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 1.15,
+      "overall_confidence": 4.67
+    },
+    "33": {
+      "candidate_id": "33",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_33.jpg",
+      "evaluated_at": "2025-09-02T11:26:49.186449",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Strong typographic hierarchy with the large serif display type for 'Chan Zuckerberg Initiative' creating excellent contrast against the clean sans-serif navigation. The type sizing appears well-proportioned with good scale relationships. The serif choice adds sophistication and the restraint in using only two typeface styles (serif display, sans-serif UI) shows intentionality. Line spacing and letter spacing appear well-considered.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Excellent use of white space and asymmetrical balance. The layout creates strong focal hierarchy with the large text block on the left balanced by the NPR logo on the right. The two image panels below are well-proportioned and create visual interest through the contrast between the technical iPhone interface and the artistic eye imagery. Consistent margins and gutters throughout, with intentional placement of elements.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Restrained color palette using primarily black, white, and accent colors from the brand logos (red from NPR, pink background panel). The monochromatic approach with selective color accents shows sophistication. However, the color usage feels somewhat safe and doesn't demonstrate particularly creative or advanced color theory application. The pink background serves its purpose but doesn't add significant design sophistication.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.7,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.65,
+      "overall_confidence": 4.33
+    },
+    "34": {
+      "candidate_id": "34",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_34.jpg",
+      "evaluated_at": "2025-09-02T11:27:10.851405",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several concerning issues. The site uses multiple typefaces without clear intentional hierarchy - mixing sans-serif for headers with what appears to be different weights and styles throughout. The body text sizing appears inconsistent between sections, and there's excessive use of different text treatments (bold, regular, varying sizes) without a clear systematic approach. The testimonial sections show particularly poor typography with inconsistent text alignment and sizing. Line spacing appears cramped in some areas and overly loose in others, lacking vertical rhythm.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from inconsistent spacing and alignment issues throughout. Different sections use varying content widths and gutters without intentional purpose - the header area, testimonials section, and project showcases all feel disconnected. The testimonials are particularly poorly laid out with inconsistent spacing between elements and no clear visual hierarchy. The project showcases use generic device mockups without customization or thoughtful presentation. There's no consistent vertical rhythm or spacing system, making sections feel randomly placed rather than purposefully designed.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is relatively restrained, primarily using black text on white background with selective use of accent colors (green for one project section, blue accents). However, the execution lacks sophistication - the green section feels disconnected from the overall palette, and there's no consistent color strategy tying the different project showcases together. The shadows appear to be default CSS values without customization. While not terrible, the color usage is basic and doesn't demonstrate advanced color theory or intentional palette development.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.3,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.55,
+      "overall_confidence": 3.67
+    },
+    "35": {
+      "candidate_id": "35",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_35.jpg",
+      "evaluated_at": "2025-09-02T11:28:01.452371",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows poor hierarchy and inconsistent execution. The main heading 'Paco Coursey' uses a simple sans-serif with no distinctive character. Body text appears to be around 16-18px which is acceptable, but the lack of clear typographic hierarchy makes content hard to scan. The italic text 'Crafting interfaces' feels arbitrary rather than purposeful. Line spacing appears inconsistent between sections. The three-column layout under 'Building/Projects/Writing' creates awkward text alignment issues. No evidence of sophisticated font choices or intentional typographic system - appears to use basic system fonts without thoughtful consideration of scale, rhythm, or hierarchy.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout lacks intentional structure and consistency. The content is simply stacked vertically with no clear grid system or compositional framework. The three-column section (Building/Projects/Writing) feels disconnected from the rest of the single-column layout. Spacing between sections appears inconsistent - some areas feel cramped while others have excessive white space without purpose. No clear visual rhythm or alignment system is evident. The layout feels more like a text document than a designed portfolio. The footer elements at the bottom appear randomly placed rather than thoughtfully positioned. Overall composition lacks sophistication and intentional design decisions.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely limited, consisting primarily of black text on white background with minimal variation. While restraint can demonstrate sophistication, this appears to be lack of intentional color strategy rather than purposeful minimalism. The few colored elements (what appears to be blue links) are standard browser defaults rather than carefully chosen accent colors. No evidence of subtle grey variations or intentional monochromatic hierarchy. The overall result feels more like default styling than deliberate color choices. Missing opportunities to use color for hierarchy, emphasis, or visual interest in a meaningful way.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 1.5,
+      "overall_confidence": 4.0
+    },
+    "36": {
+      "candidate_id": "36",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_36.jpg",
+      "evaluated_at": "2025-09-02T11:28:24.592903",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows multiple significant weaknesses. The site uses what appears to be Georgia (serif) for headings and a sans-serif for body text, but the pairing lacks intentionality and creates awkward contrast. The body text appears to be around 18px which is overly large per the rubric guidance. Line spacing is inconsistent throughout - some sections have cramped spacing while others have excessive gaps. The hierarchy is poor with headings that don't create clear information architecture. The post titles in the blog section lack proper scaling and rhythm. Overall, this demonstrates the 'too many styles without clear design intent' weakness outlined in the rubric.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from inconsistency and poor structural organization. The left sidebar navigation feels disconnected from the main content with no visual relationship or shared grid system. Spacing is highly inconsistent - the gap between the intro paragraph and credentials varies dramatically from the spacing in the posts section. The blog post list has uneven vertical rhythm with titles, descriptions, and metadata poorly aligned. The overall page lacks a coherent grid system or consistent gutters. The 'Subscribe via email' section at the bottom feels randomly placed with different alignment than the rest of the content. This exemplifies 'every section feels different from the next, with no element tying them together.'",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely limited, using primarily black text on an off-white/beige background. While minimal palettes can work well, this lacks intentional use of different shades or tones to create hierarchy or visual interest. The few accent elements (like navigation icons) don't appear to use a considered color strategy. There's no evidence of sophisticated grey usage or subtle color techniques to enhance the design. The overall result feels more like default browser styling than intentional color choices, falling into the 'lack of intentional use of different shades' weakness.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 1.5,
+      "overall_confidence": 4.0
+    },
+    "37": {
+      "candidate_id": "37",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_37.jpg",
+      "evaluated_at": "2025-09-02T11:28:59.221531",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several concerning issues. The headline uses an inconsistent mix of weights and colors ('Pranavi' in bold black, rest in regular) without clear hierarchy intent. Body text appears to be around 18px which is oversized per the rubric guidance. There's inconsistent text alignment throughout - left-aligned headlines mixed with what appears to be center-aligned sections. The type scale lacks rhythm with jarring jumps between sizes. Uses what appears to be a standard system font without sophistication. Line spacing appears inconsistent across sections, and there's excessive letter-spacing in some areas that hurts readability.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from major consistency issues. Each section feels disconnected with different spacing patterns and no unifying grid system. The testimonial cards at the bottom have inconsistent spacing and alignment. Screenshots are presented in basic, unrefined mockups with no visual cohesion - some are angled devices, others are straight browser windows with no consistent treatment. White space usage is inconsistent - some sections are cramped while others have excessive empty space without purpose. The vertical rhythm is broken with inconsistent gutters between sections. No clear layout patterns are established and repeated throughout.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is problematic with too many competing colors lacking a clear system. There's a yellow accent, blue highlights, various grays, and colored elements in screenshots that don't harmonize. The yellow star and various UI elements introduce colors without restraint or clear intent. The overall palette feels scattered rather than intentional. Background colors change arbitrarily between sections (white, light gray, etc.) without serving hierarchy. Shadows appear to use default CSS values with no custom hue or refinement.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.3,
+      "overall_confidence": 4.0
+    },
+    "38": {
+      "candidate_id": "38",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_38.jpg",
+      "evaluated_at": "2025-09-02T11:29:21.525475",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography shows mixed execution. The main heading uses good hierarchy with a clear size difference between 'Hi, I'm Pri' and the larger descriptive text below. However, there are several issues: the body text appears to be around 16-18px which is on the larger side but not egregious. The navigation uses all-caps styling which feels unnecessary. The typography lacks sophistication - it appears to use a standard system font (likely Inter or similar) without any creative or intentional pairing. While readable and functional, it doesn't demonstrate advanced typographic craft or intentional restraint that would elevate it above average.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout follows a conventional grid-based approach with consistent spacing and alignment. The hero section balances text and image appropriately. The project cards use a standard 2x2 grid layout with consistent sizing and spacing. However, the composition lacks innovation or creative layout approaches - it feels very template-like in its execution. The vertical rhythm is consistent throughout, and elements are properly aligned, but there's nothing that demonstrates sophisticated compositional thinking. The layout works functionally but doesn't show advanced design craft or unique spatial relationships.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely limited and shows minimal intentionality. The site relies almost entirely on black text on white background with colored background cards (light blue, pale green, beige, orange). While the background colors for project cards create some visual interest, they feel arbitrary rather than part of a cohesive color strategy. There's no evidence of sophisticated color relationships or intentional harmony between the chosen colors. The shadows appear to be default CSS values without any color temperature consideration. The overall color execution feels basic and doesn't demonstrate color theory knowledge or intentional restraint.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.7,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.15,
+      "overall_confidence": 4.33
+    },
+    "39": {
+      "candidate_id": "39",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_39.jpg",
+      "evaluated_at": "2025-09-02T11:29:47.885628",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several weaknesses that detract from the overall visual craft. The site uses multiple typefaces without clear intentionality - mixing what appears to be a sans-serif for headers with different weights and styles throughout. The hierarchy is inconsistent, with some headers appearing too similar in size to body text, making it difficult to scan effectively. Line spacing appears cramped in several sections, particularly in the project descriptions. The colored text links ('consumer experiences', 'enterprise products') break the typographic rhythm unnecessarily. Body text sizes vary inconsistently across sections without following a clear scale or system.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout lacks consistency and intentional structure. Each project section feels different from the next with no unifying design elements - the first project has a light blue background, the second uses lime green, followed by a stark black section, then orange elements. The spacing between sections is inconsistent, with some having generous white space while others feel cramped. The project screenshots are presented haphazardly - some are device mockups, others are floating screens, with no consistent treatment or visual relationship between them. The 'What I love. About me.' section with the illustrated portrait feels completely disconnected from the rest of the portfolio's visual language. Gutters and margins vary throughout without intentional purpose.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette lacks cohesion and restraint. The site uses a scattered approach with light blue, lime green, black, orange, and red accent colors that don't share any intentional relationship or contrast strategy. Each project section introduces new colors without building a harmonious system. The orange accent color appears sporadically without consistency. The colored text links (blue and orange) feel arbitrary rather than systematic. While individual sections might work in isolation, together they create a disjointed experience that suggests a lack of color strategy or intentional palette development.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 1.7,
+      "overall_confidence": 4.0
+    },
+    "4": {
+      "candidate_id": "4",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_4.jpg",
+      "evaluated_at": "2025-09-02T11:30:08.389515",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several issues that detract from overall quality. The script-style handwritten signature 'Cecile Parker' creates an inconsistent feel with the rest of the clean, simple body text. The body text appears to be around 16-18px which is on the larger side for web text. There's inconsistent hierarchy - the job titles and company names don't have enough contrast in size/weight to create clear information architecture. The navigation uses a light gray that may have contrast issues. While the base typeface appears to be a reasonable choice, the overall system lacks sophistication and intentional restraint.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from several compositional issues. The timeline format creates uneven visual weight with inconsistent spacing between sections. The 'View work' buttons are randomly placed and break the vertical flow. There's no clear grid system - elements feel arbitrarily positioned rather than following a structured layout. The navigation is cramped in the top right without proper breathing room. The overall composition lacks visual hierarchy and feels more like a resume formatted as a webpage rather than a thoughtfully designed portfolio. The inconsistent content blocks create a disjointed reading experience.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely minimal to the point of being underdeveloped. While minimalism can be effective, this appears to rely almost entirely on default black text on white background with some light grays. The navigation uses a gray that may not provide sufficient contrast. The 'View work' buttons appear to use a simple border treatment without any color consideration. There's no intentional use of color to create hierarchy or visual interest - it reads more like a default styled document than a designed portfolio. The monochrome approach lacks the sophistication of intentional color restraint.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 1.5,
+      "overall_confidence": 4.0
+    },
+    "40": {
+      "candidate_id": "40",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_40.jpg",
+      "evaluated_at": "2025-09-02T11:30:31.774058",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several concerning issues. The main headline uses an inconsistent mix of black and red text ('Hi, I'm Rajat') without clear hierarchy purpose. Body text appears to be at appropriate sizes, but there's inconsistent styling across sections - the 'Skilled in' section uses different text treatments than the project descriptions. The 'Let's Connect' section uses overly bold, condensed typography that feels heavy-handed. Line spacing appears cramped in some areas, particularly in the descriptive text. The overall typographic system lacks sophistication and restraint.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from poor visual hierarchy and inconsistent spacing. The navigation at the top feels cramped against the edge. There's awkward white space distribution - too much empty space in the middle section around the EY logo, while other areas feel cramped. The project showcases lack intentional presentation - the Kredey section shows a generic device mockup without thoughtful cropping or composition. The 'Creative Canvas' section with the grid background feels disconnected from the rest of the design and appears randomly placed. The footer section uses a jarring red background that creates an abrupt visual break rather than flowing cohesively.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette lacks cohesion and intentionality. The red accent color (#FF4444 or similar) is used inconsistently - appearing in the name, some project elements, and the footer, but without a clear system. The red in the footer is particularly jarring and overwhelming, taking up significant screen real estate. The overall palette feels limited to black, white, and red, but these colors aren't used with sophistication or restraint. The contrast between sections feels abrupt rather than harmonious, and there's no evidence of thoughtful color relationships or subtle tonal variations.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.0,
+      "overall_confidence": 4.3
+    },
+    "41": {
+      "candidate_id": "41",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_41.jpg",
+      "evaluated_at": "2025-09-02T11:30:51.755623",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography shows adequate hierarchy with clear distinction between headings and body text. Uses what appears to be a clean sans-serif for headings and body text. However, the body text size appears quite large (likely 16-18px+) which falls into the 'overly large' category mentioned in weak anchors. The intro paragraph uses appropriate line spacing and width constraints. Project titles use consistent sizing but could benefit from more sophisticated scale relationships. Overall functional but not demonstrating advanced typographic craft.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from several consistency issues. The project grid shows inconsistent spacing - some projects are full-width while others are in a 2x2 grid format without clear intentional reasoning. The vertical rhythm is inconsistent between sections. Screenshots are presented in generic device mockups without customization or thoughtful presentation. The 'Shop by Room' project uses standard laptop/phone mockups, while other projects use different presentation styles with no visual cohesion tying them together. Poor alignment in the bottom section where projects appear randomly sized and positioned.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Uses a restrained palette primarily relying on black, white, and project-specific colors. The orange/coral background for Shutterfly project and blue gradients for other projects show some color variety. However, the color choices feel more driven by the actual project brands rather than a cohesive portfolio design strategy. The shadows appear to be default CSS values without customization. While not offensive, the color usage lacks the sophistication and intentionality seen in stronger portfolios.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.65,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 2.35,
+      "overall_confidence": 4.0
+    },
+    "42": {
+      "candidate_id": "42",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_42.jpg",
+      "evaluated_at": "2025-09-02T11:31:20.039265",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several weaknesses that indicate poor craft. The site uses what appears to be a script/handwritten font for section headers ('My Work', 'My Process', 'Recommendations', 'Contact') which creates inconsistency with the clean sans-serif used elsewhere. The body text appears to be around 18px which is overly large per the rubric guidance. There's inconsistent text alignment - some sections are left-aligned while the testimonial section appears center-aligned. The typography lacks a clear hierarchical system and rhythm, with arbitrary sizing that doesn't follow a coherent scale. The mix of script and sans-serif fonts doesn't work harmoniously together.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from significant consistency issues. Each section feels disconnected with different background treatments - the work section has a beige background, process section is white, recommendations section returns to beige, creating a disjointed experience. The spacing between sections appears inconsistent with no clear vertical rhythm. The work showcase uses generic rounded rectangle cards that feel template-like. The process diagrams are poorly integrated and feel like separate elements pasted onto the page rather than thoughtfully composed. Screenshots are presented in basic device mockups without any intentional styling or cohesive treatment. The overall composition lacks structure and intentional alignment.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is poorly executed with a muddy beige/tan background that lacks sophistication. The color choices appear arbitrary rather than intentional - the beige background doesn't complement the content and creates poor contrast in some areas. There's no clear color strategy or restraint demonstrated. The process diagrams introduce additional colors (blues, greens, yellows) that aren't integrated with the overall site palette, creating visual discord. The shadows appear to be default CSS values without any refinement or intentional hue matching. The overall color treatment lacks the intentionality and harmony described in the good anchors.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.2,
+      "overall_confidence": 4.0
+    },
+    "43": {
+      "candidate_id": "43",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_43.jpg",
+      "evaluated_at": "2025-09-02T11:31:45.600386",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography uses a simple sans-serif font throughout with clear hierarchy between the large heading 'Hey, I'm Robin', secondary heading 'Nice to meet you', and body text. The type sizing follows a logical scale with appropriate contrast between levels. However, the typography choices are quite basic and safe - using what appears to be a standard system font without any distinctive character or sophistication. The line spacing and text alignment are consistent, but there's no evidence of thoughtful font pairing, creative use of typography as a design element, or use of premium typefaces that would elevate the design.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout is extremely basic with minimal compositional sophistication. The homepage uses a simple left-aligned text block paired with a right-aligned image in a standard two-column grid. There's adequate white space, but it feels more like default spacing rather than intentional design choices. The vertical rhythm is inconsistent - the spacing between the main heading and subheading differs from other element spacing. The image placement creates some visual interest but lacks intentional compositional relationships. The overall structure feels like a basic template layout without evidence of thoughtful grid systems, innovative spatial relationships, or creative approaches to information hierarchy.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely limited, consisting primarily of black text on white background with a single blue accent in the mountain photograph. While restraint in color can demonstrate sophistication, this feels more like lack of consideration rather than intentional minimalism. There's no evidence of a thoughtful monochrome system using varied greys, no subtle accent colors to create hierarchy, and no sophisticated use of color relationships. The blue in the photograph doesn't appear to be leveraged as part of a cohesive color strategy. The overall approach feels default rather than deliberately minimal.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.35,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 1.85,
+      "overall_confidence": 4.33
+    },
+    "44": {
+      "candidate_id": "44",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_44.jpg",
+      "evaluated_at": "2025-09-02T11:32:07.302450",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several weak elements. The site uses what appears to be system fonts without clear intentionality. There's inconsistent hierarchy with the main heading 'Hello, I'm Rasmus' not sufficiently differentiated from body text. The navigation items in the top right lack proper visual hierarchy and spacing. Body text appears to use inconsistent sizing - some project descriptions are cramped while others have awkward spacing. The line-height appears too tight in several sections, making reading difficult. There's no clear typographic system or scale evident.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from poor compositional choices. The three-column structure feels unbalanced with inconsistent gutters between columns. The left column 'Projects' section is densely packed while the right column has excessive white space that doesn't serve a clear purpose. Vertical rhythm is inconsistent - spacing between project entries varies randomly. The overall structure lacks a clear grid system, with elements appearing to float without intentional alignment. The navigation placement in the top right creates an awkward asymmetry with the main heading.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely limited and poorly executed. The site is essentially monochrome with only a small orange accent dot that appears disconnected from the overall design. The grey text lacks intentional variation - there's insufficient contrast hierarchy between different text elements. The background grey feels flat and uninspiring. While minimal color can be sophisticated, this execution lacks the intentional restraint and subtle variations that would make it effective. The single orange element feels arbitrary rather than purposeful.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 1.5,
+      "overall_confidence": 4.0
+    },
+    "46": {
+      "candidate_id": "46",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_46.jpg",
+      "evaluated_at": "2025-09-02T11:33:01.994007",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows significant weaknesses across multiple areas. The site uses inconsistent type sizes without a clear scale - project titles vary dramatically in size (Column vs Samsung vs Webflow Brand) with no apparent hierarchy logic. Text alignment changes randomly between sections (left-aligned descriptions, then center-aligned elsewhere). The body text appears to be overly large (likely 18px+) making it harder to scan. There's excessive use of all-caps in section titles without clear intentionality. The type choices appear to be basic system fonts or common Google fonts without sophistication. Line spacing and hierarchy feel arbitrary rather than systematic.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from major consistency issues. Each project section feels completely different from the next with no unifying visual elements - the grid layouts, spacing, and presentation styles vary wildly between Column, Webflow Brand, Samsung, etc. There's no consistent gutter system - some sections are full-width, others have margins, creating a disjointed experience. The image grids appear haphazardly arranged without intentional alignment or spacing relationships. White space usage is inconsistent - some sections are cramped while others have excessive empty space. The overall structure lacks a clear vertical rhythm or systematic approach to spacing.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color usage lacks restraint and intentionality. There are too many competing colors across different sections without a cohesive palette or strategy. The orange sticky note element feels arbitrary and disconnected from the rest of the design. Each project section introduces new color schemes without any unifying thread - from the blues in Column to the varied palettes in Webflow Brand to the teals in Samsung. There's no systematic use of color for hierarchy or meaning. The overall effect is chaotic rather than harmonious, suggesting a lack of color design sophistication.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 1.7,
+      "overall_confidence": 4.0
+    },
+    "47": {
+      "candidate_id": "47",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_47.jpg",
+      "evaluated_at": "2025-09-02T11:33:22.785839",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several weaknesses. The site uses what appears to be system fonts without sophistication. Body text sizing appears inconsistent across sections, with some text looking too small relative to headers. The hierarchy is basic but functional - headers are appropriately sized but lack refinement. The text alignment switches unnecessarily between sections (left-aligned in some areas, then centered in others like the 'Fun' section). Line spacing appears default rather than intentionally crafted. The typography doesn't demonstrate the restraint or intentionality seen in higher-scoring portfolios.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from inconsistency and lacks visual cohesion. Each section feels disconnected - the work samples are presented with different background treatments (some with device mockups, others without), different spacing patterns, and no unifying visual elements. The screenshots are placed haphazardly within generic browser mockups without intentional cropping or composition. White space usage is inconsistent - some sections are cramped while others have excessive empty space that doesn't serve a clear purpose. The vertical rhythm is broken frequently, with no consistent spacing system evident between sections.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is minimal and restrained, primarily using black, white, and blue accents. The blue accent color is used consistently for interactive elements and highlights. However, the color application lacks sophistication - it's very basic and safe without demonstrating mastery of subtle color techniques or intentional variation. The monochrome approach works but doesn't show the refined use of different grey tones or shadows that would elevate the design. The color choices feel default rather than carefully considered.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.3,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 2.05,
+      "overall_confidence": 4.0
+    },
+    "48": {
+      "candidate_id": "48",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_48.jpg",
+      "evaluated_at": "2025-09-02T11:33:46.713083",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows poor hierarchy and inconsistent execution. The main heading 'Shu Ding' uses what appears to be a basic sans-serif font without any distinctive character. Body text appears to be around 16-18px which is acceptable, but there's minimal contrast between different text elements. The navigation items 'about', 'thoughts', 'projects' lack visual weight and hierarchy - they appear almost as afterthoughts in light grey. Line spacing appears adequate but there's no clear typographic system or scale in evidence. The underlined links within the body text create visual noise rather than helpful hierarchy. Overall, this represents a very basic, unsophisticated approach to typography with no evidence of intentional font pairing, hierarchy creation, or typographic craft.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout is extremely basic with poor use of space and minimal compositional consideration. The navigation is cramped in the top left with inconsistent spacing - 'about', 'thoughts', 'projects' appear randomly positioned without clear alignment or intentional spacing. The main content area shows no evidence of a grid system or intentional layout structure. There's excessive white space that serves no compositional purpose - the content feels lost in the vast empty space. The content is simply left-aligned with no consideration for readability, visual flow, or engaging composition. The overall page feels unfinished and lacks any sophisticated layout techniques like intentional white space usage, visual rhythm, or compositional balance. This represents minimal effort in layout design.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 1,
+          "explanation": "The color palette is extremely limited and poorly executed. The site appears to use only black text on white background with some light grey for navigation elements. While minimal palettes can be sophisticated, this execution lacks intentional variation or hierarchy through color. The grey used for navigation appears arbitrary rather than part of a considered system. There's no evidence of intentional color relationships, tonal variations, or sophisticated use of monochrome techniques. The underlined links appear to be default blue, which creates an jarring inconsistency with the otherwise monochrome approach. This represents the most basic possible color treatment with no evidence of design consideration or craft.",
+          "confidence": 5
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 1.7,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 1.15,
+      "overall_confidence": 4.67
+    },
+    "49": {
+      "candidate_id": "49",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_49.jpg",
+      "evaluated_at": "2025-09-02T11:34:06.772254",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography shows adequate hierarchy with clear distinctions between the header, navigation, project titles, and descriptions. The main heading 'STEFANIE SCHWEMLEIN' uses appropriate letter spacing and sizing. However, the typeface choices appear to be basic system fonts without sophistication. The project titles like 'FutureAdvisor' and descriptions use standard weights and sizes that work functionally but lack refinement. There's no evidence of intentional typographic styling or premium typefaces that would elevate the design.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout follows a basic 2x2 grid system for project thumbnails, which provides some structure, but the execution feels generic and uninspired. The spacing between elements appears inconsistent - the gap between the header area and project grid seems arbitrary. The project images are simply placed in uniform rectangles without thoughtful cropping or composition. The overall layout lacks visual rhythm and feels like a default template structure. There's no innovative use of white space or creative arrangement that would demonstrate sophisticated layout skills.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely limited, using primarily black text on white background with minimal variation. While restraint can be sophisticated, this appears more like a lack of color consideration rather than intentional monochromatic design. The project images provide the only color, but there's no evidence of a cohesive color strategy tying the portfolio together. The social media icons at the bottom are basic black circles. There's no use of subtle grays, accent colors, or sophisticated color relationships that would demonstrate color mastery.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.35,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.65,
+      "overall_confidence": 4.33
+    },
+    "5": {
+      "candidate_id": "5",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_5.jpg",
+      "evaluated_at": "2025-09-02T11:34:33.419182",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several weaknesses. The main heading uses an inconsistent mix of font weights and sizes without clear hierarchy - 'Dennice Quijano Jaye is a senior product designer focused on footwear and color' appears to use multiple font weights arbitrarily. The body text in the centered description paragraph appears cramped with poor line spacing. The 'Projects' heading lacks visual weight and hierarchy compared to the body text. In the About section, there's inconsistent text alignment switching between left-aligned service lists and what appears to be different text treatments without intentional design strategy. The overall typography system lacks the restraint and intentionality that characterizes good typographic design.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from inconsistent spacing and alignment issues. The hero image bleeds to edges while subsequent content has inconsistent margins and gutters. The Projects section shows three shoe images with uneven spacing and alignment - the images don't appear to follow a consistent grid system. The transition from the white top section to the black About section feels abrupt and unintentional rather than designed. Within the About section, the photo placement and text columns lack visual balance, with awkward white space distribution. The overall composition lacks a coherent system for spacing, alignment, and visual rhythm throughout the page.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The color palette is extremely restrained - primarily black, white, and the natural colors from the photography. While this minimalist approach can work well, the execution lacks intentional variation in the grayscale values. The stark contrast between the white upper section and pure black About section feels jarring rather than thoughtfully designed. The design relies heavily on the colorful shoe photography to provide visual interest, but doesn't demonstrate sophisticated color design skills beyond basic black/white contrast. The monochrome approach shows some restraint but lacks the subtle tonal variations or intentional accent colors that would elevate the design.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.3,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 1.95,
+      "overall_confidence": 3.67
+    },
+    "50": {
+      "candidate_id": "50",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_50.jpg",
+      "evaluated_at": "2025-09-02T11:34:58.476201",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several issues that indicate poor craft. The header 'SUNNY BABBAR' uses excessive letter-spacing that creates awkward gaps between characters. The subtitle 'USER EXPERIENCE | INTERACTION DESIGNER' also has problematic spacing with the pipe character creating visual imbalance. Different sections show inconsistent text treatments - some project titles are in blue, others in black, with no clear hierarchy system. The body text appears to use default web fonts without consideration for quality typefaces. There's a lack of typographic rhythm and scale throughout the portfolio.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from inconsistent spacing and alignment issues. Each project section feels disconnected from the others with no visual system tying them together. The spacing between elements varies randomly - some sections have tight spacing while others have excessive whitespace without intentional purpose. The mockup presentations are haphazardly arranged, particularly visible in the mobile app screenshots which appear to float without proper alignment or visual connection. The overall composition lacks a coherent grid system, and elements don't follow consistent alignment principles. The portfolio reads more like a collection of unrelated pieces rather than a cohesive presentation.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color usage lacks intentional strategy and harmony. Each project section introduces different color schemes (orange for mobile apps, blue for LinkedIn project, yellow for tablet designs) without any connecting visual thread. There's no consistent accent color or palette that unifies the portfolio. The colors appear to be defaults from the individual projects rather than curated choices for the portfolio presentation. The lack of color restraint and intentional palette selection creates a disjointed visual experience that feels more like a random collection than a designed presentation.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 1.7,
+      "overall_confidence": 4.0
+    },
+    "51": {
+      "candidate_id": "51",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_51.jpg",
+      "evaluated_at": "2025-09-02T11:35:21.773189",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Strong typography execution with clear hierarchy and intentional choices. The large display text 'Hello, I'm Tammy' creates excellent visual impact, and the subheading uses a softer gray color that creates nice contrast without being too heavy. The body text maintains good readability with appropriate sizing. Project titles are well-sized and the descriptions maintain consistent treatment. The mix of weights (bold headlines, regular body text) shows restraint and purpose. Line spacing appears well-considered throughout, and the overall typographic system feels cohesive across different sections.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Excellent use of a consistent grid system with well-defined columns and gutters. The layout shows strong vertical rhythm with consistent spacing between project cards. The hero section balances the large text on the left with the circular profile image on the right effectively. Project cards maintain uniform sizing and spacing, creating visual harmony. White space is used intentionally to create breathing room and hierarchy. The navigation is clean and appropriately positioned. The layout feels purposeful rather than random, with clear alignment and structure throughout.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Sophisticated color palette that shows restraint and intention. The hero section uses a monochromatic approach with black text and gray accents that creates clean hierarchy. Each project card features distinct background colors (purple, green, orange, blue, pink, etc.) but they share similar saturation levels and work harmoniously together. The colors feel purposeful rather than random - each project gets its own identity while maintaining overall cohesion. The use of colored backgrounds for project cards creates visual interest without overwhelming the interface. The overall palette balances colorful project sections with neutral typography areas effectively.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 4.33
+    },
+    "52": {
+      "candidate_id": "52",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_52.jpg",
+      "evaluated_at": "2025-09-02T11:35:44.505809",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography shows mixed execution. The main heading 'TAYLOR CHE' uses a clean sans-serif with appropriate weight and spacing. The tagline underneath maintains good hierarchy with smaller, spaced text. However, there are inconsistencies in the overall system - the project titles like 'Sunflower' and descriptions use what appears to be standard web fonts without much sophistication. The contact section shows inconsistent text treatments between 'Let's chat!' and 'Contact' headings. While readable, the typography lacks the refinement and intentional system that would elevate it above average.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from several compositional issues. While the centered hero section with the name works well, the project presentation lacks consistency and intentional structure. Each project section uses different background colors (beige, cream with red elements, green) without a clear visual system tying them together. The spacing between sections appears inconsistent, and the footer splits into two columns ('Let's chat!' and 'Contact') in a way that feels unbalanced. The decorative dog illustrations at the top, while charming, don't integrate well with the overall design system and feel disconnected from the professional work showcase below.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette lacks cohesion and intentionality. The site uses a burgundy/maroon header, followed by beige, cream with red accents, and green backgrounds for different sections without a clear color strategy. While individual sections might work in isolation, together they create a disjointed experience. The red used in the Xbox section doesn't relate well to the green in the UCLA Library section. The color choices appear arbitrary rather than part of a thoughtful, harmonious system. There's also inconsistent use of the burgundy from the header throughout the rest of the site.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.35,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 2.05,
+      "overall_confidence": 4.0
+    },
+    "53": {
+      "candidate_id": "53",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_53.jpg",
+      "evaluated_at": "2025-09-02T11:36:34.349640",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography shows average execution with some inconsistencies. The site uses what appears to be a standard system font (likely Helvetica/Arial) which is safe but unremarkable. The hierarchy is functional with clear distinctions between the main heading 'Featured work', body text, and smaller descriptive text. However, there are issues with consistency - the navigation uses different styling than the body text in ways that don't feel intentional. The line spacing and sizing are adequate but don't demonstrate sophisticated typographic sensibilities. The 'Contact me' link styling feels disconnected from the overall type system.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout shows below-average composition skills with several concerning issues. The main content area lacks a clear grid system or consistent spacing pattern. The two large image blocks are stacked without intentional relationship or visual connection beyond basic alignment. The spacing between elements feels arbitrary rather than systematic - there's inconsistent padding around the header area and the main content blocks. The screenshots are presented in generic device mockups without any customization or thoughtful presentation. The overall page feels like disconnected blocks rather than a cohesive composition. The footer attribution is poorly positioned and styled.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is very limited and shows poor intentionality. The site is predominantly grayscale with the only accent being a blue link color that feels arbitrary rather than chosen with purpose. The dark navy background in the main image blocks creates harsh contrast without serving a clear design purpose. The overall lack of a cohesive color strategy makes the site feel bland and unfinished. While minimal color palettes can be sophisticated when executed well, this implementation lacks the subtle variations and intentional restraint that would demonstrate color mastery.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.35,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 2.05,
+      "overall_confidence": 4.33
+    },
+    "54": {
+      "candidate_id": "54",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_54.jpg",
+      "evaluated_at": "2025-09-02T11:36:59.823424",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "The typography shows several weaknesses. The header uses a very large, bold sans-serif that feels heavy and overwhelming. The body text appears to be using a generic sans-serif font without clear hierarchy. The navigation uses small, light text that creates poor contrast with the background. There's inconsistent sizing - the main headline 'I am Jiyoung' is disproportionately large compared to other elements. The project titles like 'Animation Live Editorial' and 'VFX Script Breakdown' use inconsistent text treatments. Overall, the typography lacks sophistication and intentional hierarchy.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from several compositional issues. The hero section has an awkward balance with the large text on the left and decorative dots on the right that don't serve a clear purpose. The project grid below is inconsistent - some items are landscape, some portrait, creating visual chaos. The spacing between project cards appears uneven and there's no clear vertical rhythm. The screenshots within each project card are poorly cropped and inconsistently sized. The overall composition lacks intentional structure and feels haphazardly arranged rather than thoughtfully designed.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely limited, relying primarily on black, white, and grey tones. While monochrome can be sophisticated, this execution lacks intentional variation in grey tones to create hierarchy. The dark background in the hero section creates poor contrast with the text. The project screenshots show various colors but they're not harmonized or curated in any intentional way - they just appear as whatever colors happened to be in the original work. There's no evidence of thoughtful color curation or restraint that would demonstrate design sophistication.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 1.7,
+      "overall_confidence": 4.0
+    },
+    "6": {
+      "candidate_id": "6",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_6.jpg",
+      "evaluated_at": "2025-09-02T11:37:20.337226",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Strong typography system with consistent restraint. Uses what appears to be a clean sans-serif throughout with clear hierarchy established through size and weight variations. The large project titles create good contrast with smaller descriptive text. Line spacing and alignment are consistent across sections. The typography feels intentional and sophisticated, showing good understanding of hierarchy without over-styling.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Excellent use of consistent layout patterns and generous white space. Each project section follows a similar structure with hero image, title, and description, creating visual rhythm. The full-width project images are well-composed and breathe properly with consistent margins. The grid system appears deliberate with consistent gutters and alignment. The layout feels minimal yet purposeful, with each section having enough space to be distinct while maintaining cohesion.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Restrained color palette that relies primarily on neutral tones (cream/off-white background, black text). The project screenshots provide color variety, but the site itself maintains monochromatic discipline. While this restraint shows sophistication, it could benefit from slightly more intentional use of accent colors or tonal variations in the neutral palette to create additional hierarchy or interest. The shadows and subtle tonal shifts are well-executed.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.7,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.7,
+      "overall_confidence": 4.0
+    },
+    "7": {
+      "candidate_id": "7",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_7.jpg",
+      "evaluated_at": "2025-09-02T11:37:40.990225",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography is competent but unremarkable. Uses a clean sans-serif throughout with appropriate hierarchy between headings and body text. However, it lacks sophistication - the type choices feel safe and generic rather than intentional. The line spacing and text sizing are adequate but don't demonstrate mastery of typographic craft. The 'DM' logo mark shows some consideration for custom lettering, but overall the typography doesn't elevate the design.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "The layout follows a predictable alternating pattern - left text/right image, then right text/left image. While this creates some visual rhythm, it's quite formulaic and doesn't show creative layout thinking. The spacing appears consistent and the grid structure is sound, but every project preview feels identical in treatment. The colored background blocks provide some visual interest but feel like a basic template approach rather than thoughtful composition choices.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Uses a restrained palette of soft pastels (yellow, blue, purple, green, pink, mint) as background colors for project previews. While harmonious, the color choices feel somewhat arbitrary rather than strategic. The colors don't seem to relate to the project content or create meaningful differentiation. The overall approach is pleasant but lacks sophistication in color theory application - it's more decorative than functional.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.5,
+      "overall_confidence": 4.0
+    },
+    "9": {
+      "candidate_id": "9",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_9.jpg",
+      "evaluated_at": "2025-09-02T11:38:07.252108",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "The typography shows basic competence but lacks sophistication. Uses what appears to be a single sans-serif typeface with reasonable hierarchy through size and weight variations. The main headline 'I'm Eric Hishinuma, Product Designer from the SF Bay Area' creates clear hierarchy, and body text appears appropriately sized. However, the typography feels generic and doesn't demonstrate the restraint or intentional design choices seen in higher-scoring portfolios. The type treatment lacks the subtle refinement or creative use that would elevate it above average - it's functional but not memorable or particularly well-crafted.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The layout suffers from several compositional issues. While there's a basic structure with centered content and consistent project presentation, the spacing feels inconsistent and unrefined. The project images are presented in generic device mockups (desktop monitors, phone frames) without thoughtful integration or visual cohesion between different projects. Each project section feels disconnected from the others with no unifying visual elements beyond basic typography. The overall composition lacks the intentional white space usage and vertical rhythm that characterizes strong layout work. The presentation feels template-like rather than custom-designed.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The color palette is extremely limited, appearing to be primarily grayscale with minimal accent colors. While restraint can demonstrate sophistication, this feels more like a lack of intentional color strategy rather than purposeful minimalism. The few colors present (appears to be some blue accents and an orange/red element in the header) don't seem to be used systematically to create hierarchy or meaning. The overall treatment lacks the subtle tonal variations or intentional monochromatic sophistication seen in stronger minimal color approaches.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.35,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 2.05,
+      "overall_confidence": 3.67
+    }
+  }
+}

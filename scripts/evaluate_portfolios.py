@@ -34,6 +34,13 @@ try:
 except ImportError:
     OPENAI_AVAILABLE = False
 
+# Try importing Anthropic (optional, for Claude provider)
+try:
+    import anthropic
+    ANTHROPIC_AVAILABLE = True
+except ImportError:
+    ANTHROPIC_AVAILABLE = False
+
 
 class ModelProvider(ABC):
     """Abstract base class for model providers."""
@@ -214,14 +221,168 @@ class OpenAIProvider(ModelProvider):
 
 
 class ClaudeProvider(ModelProvider):
-    """Anthropic Claude 3.5 Sonnet provider (for future implementation)."""
+    """Anthropic Claude provider for Sonnet 4 and Opus 4.1 models."""
     
-    def __init__(self, api_key: str):
-        self.api_key = api_key
-        # Placeholder for Claude implementation
+    def __init__(self, api_key: str, model: str = "claude-sonnet-4-20250514", debug: bool = False):
+        if not ANTHROPIC_AVAILABLE:
+            raise ImportError("Anthropic package not installed. Run: pip install anthropic")
+        
+        self.client = anthropic.Anthropic(api_key=api_key)
+        self.model = model
+        self.debug = debug
+        
+    def _encode_image(self, image_path: str) -> str:
+        """Encode image to base64, resizing for Claude if needed."""
+        try:
+            from PIL import Image
+            import io
+            
+            # Open and check image dimensions
+            with Image.open(image_path) as img:
+                original_size = img.size
+                max_dim = max(img.size)
+                
+                # Claude has 8000px max dimension limit
+                if max_dim > 8000:
+                    # Resize while maintaining aspect ratio
+                    ratio = 8000 / max_dim
+                    new_size = (int(img.width * ratio), int(img.height * ratio))
+                    img = img.resize(new_size, Image.Resampling.LANCZOS)
+                    
+                    if self.debug:
+                        print(f"      🔧 Resized {Path(image_path).name}: {original_size} → {new_size}")
+                
+                # Convert to bytes
+                img_buffer = io.BytesIO()
+                img.save(img_buffer, format='JPEG', quality=90)
+                image_bytes = img_buffer.getvalue()
+                
+                if self.debug:
+                    size_kb = len(image_bytes) / 1024
+                    print(f"      📷 Encoded {Path(image_path).name}: {size_kb:.1f} KB")
+                
+                return base64.b64encode(image_bytes).decode('utf-8')
+                
+        except ImportError:
+            # Fallback if PIL not available
+            with open(image_path, "rb") as image_file:
+                image_bytes = image_file.read()
+                if self.debug:
+                    size_kb = len(image_bytes) / 1024
+                    print(f"      📷 Encoded {Path(image_path).name}: {size_kb:.1f} KB (no resize - PIL not available)")
+                return base64.b64encode(image_bytes).decode('utf-8')
         
     def evaluate_portfolio(self, image_path: str, prompt: str, exemplar_images: List[str]) -> Dict[str, Any]:
-        raise NotImplementedError("Claude provider not yet implemented")
+        """Evaluate a portfolio using Claude models."""
+        
+        # Build message content with images
+        content = []
+        
+        # Add prompt text
+        content.append({
+            "type": "text",
+            "text": prompt
+        })
+        
+        # Add exemplar images if provided
+        for ex_path in exemplar_images:
+            content.append({
+                "type": "image",
+                "source": {
+                    "type": "base64",
+                    "media_type": "image/jpeg",
+                    "data": self._encode_image(ex_path)
+                }
+            })
+        
+        # Add instruction and candidate image
+        content.append({
+            "type": "text", 
+            "text": "\n\nNow evaluate this candidate portfolio:"
+        })
+        
+        content.append({
+            "type": "image",
+            "source": {
+                "type": "base64", 
+                "media_type": "image/jpeg",
+                "data": self._encode_image(image_path)
+            }
+        })
+        
+        messages = [
+            {
+                "role": "user",
+                "content": content
+            }
+        ]
+        
+        if self.debug:
+            print(f"\n============================================================")
+            print(f"🔍 DEBUG: Preparing Claude API Call")
+            print(f"============================================================")
+            print(f"   Model: {self.model}")
+            print(f"   Candidate Image: {Path(image_path).name}")
+            print(f"   Number of Exemplars: {len(exemplar_images)}")
+            print(f"   Prompt Length: {len(prompt)} characters")
+            print(f"\n   Encoding images:")
+            
+        try:
+            # Claude API call
+            response = self.client.messages.create(
+                model=self.model,
+                max_tokens=4000,
+                messages=messages,
+                system="You are a senior product design hiring manager. Evaluate portfolios strictly based on visual craft."
+            )
+            
+            if self.debug:
+                print(f"\n   ✅ Claude API Response Received:")
+                print(f"   - Model used: {response.model}")
+                print(f"   - Usage: {response.usage}")
+                print(f"   - Response length: {len(response.content[0].text)} chars")
+                
+            # Parse the JSON response
+            content_text = response.content[0].text
+            if not content_text:
+                raise ValueError("Claude API returned empty response content")
+            
+            # Claude sometimes wraps JSON in markdown code blocks
+            content_text = content_text.strip()
+            if content_text.startswith("```json"):
+                content_text = content_text.replace("```json", "").replace("```", "").strip()
+            elif content_text.startswith("```"):
+                content_text = content_text.replace("```", "").strip()
+            
+            try:
+                result = json.loads(content_text)
+            except json.JSONDecodeError as e:
+                if self.debug:
+                    print(f"\n   ❌ JSON Parsing Error: {e}")
+                    print(f"   Raw response (first 500 chars):")
+                    print(f"   {content_text[:500]}...")
+                raise ValueError(f"Claude returned invalid JSON: {e}")
+            
+            if self.debug:
+                print(f"\n   📊 Parsed Result Summary:")
+                if 'scores' in result:
+                    for criterion, data in result['scores'].items():
+                        score = data.get('score', 'N/A')
+                        confidence = data.get('confidence', 'N/A')
+                        print(f"   - {criterion.title()}: {score} (confidence: {confidence})")
+                    overall_score = result.get('overall_weighted_score', 'N/A')
+                    print(f"   - Overall Score: {overall_score}")
+                    red_flags = result.get('red_flags', [])
+                    print(f"   - Red Flags: {red_flags}")
+                print(f"============================================================\n")
+            
+            return result
+            
+        except Exception as e:
+            print(f"Error calling Claude API: {e}")
+            if self.debug and hasattr(e, 'response'):
+                print(f"Error details: {e.response}")
+            raise
 
 
 class PortfolioEvaluator:
@@ -609,8 +770,8 @@ def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser(description='Evaluate portfolio candidates using AI vision models')
     parser.add_argument('--debug', action='store_true', help='Enable debug mode with verbose output')
-    parser.add_argument('--model', choices=['gpt-4o', 'gpt-5', 'o1'], 
-                        help='Override model selection (gpt-4o, gpt-5, or o1)')
+    parser.add_argument('--model', choices=['gpt-4o', 'gpt-5', 'o1', 'claude-sonnet-4', 'claude-opus-4.1'], 
+                        help='Override model selection (gpt-4o, gpt-5, o1, claude-sonnet-4, or claude-opus-4.1)')
     parser.add_argument('--no-exemplars', action='store_true', 
                         help='Skip exemplar images - evaluate using rubric only (for calibration)')
     
@@ -632,30 +793,56 @@ def main():
         print("Please create a .env file with: OPENAI_API_KEY=your_key_here")
         sys.exit(1)
     
-    # Choose provider (easy to switch here)
-    provider_choice = os.getenv("MODEL_PROVIDER", "openai").lower()
-    
-    if provider_choice == "openai":
-        # Model selection priority: command line > environment variable > default
-        if args.model:
-            model_name = args.model
-            print(f"🔄 Command line override: using {model_name}")
-        else:
-            model_name = os.getenv("OPENAI_MODEL", "gpt-5")
-        
-        if debug:
-            print(f"🔧 Debug mode enabled")
-            print(f"🤖 Using OpenAI model: {model_name}")
-        provider = OpenAIProvider(api_key, model=model_name, debug=debug)
-    elif provider_choice == "claude":
+    # Determine provider based on model selection
+    if args.model and args.model.startswith("claude-"):
+        # Claude model selected via command line
         claude_key = os.getenv("ANTHROPIC_API_KEY")
         if not claude_key:
             print("Error: ANTHROPIC_API_KEY not found for Claude provider")
+            print("Please add ANTHROPIC_API_KEY=your_key_here to your .env file")
             sys.exit(1)
-        provider = ClaudeProvider(claude_key)
+        
+        # Map friendly names to actual model IDs
+        claude_model_map = {
+            "claude-sonnet-4": "claude-sonnet-4-20250514",      # Actual Claude Sonnet 4
+            "claude-opus-4.1": "claude-opus-4-1-20250805"       # Actual Claude Opus 4.1
+        }
+        actual_model = claude_model_map.get(args.model, args.model)
+        
+        print(f"🔄 Command line override: using {args.model} (API: {actual_model})")
+        if debug:
+            print(f"🔧 Debug mode enabled")
+            print(f"🤖 Using Claude model: {actual_model}")
+        provider = ClaudeProvider(claude_key, model=actual_model, debug=debug)
+        
     else:
-        print(f"Unknown provider: {provider_choice}")
-        sys.exit(1)
+        # OpenAI models (default behavior)
+        provider_choice = os.getenv("MODEL_PROVIDER", "openai").lower()
+        
+        if provider_choice == "openai":
+            # Model selection priority: command line > environment variable > default
+            if args.model:
+                model_name = args.model
+                print(f"🔄 Command line override: using {model_name}")
+            else:
+                model_name = os.getenv("OPENAI_MODEL", "gpt-5")
+            
+            if debug:
+                print(f"🔧 Debug mode enabled")
+                print(f"🤖 Using OpenAI model: {model_name}")
+            provider = OpenAIProvider(api_key, model=model_name, debug=debug)
+        elif provider_choice == "claude":
+            # Legacy: Claude selected via environment variable
+            claude_key = os.getenv("ANTHROPIC_API_KEY")
+            if not claude_key:
+                print("Error: ANTHROPIC_API_KEY not found for Claude provider")
+                sys.exit(1)
+            default_claude_model = "claude-sonnet-4-20250514"  # Default to Sonnet 4
+            print(f"🔄 Environment variable: using claude provider ({default_claude_model})")
+            provider = ClaudeProvider(claude_key, model=default_claude_model, debug=debug)
+        else:
+            print(f"Unknown provider: {provider_choice}")
+            sys.exit(1)
     
     # Create evaluator
     evaluator = PortfolioEvaluator(provider, base_dir, no_exemplars=args.no_exemplars)

@@ -23,9 +23,9 @@ You are a senior product design hiring manager evaluating portfolio websites bas
    - DO NOT factor in where the person worked or what they worked on
    - Focus ONLY on the visual execution and design craft
 
-4. **Be consistent in your evaluations:**
-   - Apply the rubric standards strictly and consistently across all evaluations
-   - Use the full 1-5 rating scale when warranted
+4. **Be consistent with the exemplars:**
+   - Use the provided exemplar ratings as calibration for your scores
+   - Apply the same standards strictly across all evaluations
 
 5. **Check for red flags** and list them if present:
    - template_scent_high
@@ -73,7 +73,7 @@ Return **only** valid JSON matching this exact structure:
 
 # RUBRIC (authoritative)
 
-The rubric is the primary guide. Follow it strictly.
+The rubric is the primary guide. Follow it strictly. Exemplars are calibration anchors only.
 
 {
   "rubric": {
@@ -155,4 +155,97 @@ The rubric is the primary guide. Follow it strictly.
       "5: Fantastic"
     ]
   }
+}
+
+
+# EXEMPLAR CALIBRATION (compact)
+
+{
+  "exemplars": [
+    {
+      "exemplar_id": "1",
+      "portfolio_category": "Minimal",
+      "criteria_scores": {
+        "typography": 4,
+        "layout_composition": 4,
+        "color": 4
+      },
+      "overall_weighted_score": 4.0
+    },
+    {
+      "exemplar_id": "2",
+      "portfolio_category": "Minimal",
+      "criteria_scores": {
+        "typography": 5,
+        "layout_composition": 4,
+        "color": 5
+      },
+      "overall_weighted_score": 4.65
+    },
+    {
+      "exemplar_id": "3",
+      "portfolio_category": "Minimal",
+      "criteria_scores": {
+        "typography": 2,
+        "layout_composition": 2,
+        "color": 1
+      },
+      "overall_weighted_score": 1.7
+    },
+    {
+      "exemplar_id": "4",
+      "portfolio_category": "Minimal",
+      "criteria_scores": {
+        "typography": 2,
+        "layout_composition": 1,
+        "color": 2
+      },
+      "overall_weighted_score": 1.65
+    },
+    {
+      "exemplar_id": "5",
+      "portfolio_category": "Minimal",
+      "criteria_scores": {
+        "typography": 5,
+        "layout_composition": 5,
+        "color": 4
+      },
+      "overall_weighted_score": 4.7
+    },
+    {
+      "exemplar_id": "6",
+      "portfolio_category": "Minimal",
+      "criteria_scores": {
+        "typography": 5,
+        "layout_composition": 4,
+        "color": 4
+      },
+      "overall_weighted_score": 4.35
+    },
+    {
+      "exemplar_id": "7",
+      "portfolio_category": "Minimal",
+      "criteria_scores": {
+        "typography": 1,
+        "layout_composition": 1,
+        "color": 2
+      },
+      "overall_weighted_score": 0.5
+    },
+    {
+      "exemplar_id": "8",
+      "portfolio_category": "Minimal",
+      "criteria_scores": {
+        "typography": 2,
+        "layout_composition": 3,
+        "color": 3
+      },
+      "overall_weighted_score": 2.65
+    }
+  ],
+  "guidance": [
+    "Use these numeric anchors to calibrate scoring.",
+    "Prioritize the rubric; exemplars are calibration points, not instructions.",
+    "Use the full 1\u20135 range when warranted."
+  ]
 }
