@@ -475,10 +475,12 @@ Remember: We need to make the AI more critical and better at spotting the flaws 
 class ContinuousImprover:
     """Main class orchestrating continuous prompt improvement."""
     
-    def __init__(self, provider, base_dir: Path, test_mode: bool = False):
+    def __init__(self, provider, base_dir: Path, test_mode: bool = False, eval_concurrency: int = 8, eval_max_retries: int = 3):
         self.provider = provider
         self.base_dir = base_dir
         self.test_mode = test_mode
+        self.eval_concurrency = eval_concurrency
+        self.eval_max_retries = eval_max_retries
         self.version_manager = PromptVersionManager(base_dir)
         self.prompt_improver = PromptImprover(provider, base_dir)
         
@@ -601,8 +603,8 @@ class ContinuousImprover:
         
         evaluator = CustomEvaluator(self.provider, self.base_dir, prompt_content)
         
-        # Run evaluation
-        evaluator.evaluate_candidates(candidate_ids)
+        # Run evaluation with parallel processing and retry logic
+        evaluator.evaluate_candidates(candidate_ids, concurrency=self.eval_concurrency, max_retries=self.eval_max_retries)
         
         # Load the results
         results_dir = self.base_dir / "evaluation-results"
@@ -795,6 +797,10 @@ def main():
     parser.add_argument('--model', default='gpt-5',
                        choices=['gpt-4o', 'gpt-5', 'claude-opus-4.1'],
                        help='Model to use (default: gpt-5)')
+    parser.add_argument('--eval-concurrency', type=int, default=8,
+                       help='Number of parallel evaluation workers (default: 8)')
+    parser.add_argument('--eval-max-retries', type=int, default=3,
+                       help='Maximum retry attempts for rate limited requests (default: 3)')
     
     args = parser.parse_args()
     
@@ -830,7 +836,7 @@ def main():
         iterations = args.iterations
     
     # Run improvement cycle
-    improver = ContinuousImprover(provider, base_dir, test_mode=args.test)
+    improver = ContinuousImprover(provider, base_dir, test_mode=args.test, eval_concurrency=args.eval_concurrency, eval_max_retries=args.eval_max_retries)
     improver.run_improvement_cycle(
         num_iterations=iterations,
         test_candidates=test_candidates

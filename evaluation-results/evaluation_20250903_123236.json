@@ -1,0 +1,797 @@
+{
+  "evaluation_metadata": {
+    "timestamp": "2025-09-03T12:32:36.220661",
+    "end_time": "2025-09-03T12:46:03.544886",
+    "duration_seconds": 807.324225,
+    "model_used": {
+      "provider": "OpenAIProvider",
+      "model": "gpt-5"
+    },
+    "exemplar_images": [
+      "examplar-images/exemplar_1.jpg",
+      "examplar-images/exemplar_2.jpg",
+      "examplar-images/exemplar_3.jpg",
+      "examplar-images/exemplar_4.jpg",
+      "examplar-images/exemplar_5.jpg",
+      "examplar-images/exemplar_6.jpg",
+      "examplar-images/exemplar_7.jpg",
+      "examplar-images/exemplar_8.jpg"
+    ],
+    "total_candidates_evaluated": 27,
+    "prompt_length_chars": 20842,
+    "evaluation_complete": true,
+    "no_exemplars_mode": false
+  },
+  "full_prompt_used": "# EVALUATION PROMPT\n\nYou are a senior product design hiring manager evaluating portfolio websites based on **visual craft only**. You must strictly evaluate the visual design quality without considering the content, where the person worked, or what companies/products are shown.\n\n## Evaluation Rules:\n\n1. **Score each dimension on a 1-5 scale** using the provided rubric anchors:\n   - 1: Terrible\n   - 2: Below average\n   - 3: Average\n   - 4: Above average\n   - 5: Fantastic\n\n2. **For each dimension, you MUST:**\n   - Provide a score (1-5)\n   - Write a detailed explanation of WHY you gave that score\n   - Cite specific visual evidence (e.g., \"inconsistent spacing between sections\", \"serif/sans-serif pairing creates strong hierarchy\")\n   - Rate your confidence in the score (1-5 scale where 1=very uncertain, 5=very confident)\n\n3. **Avoid context bias:**\n   - DO NOT be influenced by company names, logos, or prestigious brands shown\n   - DO NOT consider the actual content/copy of case studies\n   - DO NOT factor in where the person worked or what they worked on\n   - Focus ONLY on the visual execution and design craft\n\n4. **Be consistent with the exemplars:**\n   - Use the provided exemplar ratings as calibration for your scores\n   - Apply the same standards strictly across all evaluations\n\n5. **Check for red flags** and list them if present:\n   - template_scent_high\n   - sloppy_images\n   - process_soup\n\n## Output Format:\n\nReturn **only** valid JSON matching this exact structure:\n```json\n{\n  \"candidate_id\": \"X\",\n  \"scores\": {\n    \"typography\": {\n      \"score\": 1-5,\n      \"explanation\": \"detailed reasoning with specific evidence\",\n      \"confidence\": 1-5\n    },\n    \"layout_composition\": {\n      \"score\": 1-5,\n      \"explanation\": \"detailed reasoning with specific evidence\", \n      \"confidence\": 1-5\n    },\n    \"color\": {\n      \"score\": 1-5,\n      \"explanation\": \"detailed reasoning with specific evidence\",\n      \"confidence\": 1-5\n    }\n  },\n  \"red_flags\": [\"list any that apply\"],\n  \"overall_weighted_score\": calculated_number,\n  \"overall_confidence\": calculated_number\n}\n```\n\n## Scoring Calculation:\n- base_score = (typography \u00d7 0.35) + (layout_composition \u00d7 0.35) + (color \u00d7 0.30)\n- penalty = sum of red flag penalties:\n  - template_scent_high: 0.5 points\n  - sloppy_images: 0.3 points\n  - process_soup: 0.2 points\n- overall_weighted_score = base_score - penalty  // scores can go below 0\n- overall_confidence = average of individual dimension confidences\n\n---\n\n# RUBRIC\n\nThe rubric is the primary guide. Follow it strictly. Exemplars are calibration anchors only.\n\n## Typography (Weight: 35%)\n\n**Good indicators (4-5 points):**\n- Uses few fonts and styles with clear intentionality\n- Achieves great visual hierarchy and information architecture with a few well-chosen styles\n- Excellence through restraint - using single typeface with subtle weight/color variations shows sophistication\n- Bonus points for creative and effective use of typography as signature design elements\n- Alternatively, uses a lot of fonts but with a strong design intent and strategy (rare but possible)\n- Use of paid typefaces from type foundries\n- If combining multiple typefaces, they are choosing contrasting fonts that also have something to tie them together\n- If using google fonts they are using the good ones (IBM plex, Inter, Work, Fira, etc.)\n- Sophisticated use of minimal typography systems - achieving hierarchy through subtle techniques\n\n**Weak indicators (1-2 points):**\n- Too many fonts, too many weights, sizes, styles where it's not needed or without a clear design intent\n- Overly large type sizes for body text (18px+)\n- Excessive all-caps, letter-spacing\n- Different sections of the website change text alignment in an unintentional way e.g. left, center, then back to left\n- Type sizes don't have a scale and rhythm. e.g. captions are 11px, body is 18px, and headers are 22px\n- Unconstrained line-width that make reading hard. Lines should be between 40 to 100 chars ish\n- Usage of common low quality free google fonts\n- Choosing a combination of typefaces that don't work well together either because they are too similar, or too contrasting with nothing to tie them together\n- Random, overly large, or overly small line-spacing that leads to poor hierarchy\n\n## Layout & Composition (Weight: 35%)\n\n**Good indicators (4-5 points):**\n- Consistency: uses a few layout patterns judiciously\n- Intentional use of white space to create hierarchy and clarity\n- There is a vertical rhythm where spacing is consistent\n- Innovative layouts: Creative approaches like chat interfaces, newspaper columns, or unique navigation patterns\n- If there are screenshots of the work, they are laid out intentionally within the screenshot and the different screenshots have some elements visually tying them together (even if small like a shared color palette or corner radius) even as the work is distinct\n- Achieving more with less - minimal layouts that are highly effective\n\n**Weak indicators (1-2 points):**\n- Every section feels like it's different from the next, with no element tying them together\n- Inconsistent gutters \u2013 different sections of the website have different widths in an unintentional way\n- No clear structure; elements appear randomly placed with no alignment\n- Screenshots of the work are haphazardly presented. Generic device mocks are used. Nothing to tie the screenshots together to make them feel like they belong on the same site\n- Poor spacing: Cramped elements or excessive empty space that doesn't serve a purpose\n- Competing focal points: Everything tries to grab attention equally, creating visual noise\n\n## Color (Weight: 30%)\n\n**Good indicators (4-5 points):**\n- Harmonious palette: the colors chosen are either complementary or adjacent. they share either intentional contrast or intentional similarity\n- There are few colours and they're used with restraint in ways that are meaningful to the design\n- Monochrome mastery - all-grey/black/white palettes can be excellent when used with intentional variation\n- Less is more - restraint in color usage can demonstrate sophistication\n- The shadows are dialed in - using more than default css value. maybe they have a hue, or are very diffuse\n- Subtle color techniques: using shades of grey or minimal accent colors to create hierarchy\n\n**Weak indicators (1-2 points):**\n- Too many colours that don't share a throughline or intentional contrast\n- Or, if the site is minimal greyscale, then there is lack of intentional use of different shades of grey\n- Default looking shadows that look too dark for the site, or don't match the hue\n\n## Red Flags:\n- **template_scent_high**: the site clearly feels like it was from a template - generic layouts, standard components, no customization\n- **sloppy_images**: they show their work, but it's sloppily laid out - wrong zoom level, generic device mockups without customization, inconsistent image treatments, poor quality/compression artifacts, can't see what's going on\n- **process_soup**: the case studies spend too much time talking about process rather than showing the work\n\n---\n\n# EXEMPLAR CALIBRATION\n\nUse these detailed exemplar evaluations to calibrate your scoring. Prioritize the rubric; exemplars are calibration points, not instructions. Use the full 1\u20135 range when warranted.\n\n## Exemplar 1 (Score: 4.0)\n**Portfolio Category:** Minimal  \n**Site URL:** https://charliedeets.com/  \n**Image:** exemplar_1.jpg\n\n**Typography (Score: 4):** The typography takes a minimal direction. They create strong contrast between the title and the body, by making the title twice as large and bold, while using subtle changes in color to reflect the changes in hierarchy within the body text. The whole thing is set to system font, which further reinforces the minimal approach. While not original, it is well executed, achieving contrast and hierarchy with restraint.\n\n**Layout & Composition (Score: 4):** The layout takes a minimal approach, putting the experience of the candidate forward, instead of leaning on screenshots. The line width is set to make reading comfortable while also playing into the minimalism. Whitespace and high contrast typography is used to provide hierarchy, which keeps visual noise low, while still being clear. There are no visual flourishes, but everything is clear, clean, and well-executed.\n\n**Color (Score: 4):** The color system is extremely constrained, in keeping with the minimalism of the website. While not unique, the candidate uses shades of grey to effectively convey hierarchy while maintaining a clean minimal palette.\n\n## Exemplar 2 (Score: 4.65)\n**Portfolio Category:** Minimal  \n**Site URL:** https://www.elvinhu.com/  \n**Image:** exemplar_2.jpg\n\n**Typography (Score: 5):** The typography mixes an editorial serif font for headers, which gives the website a distinct identity, with a simple sans serif for body text, which keeps things clean and simple. It also uses two great paid typefaces (GT Alpina and Untitled Sans) which tells us that the candidate really thought through their choices. The overall effect combination of typefaces achieve a good blend of elegance and simplicity.\n\n**Layout & Composition (Score: 4):** The layout heavily emphasizes screenshots of the author's work and leans on them heavily as the center of visual interest. Because the images are so important, the author has also taken care to design each one of them in intentional layouts. The core concept of heavily image site is simple, but well-executed with adequate whitespace to create hierarchy, and subtle details like rounded corners for the screenshots to add a subtle flair.\n\n**Color (Score: 5):** The website itself is minimal to not distract from the work screenshots, which are designed to each bring a different pop of colour. The primary colour of each screenshot is also well coordinated \u2013 each is a different hue, but are all similarly pastel, which makes them feel each unique but still cohesive.\n\n## Exemplar 3 (Score: 1.7)\n**Portfolio Category:** Minimal  \n**Site URL:** https://www.agnimurthy.com/  \n**Image:** exemplar_3.jpg\n\n**Typography (Score: 2):** The site combines two similar looking sans serifs (overpass & roboto) which don't contrast enough to achieve visual interest. Instead adds random visual noise. Visual hierarchy is also lacking due to poor use of line spacing. The site uses multiple weight, size, family, opacity without restraint, causing it to feel busy and incohesive.\n\n**Layout & Composition (Score: 2):** The site layout itself is relatively basic. The problem is that the author has put very busy screenshots of their work in small image boxes, which makes it feel busy and hard to read. There is insufficient differentiation between the case study sections and the author's bio, leading two distinct content sections to blend in together. The footer also randomly switches from full width content to narrow center aligned content.\n\n**Color (Score: 1):** The website overuses colors without intentionality. Every case study has its own theme color in the CTA text, without the color contributing any meaning to the design. The site itself also has its purple theme color, which gets lost in the many colors from the case studies.\n\n## Exemplar 4 (Score: 1.65)\n**Portfolio Category:** Minimal  \n**Site URL:** https://sallywangdesigns.com/  \n**Image:** exemplar_4.jpg\n\n**Typography (Score: 2):** The type choices are mediocre free fonts from google (open sans & calluna). The white space is also poorly done. The title and body should be closer. They also use a vertical bar to divide labels in their case study, but the vertical bars are taller and just as dark as the text they divide, making them feel like the primary visual element instead of a subtle divider.\n\n**Layout & Composition (Score: 1):** Every section of this website, from nav, hero, case studies, to footer, are a different width for no apparent reason. The nav is full width justified, the hero is left aligned, the cases are justified full width, and the footer is center aligned again for no good reason. The screenshots of the work are also poorly laid out. They're mostly zoomed out too far to be able to show anything and use generic device templates.\n\n**Color (Score: 2):** There was some attempt at creating a cohesive pastel color system, however, the effect is defeated by: 1. the strongly contrasting black and silver from the device mocks used in her screenshot, which distract from the pastel 2. the fact that there is a random darker colour used in the footer that is not cohesive with the softer, lighter pastel used in the rest of the site.\n\n## Exemplar 5 (Score: 4.7)\n**Portfolio Category:** Minimal  \n**Site URL:** https://emilkowal.ski/  \n**Image:** exemplar_5.jpg\n\n**Typography (Score: 5):** This is an example of a really well-executed minimal typography system. They use exactly one size across the entire website, but through the clever usage of just a slight difference in color between dark and gray, they managed to achieve all the hierarchy and visual distinction that they need. So really there is a level of restraint here that achieves all the goals it seeks out to achieve with very few elements which is elegant. They use shades of gray and then ample white space to create all the hierarchy that they need. The white space is also ample between elements, but it's not too much for the line height. Overall, really well done.\n\n**Layout & Composition (Score: 5):** The layout here is also very simple, but effective. They use white space in a very generous and confident way to create a hierarchy. It's very simple, but what it does it does very well.\n\n**Color (Score: 4):** There is only one color here, but it doesn't mean that it's bad. The black and white here is well done. They chose a very slight shade of gray for the background which is intentional. They chose a contrasting color for the body text vs the title, but it's not too contrasting. They also didn't use pure black when they used a darker color. All of it is intentional, even if it's very minimal. Overall, I think this is a strong example of color usage even though it's all monochrome.\n\n## Exemplar 6 (Score: 4.35)\n**Portfolio Category:** Minimal  \n**Site URL:** https://ryo.lu/  \n**Image:** exemplar_6.jpg\n\n**Typography (Score: 5):** This is another example of a great minimalist typography system. Here are the signs why it's good: first, the site uses two typefaces from a relatively obscure but really high-quality foundry called NB International. I think this was a very intentional choice that works really well for the site in both the super large title case and also the small body case. It demonstrates a level of mastery of typefaces, even though there is not much going on. There's also a nice bit of detail where their age is displayed in a super rapidly shifting number with high decimals, which is a very subtle but good design choice.\n\n**Layout & Composition (Score: 4):** The composition here is simple yet makes great use of contrast. The title is really big and it really works here because there is a whole white space to frame it. The font is high quality and can hold up a large size. They also cleverly use a peel-back design at the top right to hint that there might be something more to this portfolio, which creates both Easter egg and visual focal point that lends subtle compositional interest.\n\n**Color (Score: 4):** There is not much going on in terms of color - mostly only one monochrome color and then two shades of it. But they use it effectively, and this is an example of less done well.\n\n## Exemplar 7 (Score: 0.5)\n**Portfolio Category:** Minimal  \n**Site URL:** candidate_21_original  \n**Image:** exemplar_7.jpg  \n**Red Flags:** template_scent_high, sloppy_images\n\n**Typography (Score: 1):** The typography here is quite messy in a couple ways: one-line height for a lot of these elements is too wide, so for the header, there's too much line height, and then there's an equal amount of line height between the header and the body under it, and then the body and the buttons, which I think is a weird visual hierarchy. And then in the case studies, there's a ton of line height between every line, so it makes it almost seem like bullet points, but there's no bullets, so it's hard to tell whether it's bullet points or not. They've also just selected a really poorly designed serif font, which doesn't help.\n\n**Layout & Composition (Score: 1):** There is no real rhyme or reason to the layout here. Every section feels like a different website. The cards are also really poorly done. They are overly rounded and I feel like they don't connect.\n\n**Color (Score: 2):** There is sort of a theme going on here around a light purple, black, and white, but it's just really poorly executed. They use the color purple in a lot of places that doesn't make a lot of sense and doesn't bring emphasis where it's important. For example, the secondary button outline is purple. Why? There's no reason. The labels on the case studies are also purple outline. Again, no reason and confuses them with the buttons as well. Some of the labels are also filled, whereas others are outlined. Again, not really a good reason for this change and adds visual noise.\n\n## Exemplar 8 (Score: 2.65)\n**Portfolio Category:** Minimal  \n**Site URL:** candidate_30_original  \n**Image:** exemplar_8.jpg\n\n**Typography (Score: 2):** The type work here is okay, I'm sort of somewhere between a 2 and a 3, probably more of a 2 if I was honest. She has selected a pretty cool, unique display type for her main header, the design code art part. And then the words in her top left nav. But she unfortunately doesn't carry it through to the rest of her site, so that the case study titles go back to this generic sans-serif which is not as interesting. In the case studies themselves, there's also a little bit of just messy font type usage. For example, \"Selected work\" is the same size as \"Introducing a new homepage\" underneath. \"Selected work\" is clearly a higher heading level and should probably be a little bigger or different, but it looks kind of the same as the case study titles. And then the case study title has sort of a two-line underneath one which is a body which is well done, but then the other one is sort of some key results which then is stronger than the body text and it's a little too close to the body text which deducts points for me. The labels needed a little bit more separation, so top padding, and probably needed to be a little smaller and not competing with the body. Right now the label is bigger than the body, which probably shouldn't be the case. There's also minor details that make the type not as good. For example, the vertical bar is a little too strong between the labels.\n\n**Layout & Composition (Score: 3):** The layout here doesn't do too much, but it's relatively decently executed. There's a little bit of awkwardness at the \"About me\" section which feels like there's too many cards right? It's a card inside of a card. The bio section is just a little wider than everything else, along with the footer, and there's not a really good reason for it. It doesn't feel super intentional to me, which is also not that great. But otherwise, I think the website pulls off an overall generally competent sort of like spacing, hierarchy, and clarity in terms of the layout. And sort of like I think that if you just look at the hero section at the top and the case studies, I think it's like decently executed. With sort of just like a little bit of lack of refinement around details like what I just mentioned.\n\n**Color (Score: 3):** They've done a decent job balancing a minimal website color palette with a few themes. So I see some mostly monochrome black and white here, but they've punctuated it with some blue and yellow. It's not super consistent, but it's consistent enough that there is a visual theme happening in general. There is also some use of background texture here. It's probably a little overdone, but the fact that it exists is a good sign, and it feels like they're able to use both color and texture. It's a little junior feeling, but not bad. They also have done some interesting gradient and noise work in the three little micro-images next to the words \"design\", \"code\", and \"art\". Again, this tells me that they have some experience working with color. They are not incredibly well done, but they show signs of promise. There are, however, still elements where I think there needs to be a little bit more refinement. For example, the divider line at the very end of her portfolio is too dark. And also, there are some awkward gradients at the car seller case study image that doesn't seem to match with the rest of the site, which is more flat. So minor mistakes, but overall I think it's showing promise in color usage.\n",
+  "candidate_ratings": {
+    "11": {
+      "candidate_id": "11",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_11.jpg",
+      "evaluated_at": "2025-09-03T12:33:59.403923",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Clean, restrained sans-serif system with clear hierarchy in the hero (bold headline, smaller subheads). Line lengths are comfortable and centered copy is readable. However, choices feel generic and light on nuance. The navigation mixes a bordered 'WORK' button with plain text links, introducing inconsistent emphasis. Footer link lists are small with tight leading and little typographic differentiation beyond weight, reducing sophistication.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Strong, simple composition: a centered hero followed by a tight 3x3 grid of square thumbnails with consistent gutters creates order and rhythm. Generous whitespace above and around the grid keeps focus on the work. The footer sits in a light-grey band and aligns content to a clear grid (link columns left, social icons right). Minor weaknesses: the footer feels visually heavier than the rest and the two-column footer balance leaves a large inactive center; otherwise the system is cohesive.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The site chrome is minimal (black/white with a light-grey footer), letting the thumbnails carry color. The grid shows many saturated hues (blues, oranges, teal, magenta-orange gradient), which creates energy but also visual noise since palettes vary per tile without a strong unifying treatment. Repetition of blues/oranges and the dark navy tile anchoring the bottom-right helps balance, but overall color cohesion is average.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.35,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.35,
+      "overall_confidence": 3.67
+    },
+    "1": {
+      "candidate_id": "1",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_1.jpg",
+      "evaluated_at": "2025-09-03T12:34:13.958838",
+      "criteria": {
+        "typography": {
+          "score": 5,
+          "explanation": "Elegant editorial serif italic set very large creates a distinctive voice with excellent micro-typography. The narrow measure and consistent left alignment produce strong readability for a display paragraph. Links are differentiated via a cobalt blue while the rest remains charcoal, and the small, superscript-style years add refined hierarchy. Tracking and kerning look tuned; curves and stroke contrast signal a high-quality typeface. Minor nit: leading is tight but controlled, avoiding collisions.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "A restrained single-column hero is centered within generous negative space, creating a clear focal point. The vertical side navigation on the right adds a subtle secondary structure without clutter. Alignment is consistent and the block\u2019s width feels intentional, producing good rhythm. Not highly inventive beyond the hero, but very clean and balanced.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Sophisticated minimal palette: soft light-gray background, deep charcoal text, and a single vivid blue accent used sparingly for links and the small icon. Contrast is well judged and the accent color adds just enough emphasis. No unnecessary gradients or heavy shadows, maintaining a calm, editorial feel.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.35,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.35,
+      "overall_confidence": 4
+    },
+    "13": {
+      "candidate_id": "13",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_13.jpg",
+      "evaluated_at": "2025-09-03T12:34:14.292123",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Strong serif/sans pairing: a bold display serif for the hero heading ('User Researcher + Designer') creates a clear focal point, paired with a utilitarian mono/sans for body and nav that supports hierarchy. The serif sizing and weight contrast are well-judged and feel intentional. Links and small labels use consistent styling (teal, underlined) that reinforces structure. Minor issues prevent a 5: the small body copy beneath the hero and within the three columns feels a bit cramped with tight leading and generous letter-spacing that reduces readability; section labels ('UNDERSTAND / ITERATE / REFINE') are small and don\u2019t separate enough from the body lists.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Clear, consistent grid with three equal columns under the hero. The illustrative tiles align with their corresponding text blocks, and gutters are even. Generous whitespace around the hero and the centered CTA provides breathing room and visual rhythm. Alignment between left brand and right nav is clean. Minor nitpicks: the switch from centered hero heading to left-aligned columns is slightly abrupt, and the dense bullet lists create localized visual weight that could be lightened with spacing.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Cohesive, restrained palette: soft cream background, muted teal as a primary accent, and warm beige in the illustrations. The teal is used consistently for links, headings, and the outline button, tying elements together without overuse. The illustrations match the palette and feel custom, adding character. While harmonious and well controlled, the system doesn\u2019t push into especially nuanced or complex color work that would merit a 5.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 4.0
+    },
+    "12": {
+      "candidate_id": "12",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_12.jpg",
+      "evaluated_at": "2025-09-03T12:34:23.180956",
+      "criteria": {
+        "typography": {
+          "score": 5,
+          "explanation": "Highly restrained, single sans-serif system style used throughout. Strong hierarchy is created with weight and subtle size changes: bold name and handle vs lighter tagline; chat bubbles use consistent body size with comfortable line-height; small pill labels and captions are scaled down appropriately. Alignment is consistently left, with no random center/justify shifts. Line length of bubbles sits in the ~55\u201370 character range, making the conversational text easy to scan. No gratuitous letter\u2011spacing or all\u2011caps; hierarchy achieved through weight, color, and spacing only.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 5,
+          "explanation": "Distinct chat-interface concept executed with precision. A single narrow column creates a clear reading path; vertical rhythm between bubbles is consistent, producing a smooth cadence. Embedded project cards slot naturally into the conversation and share the same corner radius, border, and elevation, tying the system together. Generous white space around the column and ample insets inside bubbles/cards prevent crowding. Social icon row is evenly spaced with matching container sizes, maintaining the grid. Nothing feels arbitrary\u2014alignment, spacing, and grouping are disciplined.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 5,
+          "explanation": "Refined blue/grey palette with excellent restraint. The background uses a soft blue\u2011tinted gradient to create depth without noise. Reply bubbles use a saturated blue gradient for emphasis while questions are neutral grey, encoding role via color. Cards are white with subtle, cool\u2011tinted shadows and hairline borders\u2014no harsh default black shadows. Pops of color appear only inside project thumbnails and small icons, providing controlled accents while the overall palette stays cohesive.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 5.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 5,
+      "overall_confidence": 4
+    },
+    "10": {
+      "candidate_id": "10",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_10.jpg",
+      "evaluated_at": "2025-09-03T12:34:28.571836",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "Mixes a serif for body copy with a sans-serif for nav, buttons, and callout cards without a clear rationale, creating a split personality. Headings are not visually distinct from body\u2014most text sits at a similar size/weight, so hierarchy is weak. Numerous bright-blue, heavily underlined inline links draw disproportionate attention and add noise. Lists read like run-on paragraphs with bullet-like dots that don\u2019t align cleanly. Overall reads competent but junior and inconsistent.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Two-column structure (text left, avatar/card right) lacks alignment discipline: the avatar and later callout cards float without shared baselines or consistent edges. Large horizontal rules break sections but feel arbitrary and heavy relative to the amount of content. Spacing rhythm is uneven\u2014big gaps between sections then tighter stacks in the left column. The footer switches to centered alignment, breaking the left-aligned pattern without a clear reason. Visual weight is unbalanced with small cards competing against long text blocks.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "Relies on multiple unrelated blues: bright link blue, darker button blue, and pale blue card backgrounds that don\u2019t feel part of a single palette. The light-blue cards with soft shadows read like default component styling. Full-color social icons in the footer (blue and red) clash with the otherwise blue/neutral scheme. Color is not used to establish hierarchy consistently and feels ad hoc.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 2.0,
+      "overall_confidence": 4
+    },
+    "20": {
+      "candidate_id": "20",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_20.jpg",
+      "evaluated_at": "2025-09-03T12:36:19.522039",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "Type choices feel generic and under\u2011designed. The logotype uses a plain sans with two colors, but that system doesn't extend anywhere else. The navigation pills directly under the logo use small, low\u2011contrast grey text with tight letter\u2011spacing and all\u2011caps, making them hard to read against the white background. There is little hierarchy beyond the logo\u2014no clear scale steps between navigation, section labels, and footer copy. Line lengths are fine, but the overall type system lacks contrast and intentional rhythm.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "A simple three\u2011column grid of uniformly sized thumbnails creates basic order and consistent gutters. The content column is centered with generous side margins, which keeps the page clean. However, the composition leans heavily on generic device mockups and image tiles without a unifying treatment; the header (logo + pills) feels visually disconnected from the grid due to sparse spacing and differing alignments. The large empty band above the grid and the very small footer text create weak vertical rhythm. Overall competent but not refined.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The site chrome is largely neutral (white with light grey), but the thumbnails introduce many unrelated hues that compete with each other, producing visual noise. The teal/purple in the logo is not reused elsewhere to create cohesion. The grey navigation pills and dotted side background texture add additional, slightly mismatched tones. Color is not used to build hierarchy or tie the pieces together.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.35,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.55,
+      "overall_confidence": 3.33
+    },
+    "15": {
+      "candidate_id": "15",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_15.jpg",
+      "evaluated_at": "2025-09-03T12:36:35.921136",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Editorial serif used for the hero with tasteful italics (e.g., the emphasized 'in\u2011between') creates a clear voice and strong contrast against smaller body copy. Left-aligned rag and comfortable line length in the intro improve readability. Captions and project labels appear consistently set in a lighter, smaller serif, maintaining cohesion. Minor deductions: some captions feel a bit under-sized relative to large images, and hierarchy between project titles/captions isn\u2019t always strongly differentiated, leading to occasional ambiguity about what text belongs to which image.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Asymmetric, editorial grid with alternating image widths establishes rhythm and visual interest; generous whitespace around the hero and between project blocks creates a clear scan path. Images are well-cropped and placed on a consistent column grid rather than generic device frames, which elevates craft. Minor weaknesses: spacing between certain captions and their corresponding images varies, and the masonry-like sequencing (e.g., the large studio photo followed by a black title slide, then a dense collage) occasionally disrupts vertical rhythm and makes grouping less explicit.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Site chrome is restrained (black text on off\u2011white), allowing curated project imagery to carry color. The image set feels intentionally selected\u2014lavender/purple, deep blacks with a red stamp, and a saturated yellow at the end\u2014providing variety without chaos. The high-saturation yellow tile is a stronger spike than the rest and slightly disrupts the otherwise muted palette, but overall the color story remains cohesive and controlled.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 4.0
+    },
+    "19": {
+      "candidate_id": "19",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_19.jpg",
+      "evaluated_at": "2025-09-03T12:36:39.427063",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Strong, consistent sans-serif system with clear hierarchy. Oversized bold headlines (\u201cI am a digital product designer\u2026\u201d, \u201cPreviously I worked on\u2026\u201d, \u201cA quick overview\u201d) establish scale and rhythm; body copy appears in a lighter weight with restrained sizes. Left-aligned typesetting and tight but controlled tracking create a confident look. Blue-styled inline links (\u201cGet in touch\u201d, highlighted word links) add emphasis without introducing another type style. Minor deductions: some body text under the large screenshot and in the orange section trends small and low-contrast, reducing readability; decorative speech-bubble labels (\u201cKrijn\u201d) use a different style that slightly breaks typographic cohesion.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Consistent container width and strong vertical rhythm across sections. Clear grid: hero with generous whitespace, a two-column text+image section with a well-framed screenshot on a soft-shadowed card, and a balanced resume/timeline split (\u201cA quick overview\u201d) with icons. Logos row is clean and monochrome, keeping focus. Section transitions use subtle shadows/gradients for depth without clutter. Small knocks: floating 3D badges and callouts add a bit of visual noise; the full-bleed orange band breaks the otherwise consistent rhythm and introduces a slightly heavier block.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Disciplined palette: black/white/greys with a single electric blue accent for links and CTAs (e.g., \u201cGet in touch\u201d, highlighted word links), which creates clear emphasis. Complementary warmth introduced via the full-bleed orange gradient section\u2014adds contrast and a focal moment. Shadows are soft and diffuse rather than default. Minor issues: the white text over parts of the orange gradient approaches lower contrast; playful 3D stickers introduce extra hues that slightly dilute the otherwise tight palette.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 4.0
+    },
+    "23": {
+      "candidate_id": "23",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_23.jpg",
+      "evaluated_at": "2025-09-03T12:37:09.250021",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Clean, restrained sans-serif system with clear hierarchy. The hero uses a larger bold weight for the name, followed by smaller regular-weight lines that establish a neat scale. Body copy in the centered bio card is compact with comfortable line length and spacing. Labels like \"Thoughts\" and \"Latest Projects\" are set in a small, lighter style that reads as section meta. Type choices feel contemporary and consistent across cards, buttons, and headings. Minor nits: section titles switch to centered alignment while most content is left-aligned, creating a slight rhythm break; small reversed labels inside image cards edge toward low contrast.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Strong grid discipline and confident white space. Repeating card modules with consistent corner radii and soft shadows create cohesion from the top project row to the \"Latest Projects\" carousel. Vertical rhythm between sections is generous and even, and alignment is tidy (hero block left, card rows aligned on a common column). The floating bio card is well-contained and visually distinct without clutter. Minor issues: the centered section headings interrupt the otherwise left-aligned flow; the isolated top-right black dot reads as a stray element and slightly distracts from the clean composition.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Base is monochrome (black on white) with restrained, high-saturation accents confined to cards. Despite each card having a different hue (blue, orange, gradient), the consistent treatment\u2014rounded cards, white type, and uniform shadows\u2014keeps the palette cohesive. Subtle shadows look diffuse and not default-heavy, supporting the light aesthetic. Small concern: a couple of card captions in white over imagery push contrast limits; the black dot near the header feels visually heavy against an otherwise airy palette.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 4
+    },
+    "24": {
+      "candidate_id": "24",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_24.jpg",
+      "evaluated_at": "2025-09-03T12:37:54.854784",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "Type choices feel generic and template-like (likely a common sans such as Open Sans/Arial). Section titles are all-caps with wide letter\u2011spacing and thin divider lines, but the scale between levels is weak: 'ABOUT', 'PORTFOLIO', and 'CONTACT' appear nearly the same size. The long about paragraph is center\u2011aligned with small body size and tight line-height, reducing readability. The 'My Guiding Design Principles' numbers (01/02/03) introduce another style that doesn't reinforce hierarchy. Overall, inconsistent hierarchy and overreliance on caps/letter\u2011spacing rather than a considered type scale.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The page reads as a stock theme: a centered hero/about block, a three\u2011column principles row, a thumbnail grid, and a generic contact form. Decorative wave bands above and below sections add noise and compete with content rather than structuring it. Content widths vary without clear intent (narrow about text, wider portfolio grid, full\u2011width contact form). The circular headshot floats with excessive whitespace and little alignment relationship to surrounding text. The portfolio grid uses small, busy thumbnails that don't establish a focal point and mix device photos with illustrations without a unifying treatment.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "A multicolor pastel wave background (purples/blues/greens) repeats across sections while the rest of the site is mostly grayscale, creating a disjointed palette. The purple 'Send' button introduces a separate accent that doesn't tie back to the wave hues. Portfolio thumbnails bring many additional colors with no framing or treatment to harmonize them, so the page feels visually fragmented. Color is not used to build hierarchy; it mostly decorates.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 1.5,
+      "overall_confidence": 3.67
+    },
+    "28": {
+      "candidate_id": "28",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_28.jpg",
+      "evaluated_at": "2025-09-03T12:38:22.711001",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Consistent use of a single clean sans-serif with clear weight hierarchy (heavy H1, medium section headers, regular body). The hero headline is large with a good rag and comfortable measure, and section headers like \u201cExperience\u201d/\u201cEducation\u201d provide strong contrast on the dark block. Metadata uses lighter gray for secondary hierarchy. Minor issues keep it from a 5: bullet lists in the black section are a bit small and tightly led, and indentation of bullets looks slightly uneven, reducing readability on the dark background.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Clear grid and rhythm across sections: a left label column and right content column on the black block create structure; section changes are signaled by background shifts (white \u2192 black \u2192 white \u2192 light gray) with generous spacing. The hero balances large left-aligned copy with a soft accent shape on the right for a focal point. Toolbox and More sections are neatly columnized with consistent gutters. Small nitpicks: the bullet columns feel a touch dense, and the left heading column could align more tightly with the content column to perfect the grid.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "A restrained palette of white/black/gray with a single soft multicolor gradient in the hero and a subtle blue accent for the email link. High contrast on the black section keeps text legible, and background tones differentiate sections without clutter. The gradient adds personality while staying subdued. Slight critique: the vividness of the gradient blob is a bit stronger than the rest of the site\u2019s minimalism, creating a small imbalance.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 4.0
+    },
+    "26": {
+      "candidate_id": "26",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_26.jpg",
+      "evaluated_at": "2025-09-03T12:38:35.531767",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "Inconsistent type system across tiles. Each project card uses different fonts and styles (e.g., the large 'Checkout Flow Redesign' set in a bold sans, other tiles mixing serif-like logotypes and varying weights), which breaks harmony. Frequent all\u2011caps labels such as 'MOBILE UX / UI' and 'OTHER PROJECTS' add visual noise and feel heavy relative to surrounding text. Divider rules under headings are thick and compete with the text. Line-height and scale vary without a clear rhythm\u2014the subhead under 'Checkout Flow Redesign' is generously spaced while other cards (e.g., 'ATS Integration') have tighter, denser copy. Overall hierarchy feels improvised rather than a cohesive type scale.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "A basic grid is present, but composition lacks consistency and refinement. Card heights and internal layouts vary significantly; elements don\u2019t align from tile to tile. The central 'Tophatter' section uses a very large wordmark with a heavy horizontal rule and a floating phone mock that creates an unbalanced focal point relative to the left text block. The 'OTHER PROJECTS' section introduces oversized, cropped uppercase text and a different spacing rhythm, breaking vertical continuity. Gutters appear inconsistent between rows, and multiple image treatments (photo cutouts, device mockups, cropped browser shots) are mixed without a unifying presentation style.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 2,
+          "explanation": "Each tile uses its own pastel background (light blue, peach, grey, mint, etc.) combined with saturated accents inside screenshots, leading to a patchwork rather than a controlled palette. Heavy black text and thick black rules further clash with the soft backgrounds. Social icons at the bottom introduce additional hues without reinforcing a system. The page lacks a restrained, cohesive color strategy that ties the sections together.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 1.7,
+      "overall_confidence": 3
+    },
+    "3": {
+      "candidate_id": "3",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_3.jpg",
+      "evaluated_at": "2025-09-03T12:39:09.430482",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Minimal, disciplined type system using a single sans-serif (system-feel) with restrained weights. Clear hierarchy via tone and size: name set slightly larger with the \"Updated\" line in a lighter grey; body copy has comfortable line length and line-height; tertiary items (years, dates) are down-weighted in grey. Inline links are styled consistently (blue with small external-link icons) and maintain baseline alignment. Minor nit: the top-level name is visually close in size/weight to the body, so the primary heading doesn\u2019t anchor the page as strongly as it could.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Strong use of whitespace and a consistent single-column layout. The journal list uses a clean three-column grid (year, title, right-aligned date) with hairline dividers and even vertical rhythm. Elements align cleanly, and spacing between paragraphs and list items is consistent. The overall composition is intentionally sparse; however, the hero block feels slightly under-powered (small heading, large empty field), leaving the page a touch barren rather than confidently minimal.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Refined monochrome palette with subtle greys for hierarchy (dates, dividers, update line) and a single accent color for links. The low-contrast rules and text tones feel intentional and cohesive. Small critique: the saturated link blue reads a bit brighter than the otherwise muted palette, which slightly disrupts the calm tone.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 4.0
+    },
+    "32": {
+      "candidate_id": "32",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_32.jpg",
+      "evaluated_at": "2025-09-03T12:39:15.530218",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Minimal, disciplined type system using a single high-quality sans (likely Inter/SF). Clear hierarchy through weight and tone: project titles in a medium weight black, supporting metadata in a lighter grey with dot separators. Line length is comfortable and consistent, and spacing between title and metadata is tight but deliberate, creating a clean list rhythm. The restraint shows taste. Slight deduction because the hero name/role and project titles are very similar in scale/weight, so the top hierarchy doesn\u2019t feel distinct and the nav links are quite light, bordering on low contrast.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Single-column layout with generous whitespace and a consistent vertical rhythm across list items. Elements align to a clear left edge, and the content column width feels intentional, keeping reading measure comfortable and uncluttered. The avatar/name block, nav, and project list form a calm, predictable flow. Minor deduction for being almost too uniform\u2014no secondary layout device or visual anchor to punctuate sections, which can read a bit austere.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Sophisticated monochrome palette: black for primary text, soft greys for secondary text and links. The subtle tonal differences create hierarchy without noise. No harsh pure black; greys appear tuned and cohesive. Very restrained and intentional, though the extreme minimalism offers limited opportunities to demonstrate color mastery beyond grayscale.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 4.0
+    },
+    "35": {
+      "candidate_id": "35",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_35.jpg",
+      "evaluated_at": "2025-09-03T12:40:24.817151",
+      "criteria": {
+        "typography": {
+          "score": 5,
+          "explanation": "Exemplary restraint and hierarchy. The page appears to use a single high-quality serif with italic used sparingly for the opening line, creating a distinctive voice without noise. Small headers like \u201cBuilding / Projects / Writing\u201d are rendered in a lighter tone/weight with tight tracking, clearly separating labels from body. Body copy sits at a comfortable measure and line-height, with consistent left alignment and predictable scale across sections (e.g., the three-column list uses identical sizes and spacing). Subtle tonal contrast (dark for headings, mid-gray for body) and micro-typographic care (em dashes, punctuation spacing) reinforce clarity.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 5,
+          "explanation": "Minimal composition executed with precision. A strong left-edge anchor guides the eye, and generous white space establishes clear sections. The three-column module (\u201cBuilding / Projects / Writing\u201d) shows even column widths and gutters, with baseline alignment of headings and descriptions. Vertical rhythm is consistent from the intro to the 'Now' and 'Connect' sections, with equal top/bottom paddings and no competing focal points. Everything feels intentional and balanced while remaining understated.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Sophisticated monochrome palette. Off-white background with a range of soft grays creates hierarchy without relying on saturated hues. Links and subtle accents stay within the restrained gray/near-black range, avoiding heavy contrast. The restraint keeps focus on composition and type, with no harsh default blacks or mismatched shadows.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.7,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.7,
+      "overall_confidence": 4
+    },
+    "38": {
+      "candidate_id": "38",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_38.jpg",
+      "evaluated_at": "2025-09-03T12:40:57.287861",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Clear, restrained sans-serif system with strong hierarchy. The hero uses a large, bold headline with comfortable line length and leading; supporting copy steps down in weight and size cleanly. Navigation is small and quiet, allowing the hero to lead. Project cards repeat consistent heading/body scales and small label text, keeping type styles to a minimal set. Line lengths in cards are controlled and readable. Minor misses: the 'Selected Works' section label feels slightly under-scaled relative to the grid below, and some card captions sit a bit close to their screenshots, reducing typographic breathing room. Overall polished but not as distinctive as top-tier editorial type pairings.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Well-structured two-column hero with generous whitespace and a clear grid. The project gallery is a tidy 2x2 card grid with consistent gutters, corner radii, and internal padding; cards align vertically and horizontally with good rhythm. The transition to 'Past Projects' is clear, with a subtle divider and a simpler two-card row that maintains the same gutters. Elements are left-aligned for coherence, and the portrait mirrors card corner radii to tie sections together. Minor nitpicks: the section header sits a touch close to the first card row, and visual weight varies between UI screenshots and illustration-heavy cards, creating small hierarchy fluctuations.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "A restrained palette: neutral page chrome with soft pastel tints per project card creates cohesion without noise. Accents are used sparingly; shadows are subtle and diffuse, matching the light aesthetic. The strong orange tile in 'Past Projects' increases saturation but remains contained, preventing clash. Black-and-white portrait adds contrast without breaking the palette. Overall harmonious with good restraint.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 4
+    },
+    "37": {
+      "candidate_id": "37",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_37.jpg",
+      "evaluated_at": "2025-09-03T12:41:00.756874",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Mostly one clean sans-serif with consistent weights, giving decent readability. Headline hierarchy is present, but the hero mixes many emphasis treatments at once (multiple inline bold phrases plus yellow hand\u2011drawn highlights) which creates visual noise and weakens typographic discipline. The dotted texture behind the hero type competes slightly with the headline. Subheads like 'I worked on\u2026' and testimonial titles are relatively small compared to the very large hero, making the overall scale feel a bit uneven.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Clear sectioning with consistent content width and generous vertical spacing establishes hierarchy. Project cards use a repeated pattern (rounded container, soft shadow, device mock at an angle) that ties the section together. Testimonial grid shows alignment and balanced spacing between cards with consistent padding and corner treatment. A few quirks keep it from a 5: one project tile appears faded/overlayed mid\u2011section which feels like an accidental hover state in a static context, and the large tilted devices sometimes dominate, creating slightly awkward negative space.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "A cohesive warm, pale background sets a calm base with black/gray type. The selective yellow underline/highlight motif adds a memorable accent and is reused in multiple headings for consistency. Project tiles use soft desaturated mints/blues that stay within a pastel range, avoiding clashes. Shadows are subtle and warm rather than default harsh black. Minor inconsistencies remain: the confetti texture adds extra colors that aren\u2019t strictly necessary and slightly competes with the otherwise restrained palette.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.65,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.65,
+      "overall_confidence": 3.33
+    },
+    "39": {
+      "candidate_id": "39",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_39.jpg",
+      "evaluated_at": "2025-09-03T12:41:20.040925",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Overall strong, restrained sans-serif system with clear hierarchy. The hero uses a larger, heavier sentence case headline with a tasteful italic/accent treatment on single words (e.g., 'Priyanka' and 'love'), while body copy is lighter and comfortable in line-height. Inline emphasis via orange link color in the hero paragraph adds hierarchy without shouting. Case-study titles and metadata maintain a consistent scale and weight, and the 'Designing for Impact' heading effectively uses color contrast to signal emphasis. Minor issues prevent a 5: the hero paragraph line length feels slightly long for optimal readability, some microtext under case studies (icons + labels) skews small and crowded, and the mix of italicized words across headings occasionally feels a bit decorative/fussy.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Consistent grid and alignment throughout: the left edge of hero copy, case-study cards, and subsequent sections line up, creating a strong reading spine. Whitespace is used confidently around each card; images sit in well-sized color blocks with consistent corner radii and margins. The 'Designing for Impact' section uses a modular multi-column grid with even gutters and repeated motifs (orange bars, textured blue tiles) to tie items together. Good balance in the hero where the avatar counterbalances the headline block. Small drawbacks: metadata beneath case cards gets cramped, and the dark 'About me' band duplicates two similar panels side by side, creating two equal focal points and a slight break in rhythm.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Thoughtful palette: warm cream base, coral/orange accents (logo mark, emphasized words, buttons), and cool supporting hues (slate blues, navy textures) produce a harmonious warm\u2013cool balance. The colored backplates behind screenshots feel coordinated rather than random, and the charcoal 'About me' band introduces contrast while staying on-brand with coral line art. Shadows and tints are subtle. Minor inconsistencies keep it from a 5: the light yellow\u2011green backplate on one case is a bit loud versus the otherwise muted scheme, and contrast in the dark section is slightly high compared to the softer main canvas.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 4.0
+    },
+    "43": {
+      "candidate_id": "43",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_43.jpg",
+      "evaluated_at": "2025-09-03T12:42:09.666514",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Clean, restrained system/neutral sans-serif used throughout with only a few weights (bold for headings, regular for body). Strong hierarchy: large, bold H1 'Hey, I\u2019m Robin' contrasts clearly with smaller body copy in the right column and in the 'Nice to meet you' section. Alignment is consistent (left-aligned across columns) and line lengths are controlled. Minor issues: body text appears a touch small with slightly tight line-height in the bio paragraph, which flattens reading rhythm, and the tiny nav links in the top-right feel underweighted.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "A clear two-column grid is repeated in hero and about sections, creating consistency. Generous white space establishes hierarchy; elements breathe and align to a coherent max-width. The text block on the left balances the portrait on the right; gutters and margins are even, and the horizontal divider band separates sections cleanly. Minor nit: the hero feels almost too sparse with a large expanse between the headline and the content below, which slightly reduces visual energy.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Sophisticated restraint with mostly grayscale: black text on a soft light background, plus a warm beige footer band that adds a subtle accent. The single photo provides controlled color contrast without overwhelming the page. Tones are harmonious and consistent. Minor quibble: the beige footer block feels slightly detached from the stark white main area, but the softness keeps it cohesive.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 4
+    },
+    "44": {
+      "candidate_id": "44",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_44.jpg",
+      "evaluated_at": "2025-09-03T12:42:41.211576",
+      "criteria": {
+        "typography": {
+          "score": 5,
+          "explanation": "Highly disciplined single-sans system (looks like Inter) with excellent hierarchy created through weight and tone, not size gimmicks. Column headings (e.g., 'Projects', 'Thoughts & ideas') use a heavier weight while list items are regular with lighter grey metadata, producing clear scan lines. Body measure per column is constrained and comfortable (~55\u201370 chars), and line-height is tuned for dense lists without crowding. Alignment is consistent left throughout; the right rail navigation uses a softer grey and tighter leading that distinguishes it as secondary. Overall, refined, intentional, and cohesive.",
+          "confidence": 5
+        },
+        "layout_composition": {
+          "score": 5,
+          "explanation": "Three-column grid is balanced with consistent gutters and strong vertical rhythm. The title block ('Hello, I'm Rasmus') establishes the left anchor; content columns snap to a common baseline, and list items have uniform spacing creating an even typographic texture. The right rail modules (bio block and two grey cards) align to the grid and introduce controlled variety without breaking structure. Dark side rails frame the white canvas, increasing focus and contrast. Nothing feels templated or random; whitespace is confident and purposeful.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Monochrome palette with disciplined use of greys and a single orange accent dot for navigation focus. Grey cards on the right provide subtle tonal variation; text hierarchy uses greys rather than multiple hues. The restraint reads sophisticated, though the palette remains conservative without deeper color interplay or nuanced shadows, hence a 4 rather than 5.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.7,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.7,
+      "overall_confidence": 4.67
+    },
+    "42": {
+      "candidate_id": "42",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_42.jpg",
+      "evaluated_at": "2025-09-03T12:43:00.724173",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "Pairing a casual handwritten display face for section headers with a generic sans-serif body creates a tonal mismatch and visual noise for a professional portfolio. Hierarchy is inconsistent: the hero script headline and section headers (e.g., 'My Work', 'My Process') are similar in size and weight, offering limited contrast to the paragraph text below. Captions over the work thumbnails are very small and low-contrast white on busy photos, making them hard to read. Decorative underlines next to headings add weight without aiding hierarchy, and the slider dots and tiny labels in the Recommendations card feel fussy.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "The page relies on many rounded cards layered on top of a noisy gradient background, leading to competing focal points. There are nested cards (e.g., the Recommendations testimonial inside a larger rounded container) which creates a card-in-card anti-pattern and cramped inner spacing versus generous outer padding. The three 'My Work' tiles show inconsistent crops and overlapping caption treatments, with an intrusive arrow control on the rightmost tile. The 'My Process' two-card row has misaligned baselines and uneven visual weight. The large arched photo in the Contact section breaks the grid and overpowers the nearby text block, reducing overall cohesion.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 2,
+          "explanation": "A taupe/beige gradient backdrop with soft cards produces a muddy, low-contrast base; dark, heavy shadows on the cards feel default and out of place against the soft palette. Accent elements (black underlines, icons, slider dots) are stark and don't harmonize with the muted background. The thumbnail imagery introduces unrelated, saturated hues (wood tabletop, green grass) that clash with the warm neutral theme. Overall color usage lacks restraint and polish, and shadows are not tuned to the palette.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.2,
+      "overall_confidence": 4
+    },
+    "46": {
+      "candidate_id": "46",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_46.jpg",
+      "evaluated_at": "2025-09-03T12:43:06.390245",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "The site relies on a single clean neo\u2011grotesk sans for nearly everything, producing a clear hierarchy through scale and weight. Section titles like \u201cColumn\u201d and \u201cWebflow Brand\u201d are set extremely large with tight tracking and strong left alignment, anchoring each section. Supporting meta lines above the grids are smaller and lighter, creating contrast without clutter. The hero introduces a handwritten note on an orange sticky as a playful display accent; it works, but the handwriting style feels slightly disconnected from the otherwise rigorous sans system. A few micro\u2011lines look very small compared with the huge headers, creating a big jump in the type scale.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 5,
+          "explanation": "Consistent, disciplined patterns throughout: each section starts with an oversized left\u2011aligned title, a thin divider rule, compact metadata rows, and then tightly curated thumbnail grids with uniform gutters and alignment. The grid maintains consistent column widths and spacing across sections, and image crops are coherent, avoiding generic device frames. Generous white space between sections and around the hero creates a strong vertical rhythm. The sticky\u2011note hero is centered with ample breathing room and a soft shadow, providing a single focal point before the structured index below.",
+          "confidence": 5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "The base palette is restrained monochrome (black text on white) that lets the work thumbnails carry color. The hero uses a single vivid orange sticky note for a controlled accent, and the drop shadow is subtle and diffuse rather than default-heavy. Across the grids, vivid purples/blues/greens appear, but the neutral page frame keeps them cohesive. Color choices feel intentional and sparing, though most harmony comes from the imagery rather than a bespoke site palette.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.35,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.35,
+      "overall_confidence": 4.33
+    },
+    "49": {
+      "candidate_id": "49",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_49.jpg",
+      "evaluated_at": "2025-09-03T12:44:28.061613",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Clean, restrained sans\u2011serif system with consistent small caps in the nav and light-weight body text. The three-part header (role/name/location) is aligned neatly and uses subtle weight/letter\u2011spacing for differentiation. However, hierarchy feels underpowered: project titles are small and close in weight to captions; the light gray captions are very faint; and the 'WORK / ABOUT / RESUME' nav competes visually with project titles due to similar size/weight. Overall competent but generic and not particularly refined.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "A simple two\u2011column grid with consistent gutters and generous margins produces a clear structure. The centered logo with left/right metadata and a thin divider line creates a tidy header. Weaknesses: thumbnail images have mixed aspect ratios and very different visual densities (busy workshop photo vs. sparse desk shots vs. outdoor leaves), which breaks rhythm and creates uneven visual weight across the grid. Generic device-on-desk compositions and inconsistent cropping reduce cohesion.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 2,
+          "explanation": "Site chrome is nearly monochrome (black/gray on white) but lacks intentional accents. Color is delegated to project images whose palettes clash\u2014bright greens, yellow Post\u2011its, warm wood, and orange/brown leaves\u2014with no unifying treatment or tint. The result feels visually noisy and not harmonized by any overarching palette.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.7,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.9,
+      "overall_confidence": 3
+    },
+    "52": {
+      "candidate_id": "52",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_52.jpg",
+      "evaluated_at": "2025-09-03T12:44:28.560367",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Overall uses a clean sans-serif system with consistent sizes for project titles and captions. The large uppercase hero type is legible but feels generic and slightly over\u2013letter-spaced, giving a blocky look without much finesse. Mixing a playful script/handwritten style in the footer ('Let\u2019s chat!') with the otherwise neutral sans introduces a mismatch in tone. Project captions and dates are small and light gray, bordering on low contrast. Hierarchy works but lacks the refinement and typographic character of stronger examples.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Clear, repeatable layout pattern: a centered column with generous gutters and consistent spacing between project cards. Each project tile is composed with intention\u2014screens are framed within cohesive collage backgrounds (tape, paper textures) that unify the set and avoid generic device mockups. Alignment of labels, captions, and dates is tidy with a predictable rhythm. Minor nit: the heavy textured hero plus the decorative green strip creates two competing bands at the top, adding slight visual weight before the content.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Harmonious, muted palette anchored by deep burgundy in the hero and desaturated greens/beiges in project backdrops. The paper-texture colors tie the thumbnails together and let varied screenshot hues sit comfortably. White text on burgundy provides clear contrast. The illustrated green strip is a touch more saturated than the rest and pulls attention, but overall color restraint and cohesion are strong.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.65,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.65,
+      "overall_confidence": 3.67
+    },
+    "54": {
+      "candidate_id": "54",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_54.jpg",
+      "evaluated_at": "2025-09-03T12:44:55.788092",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Clean, restrained sans\u2011serif system with consistent alignment. The hero headline 'I am Jiyoung' establishes hierarchy, but the scale difference to the body is modest and the micro\u2011nav/CTA text is very small, creating a slightly cramped feel on the dark hero. Project titles and metadata under thumbnails are set in very light grey and small sizes, reducing contrast and readability. Overall competent but generic; little typographic personality beyond weight changes.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Solid overall structure: a balanced split hero (text left, animated grid right) with ample whitespace, then a two\u2011column project grid with consistent gutters. However, image treatments vary: some thumbnails sit on mid\u2011grey plates with device mocks while others are full\u2011bleed dark UI windows; heights and backgrounds shift, weakening rhythm. Captions float close to some thumbnails and farther from others, and the very small 'See projects' jump link feels visually lost. Competent but not highly refined.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "A restrained palette: deep green\u2011black hero against a white content area provides clear contrast. Accents are minimal and shadows are subtle. Inconsistencies appear in thumbnail backgrounds (one uses a large neutral grey panel while others are white or dark), which breaks cohesion. The ghost CTA on the dark hero is low\u2011contrast. Overall harmonious but not distinctive.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 4
+    },
+    "9": {
+      "candidate_id": "9",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_9.jpg",
+      "evaluated_at": "2025-09-03T12:45:27.734056",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Strong, disciplined sans-serif system with clear hierarchy. The oversized hero heading set in a heavy weight establishes a clear focal point; the supporting paragraph is lighter in color and weight, creating a clean second level. Project modules repeat a consistent pattern: small uppercase label, bold title, and subdued description\u2014good scale and weight control. Microcopy like 'See all work' is intentionally smaller and lighter, aiding hierarchy. Minor nit: the center-aligned hero followed by left-aligned sections introduces a slight rhythm shift, and the type choices feel standard rather than distinctive, keeping it just shy of exceptional.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Consistent single-column system with a fixed content width and generous whitespace. The 'Selected work' header aligns with a right-justified utility link, showing grid awareness. Each project is presented in a large, spacious card with matching corner radii, ample padding, and soft shadows; image treatments (angled device/screen renders on pale panels) are cohesive across pieces, tying the page together. Vertical spacing between modules is even, producing a reliable rhythm. Not particularly innovative, but very well executed and tidy.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Restrained palette: deep navy for headings, neutral grays for body, and a single blue accent for links/titles. Project cards use very light blue-gray panels that unify the different screenshots while keeping the page airy. Shadows are soft and diffuse, matching the light palette. A coral contact pill adds a small, controlled pop without overwhelming the system. Overall harmonious and restrained; not highly original, but polished.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 4.0
+    },
+    "6": {
+      "candidate_id": "6",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_6.jpg",
+      "evaluated_at": "2025-09-03T12:46:03.544511",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Refined serif\u2013sans pairing: section titles use an elegant editorial serif with clear contrast to the neutral sans body, creating strong hierarchy. Repeated right-column meta (small uppercase with tight tracking) is consistent and helps information architecture. Leading and line-lengths are controlled, and headings like \u201cStrong opinions, Loosely\u201d show tasteful weight/size contrast. Minor knocks: some body and meta text is quite small on a warm, low-contrast background, and the tiny meta in the right rail pushes legibility.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Cohesive grid with consistent content width, generous white space, and a repeated section pattern (title + intro + large hero image). The small dotted-square motif and right-aligned meta create rhythm between sections. Screenshots are intentionally framed and sized, avoiding generic device mockups; shadows/perspective are subtle. Slight dips: mixing a dark, game-like section, a photo-on-desk mock, and an angled collage introduces mild inconsistency against the otherwise rectilinear, minimal system.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Sophisticated restraint: a warm off\u2011white canvas with charcoal text allows project imagery to provide color accents. Pastel gradients and soft hues feel coordinated, and the deep, inky footer anchors the page without heavy contrast elsewhere. Minor inconsistency arises because project images span very dark to very bright palettes; the footer\u2019s darkness is a touch abrupt versus the airy scroll above, but still feels intentional.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 4.0
+    }
+  }
+}

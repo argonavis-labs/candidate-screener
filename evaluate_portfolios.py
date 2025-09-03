@@ -13,7 +13,10 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional
 from abc import ABC, abstractmethod
 import time
+import threading
+import random
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Script is now in root directory - no path adjustments needed
 
@@ -45,7 +48,7 @@ class ModelProvider(ABC):
     """Abstract base class for model providers."""
     
     @abstractmethod
-    def evaluate_portfolio(self, image_path: str, prompt: str, exemplar_images: List[str]) -> Dict[str, Any]:
+    def evaluate_portfolio(self, image_path: str, prompt: str, exemplar_images: List[str], max_retries: int = 3) -> Dict[str, Any]:
         """Evaluate a portfolio image and return structured results."""
         pass
 
@@ -70,8 +73,42 @@ class OpenAIProvider(ModelProvider):
                 print(f"      📷 Encoded {Path(image_path).name}: {size_kb:.1f} KB")
             return base64.b64encode(image_bytes).decode('utf-8')
     
-    def evaluate_portfolio(self, image_path: str, prompt: str, exemplar_images: List[str]) -> Dict[str, Any]:
+    def _evaluate_portfolio_with_retry(self, image_path: str, prompt: str, exemplar_images: List[str], max_retries: int = 3) -> Dict[str, Any]:
+        """Evaluate a portfolio with exponential backoff retry logic."""
+        last_exception = None
+        
+        for attempt in range(max_retries + 1):
+            try:
+                return self._evaluate_portfolio_impl(image_path, prompt, exemplar_images)
+            except Exception as e:
+                last_exception = e
+                error_str = str(e).lower()
+                
+                # Check if it's a rate limit error
+                if "rate limit" in error_str or "429" in error_str:
+                    if attempt < max_retries:
+                        # Exponential backoff with jitter: 2^attempt + random(0-1) seconds
+                        wait_time = (2 ** attempt) + random.uniform(0, 1)
+                        print(f"⏳ Rate limited. Retrying in {wait_time:.1f}s... (attempt {attempt + 1}/{max_retries + 1})")
+                        time.sleep(wait_time)
+                        continue
+                    else:
+                        print(f"❌ Max retries reached for rate limiting")
+                        raise
+                else:
+                    # For non-rate-limit errors, don't retry
+                    print(f"❌ Non-retryable error: {e}")
+                    raise
+        
+        # This should never be reached, but just in case
+        raise last_exception
+    
+    def evaluate_portfolio(self, image_path: str, prompt: str, exemplar_images: List[str], max_retries: int = 3) -> Dict[str, Any]:
         """Evaluate a portfolio using GPT-4o vision."""
+        return self._evaluate_portfolio_with_retry(image_path, prompt, exemplar_images, max_retries)
+    
+    def _evaluate_portfolio_impl(self, image_path: str, prompt: str, exemplar_images: List[str]) -> Dict[str, Any]:
+        """Internal implementation of portfolio evaluation."""
         
         if self.debug:
             print("\n" + "="*60)
@@ -271,8 +308,42 @@ class ClaudeProvider(ModelProvider):
                     print(f"      📷 Encoded {Path(image_path).name}: {size_kb:.1f} KB (no resize - PIL not available)")
                 return base64.b64encode(image_bytes).decode('utf-8')
         
-    def evaluate_portfolio(self, image_path: str, prompt: str, exemplar_images: List[str]) -> Dict[str, Any]:
+    def _evaluate_portfolio_with_retry(self, image_path: str, prompt: str, exemplar_images: List[str], max_retries: int = 3) -> Dict[str, Any]:
+        """Evaluate a portfolio with exponential backoff retry logic."""
+        last_exception = None
+        
+        for attempt in range(max_retries + 1):
+            try:
+                return self._evaluate_portfolio_impl(image_path, prompt, exemplar_images)
+            except Exception as e:
+                last_exception = e
+                error_str = str(e).lower()
+                
+                # Check if it's a rate limit error
+                if "rate limit" in error_str or "429" in error_str:
+                    if attempt < max_retries:
+                        # Exponential backoff with jitter: 2^attempt + random(0-1) seconds
+                        wait_time = (2 ** attempt) + random.uniform(0, 1)
+                        print(f"⏳ Rate limited. Retrying in {wait_time:.1f}s... (attempt {attempt + 1}/{max_retries + 1})")
+                        time.sleep(wait_time)
+                        continue
+                    else:
+                        print(f"❌ Max retries reached for rate limiting")
+                        raise
+                else:
+                    # For non-rate-limit errors, don't retry
+                    print(f"❌ Non-retryable error: {e}")
+                    raise
+        
+        # This should never be reached, but just in case
+        raise last_exception
+    
+    def evaluate_portfolio(self, image_path: str, prompt: str, exemplar_images: List[str], max_retries: int = 3) -> Dict[str, Any]:
         """Evaluate a portfolio using Claude models."""
+        return self._evaluate_portfolio_with_retry(image_path, prompt, exemplar_images, max_retries)
+        
+    def _evaluate_portfolio_impl(self, image_path: str, prompt: str, exemplar_images: List[str]) -> Dict[str, Any]:
+        """Internal implementation of portfolio evaluation."""
         
         # Build message content with images
         content = []
@@ -474,7 +545,7 @@ class PortfolioEvaluator:
 
         return images
     
-    def evaluate_candidates(self, candidate_ids: Optional[List[str]] = None):
+    def evaluate_candidates(self, candidate_ids: Optional[List[str]] = None, concurrency: int = 8, save_every: int = 5, max_retries: int = 3):
         """Evaluate all candidate portfolios."""
         
         # Track start time
@@ -528,43 +599,59 @@ class PortfolioEvaluator:
         timestamp = self.start_time.strftime("%Y%m%d_%H%M%S")
         ai_ratings_file = results_dir / f"evaluation_{timestamp}.json"
         
-        # Initialize empty ratings
+        # Initialize empty ratings and thread-safe state
         ai_ratings = {}
+        save_lock = threading.Lock()
+        completed_count = 0
         
-        # Evaluate each candidate
-        for candidate_file in candidate_files:
-            # Extract candidate ID from filename
+        def evaluate_one(candidate_file):
+            """Evaluate a single candidate - thread worker function."""
             candidate_id = candidate_file.stem.split('_')[1]
             
-            print(f"\nEvaluating candidate {candidate_id}...")
-            
             try:
-                # Call the model
+                print(f"\nEvaluating candidate {candidate_id}...")
+                
+                # Call the model with retry logic (thread-safe)
                 result = self.provider.evaluate_portfolio(
                     str(candidate_file),
                     prompt,
-                    exemplar_images
+                    exemplar_images,
+                    max_retries
                 )
                 
                 # Process and structure the result
                 structured_result = self.structure_result(result, candidate_id, candidate_file.name)
                 
-                # Add to ratings
-                ai_ratings[candidate_id] = structured_result
-                
-                # Save after each evaluation (in case of interruption)
-                # Include metadata in every save
-                self.save_with_metadata(ai_ratings, ai_ratings_file)
-                
                 print(f"✓ Candidate {candidate_id} evaluated successfully")
                 print(f"  Overall score: {structured_result.get('overall_weighted_score', 'N/A'):.2f}")
                 
-                # Rate limiting (be nice to the API)
-                time.sleep(1)
+                return candidate_id, structured_result
                 
             except Exception as e:
                 print(f"✗ Error evaluating candidate {candidate_id}: {e}")
-                continue
+                return candidate_id, None
+        
+        # Parallel evaluation with bounded concurrency
+        print(f"\n🚀 Starting parallel evaluation with {concurrency} workers...")
+        
+        with ThreadPoolExecutor(max_workers=concurrency) as executor:
+            # Submit all tasks
+            futures = {executor.submit(evaluate_one, f): f for f in candidate_files}
+            
+            # Process results as they complete
+            for future in as_completed(futures):
+                candidate_id, structured_result = future.result()
+                
+                if structured_result is not None:
+                    # Thread-safe updates
+                    with save_lock:
+                        ai_ratings[candidate_id] = structured_result
+                        completed_count += 1
+                        
+                        # Save progress periodically 
+                        if completed_count % save_every == 0 or completed_count == len(candidate_files):
+                            self.save_with_metadata(ai_ratings, ai_ratings_file)
+                            print(f"📁 Progress saved: {completed_count}/{len(candidate_files)} completed")
         
         # Track end time
         self.end_time = datetime.now()
@@ -721,6 +808,12 @@ def main():
                         help='Override model selection (gpt-4o, gpt-5, o1, claude-sonnet-4, or claude-opus-4.1)')
     parser.add_argument('--no-exemplars', action='store_true', 
                         help='Skip exemplar images - evaluate using rubric only (for calibration)')
+    parser.add_argument('--concurrency', type=int, default=8,
+                        help='Number of parallel evaluation workers (default: 8)')
+    parser.add_argument('--save-every', type=int, default=5,
+                        help='Save progress every N completions (default: 5)')
+    parser.add_argument('--max-retries', type=int, default=3,
+                        help='Maximum retry attempts for rate limited requests (default: 3)')
     
     args = parser.parse_args()
     
@@ -730,8 +823,8 @@ def main():
     # Load environment variables
     load_dotenv()
     
-    # Get base directory
-    base_dir = Path(__file__).parent.parent
+    # Get base directory (script is now in root)
+    base_dir = Path(__file__).parent
     
     # Get API configuration
     api_key = os.getenv("OPENAI_API_KEY")
@@ -794,8 +887,8 @@ def main():
     # Create evaluator
     evaluator = PortfolioEvaluator(provider, base_dir, no_exemplars=args.no_exemplars)
     
-    # Run evaluation
-    evaluator.evaluate_candidates()
+    # Run evaluation with parallel processing and retry logic
+    evaluator.evaluate_candidates(concurrency=args.concurrency, save_every=args.save_every, max_retries=args.max_retries)
 
 
 if __name__ == "__main__":
