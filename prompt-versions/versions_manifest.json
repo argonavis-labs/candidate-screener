@@ -167,9 +167,41 @@
       "improvements": [
         "general: Gap reduction"
       ],
-      "evaluation_runs": [],
+      "evaluation_runs": [
+        {
+          "timestamp": "2025-09-03T11:55:24.604094",
+          "file": "evaluation_20250903_115524.json",
+          "candidates_evaluated": 5
+        }
+      ],
       "file": "prompt-versions/prompt_v11.md"
+    },
+    {
+      "version": 12,
+      "created_at": "2025-09-03T12:00:24.719908",
+      "parent_version": 11,
+      "improvements": [
+        "general: Gap reduction"
+      ],
+      "evaluation_runs": [
+        {
+          "timestamp": "2025-09-03T12:00:26.726101",
+          "file": "evaluation_20250903_120026.json",
+          "candidates_evaluated": 5
+        }
+      ],
+      "file": "prompt-versions/prompt_v12.md"
+    },
+    {
+      "version": 13,
+      "created_at": "2025-09-03T12:05:00.617269",
+      "parent_version": 12,
+      "improvements": [
+        "general: Gap reduction"
+      ],
+      "evaluation_runs": [],
+      "file": "prompt-versions/prompt_v13.md"
     }
   ],
-  "current_version": 11
+  "current_version": 13
 }

@@ -499,7 +499,7 @@ class ContinuousImprover:
         print(f"Candidates: {len(test_candidates) if test_candidates else 'ALL'}")
         
         # Load current prompt
-        current_prompt_file = self.base_dir / "core-prompt.md"
+        current_prompt_file = self.base_dir / "prompt.md"
         with open(current_prompt_file, 'r') as f:
             current_prompt = f.read()
         
@@ -800,7 +800,7 @@ def main():
     
     # Load environment
     load_dotenv()
-    base_dir = Path(__file__).parent.parent
+    base_dir = Path(__file__).parent
     
     # Set up provider [[memory:7530211]]
     if 'claude' in args.model:
