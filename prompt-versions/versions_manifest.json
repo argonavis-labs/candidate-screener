@@ -1,0 +1,175 @@
+{
+  "versions": [
+    {
+      "version": 1,
+      "created_at": "2025-09-02T16:56:11.833860",
+      "parent_version": null,
+      "improvements": [
+        "Initial prompt - baseline version"
+      ],
+      "evaluation_runs": [
+        {
+          "timestamp": "2025-09-02T16:56:11.834219",
+          "file": "evaluation_20250902_165611.json",
+          "candidates_evaluated": 5
+        }
+      ],
+      "file": "prompt-versions/prompt_v1.md"
+    },
+    {
+      "version": 2,
+      "created_at": "2025-09-02T17:01:50.737528",
+      "parent_version": 1,
+      "improvements": [
+        "general: Gap reduction"
+      ],
+      "evaluation_runs": [
+        {
+          "timestamp": "2025-09-02T17:01:52.743731",
+          "file": "evaluation_20250902_170152.json",
+          "candidates_evaluated": 5
+        }
+      ],
+      "file": "prompt-versions/prompt_v2.md"
+    },
+    {
+      "version": 3,
+      "created_at": "2025-09-02T17:06:36.428714",
+      "parent_version": 2,
+      "improvements": [
+        "general: Gap reduction"
+      ],
+      "evaluation_runs": [
+        {
+          "timestamp": "2025-09-02T17:22:35.771991",
+          "file": "evaluation_20250902_172235.json",
+          "candidates_evaluated": 50
+        }
+      ],
+      "file": "prompt-versions/prompt_v3.md"
+    },
+    {
+      "version": 4,
+      "created_at": "2025-09-02T19:09:15.012058",
+      "parent_version": 3,
+      "improvements": [
+        "general: Gap reduction"
+      ],
+      "evaluation_runs": [
+        {
+          "timestamp": "2025-09-02T19:09:17.025015",
+          "file": "evaluation_20250902_190917.json",
+          "candidates_evaluated": 50
+        }
+      ],
+      "file": "prompt-versions/prompt_v4.md"
+    },
+    {
+      "version": 5,
+      "created_at": "2025-09-02T20:54:51.612525",
+      "parent_version": 4,
+      "improvements": [
+        "general: Gap reduction"
+      ],
+      "evaluation_runs": [
+        {
+          "timestamp": "2025-09-02T20:54:53.727939",
+          "file": "evaluation_20250902_205453.json",
+          "candidates_evaluated": 50
+        }
+      ],
+      "file": "prompt-versions/prompt_v5.md"
+    },
+    {
+      "version": 6,
+      "created_at": "2025-09-02T21:39:33.893874",
+      "parent_version": 5,
+      "improvements": [
+        "general: Gap reduction"
+      ],
+      "evaluation_runs": [
+        {
+          "timestamp": "2025-09-02T21:39:36.002528",
+          "file": "evaluation_20250902_213936.json",
+          "candidates_evaluated": 50
+        }
+      ],
+      "file": "prompt-versions/prompt_v6.md"
+    },
+    {
+      "version": 7,
+      "created_at": "2025-09-02T22:25:13.849648",
+      "parent_version": 6,
+      "improvements": [
+        "general: Gap reduction"
+      ],
+      "evaluation_runs": [
+        {
+          "timestamp": "2025-09-02T22:25:15.859675",
+          "file": "evaluation_20250902_222515.json",
+          "candidates_evaluated": 50
+        }
+      ],
+      "file": "prompt-versions/prompt_v7.md"
+    },
+    {
+      "version": 8,
+      "created_at": "2025-09-02T23:10:02.413906",
+      "parent_version": 7,
+      "improvements": [
+        "general: Gap reduction"
+      ],
+      "evaluation_runs": [
+        {
+          "timestamp": "2025-09-02T23:10:04.419838",
+          "file": "evaluation_20250902_231004.json",
+          "candidates_evaluated": 50
+        }
+      ],
+      "file": "prompt-versions/prompt_v8.md"
+    },
+    {
+      "version": 9,
+      "created_at": "2025-09-03T08:27:37.185823",
+      "parent_version": 8,
+      "improvements": [
+        "general: Gap reduction"
+      ],
+      "evaluation_runs": [
+        {
+          "timestamp": "2025-09-03T08:27:39.195241",
+          "file": "evaluation_20250903_082739.json",
+          "candidates_evaluated": 50
+        }
+      ],
+      "file": "prompt-versions/prompt_v9.md"
+    },
+    {
+      "version": 10,
+      "created_at": "2025-09-03T09:16:03.013642",
+      "parent_version": 9,
+      "improvements": [
+        "general: Gap reduction"
+      ],
+      "evaluation_runs": [
+        {
+          "timestamp": "2025-09-03T09:16:05.226844",
+          "file": "evaluation_20250903_091605.json",
+          "candidates_evaluated": 50
+        }
+      ],
+      "file": "prompt-versions/prompt_v10.md"
+    },
+    {
+      "version": 11,
+      "created_at": "2025-09-03T10:19:53.389795",
+      "parent_version": 10,
+      "improvements": [
+        "general: Gap reduction"
+      ],
+      "evaluation_runs": [],
+      "file": "prompt-versions/prompt_v11.md"
+    }
+  ],
+  "current_version": 11
+}
