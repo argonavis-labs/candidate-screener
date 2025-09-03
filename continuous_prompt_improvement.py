@@ -1,103 +1,20 @@
 #!/usr/bin/env python3
 """
-Continuous Prompt Improvement Script
+Simplified Continuous Prompt Improvement Script
 Automatically improves evaluation prompts by analyzing gaps between AI and human ratings.
 """
 
 import os
 import sys
 import json
-import time
 import argparse
-import numpy as np
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, List, Tuple, Optional, Any
-from collections import defaultdict
+from typing import Dict, List, Tuple, Optional
 from dotenv import load_dotenv
 
 # Script is now in root directory - no path adjustments needed
-
 from evaluate_portfolios import OpenAIProvider, ClaudeProvider, PortfolioEvaluator
-
-
-class PromptVersionManager:
-    """Manages versioning of prompts and tracks their usage."""
-    
-    def __init__(self, base_dir: Path):
-        self.base_dir = base_dir
-        self.versions_dir = base_dir / "prompt-versions"
-        self.versions_dir.mkdir(exist_ok=True)
-        self.versions_file = self.versions_dir / "versions_manifest.json"
-        self.manifest = self._load_manifest()
-    
-    def _load_manifest(self) -> Dict:
-        """Load the versions manifest or create new one."""
-        if self.versions_file.exists():
-            with open(self.versions_file, 'r') as f:
-                return json.load(f)
-        return {"versions": [], "current_version": 0}
-    
-    def _save_manifest(self):
-        """Save the versions manifest."""
-        with open(self.versions_file, 'w') as f:
-            json.dump(self.manifest, f, indent=2)
-    
-    def save_new_version(self, prompt_content: str, improvements: List[str], 
-                        parent_version: Optional[int] = None) -> int:
-        """Save a new prompt version and return version number."""
-        version_num = self.manifest["current_version"] + 1
-        timestamp = datetime.now().isoformat()
-        
-        # Save prompt file
-        prompt_file = self.versions_dir / f"prompt_v{version_num}.md"
-        with open(prompt_file, 'w') as f:
-            f.write(f"# Prompt Version {version_num}\n")
-            f.write(f"Created: {timestamp}\n")
-            f.write(f"Parent Version: {parent_version or 'Initial'}\n\n")
-            f.write("## Improvements Applied:\n")
-            for improvement in improvements:
-                f.write(f"- {improvement}\n")
-            f.write("\n## Prompt Content:\n\n")
-            f.write(prompt_content)
-        
-        # Update manifest
-        version_info = {
-            "version": version_num,
-            "created_at": timestamp,
-            "parent_version": parent_version,
-            "improvements": improvements,
-            "evaluation_runs": [],
-            "file": str(prompt_file.relative_to(self.base_dir))
-        }
-        
-        self.manifest["versions"].append(version_info)
-        self.manifest["current_version"] = version_num
-        self._save_manifest()
-        
-        return version_num
-    
-    def add_evaluation_run(self, version: int, run_info: Dict):
-        """Add an evaluation run to a prompt version."""
-        for v in self.manifest["versions"]:
-            if v["version"] == version:
-                v["evaluation_runs"].append(run_info)
-                break
-        self._save_manifest()
-    
-    def get_version_content(self, version: int) -> str:
-        """Get the content of a specific prompt version."""
-        for v in self.manifest["versions"]:
-            if v["version"] == version:
-                prompt_file = self.base_dir / v["file"]
-                with open(prompt_file, 'r') as f:
-                    content = f.read()
-                    # Extract just the prompt content part
-                    parts = content.split("## Prompt Content:\n\n")
-                    if len(parts) > 1:
-                        return parts[1]
-                    return content
-        raise ValueError(f"Version {version} not found")
 
 
 class GapAnalyzer:
@@ -107,506 +24,728 @@ class GapAnalyzer:
         self.ai_ratings = ai_ratings
         self.human_ratings = human_ratings
     
-    def calculate_gaps(self) -> Dict[str, Dict]:
-        """Calculate rating gaps for all candidates."""
-        gaps = {}
+    def generate_comprehensive_report(self) -> Dict:
+        """Generate comprehensive gap analysis report."""
         
-        for candidate_id, human_rating in self.human_ratings.items():
-            if candidate_id not in self.ai_ratings:
-                continue
+        # Calculate gaps for all candidates with both ratings
+        gaps = {}
+        for candidate_id in self.human_ratings.keys():
+            if candidate_id in self.ai_ratings:
+                gaps[candidate_id] = self._calculate_candidate_gap(candidate_id)
+        
+        if not gaps:
+            raise ValueError("No candidates found with both AI and human ratings")
+        
+        # Overall metrics
+        overall_gaps = [gap['overall_gap'] for gap in gaps.values()]
+        ai_scores = [gap['ai_score'] for gap in gaps.values()]
+        human_scores = [gap['human_score'] for gap in gaps.values()]
+        
+        overall_metrics = {
+            "average_gap": sum(overall_gaps) / len(overall_gaps),
+            "median_gap": sorted(overall_gaps)[len(overall_gaps) // 2],
+            "ai_bias": "lenient" if sum(ai_scores) > sum(human_scores) else "strict",
+            "ai_average_score": sum(ai_scores) / len(ai_scores),
+            "human_average_score": sum(human_scores) / len(human_scores),
+            "bias_magnitude": abs(sum(ai_scores) - sum(human_scores)) / len(ai_scores)
+        }
+        
+        # Gap distribution
+        large_gaps = sum(1 for gap in overall_gaps if gap >= 1.5)
+        medium_gaps = sum(1 for gap in overall_gaps if 0.5 <= gap < 1.5)
+        small_gaps = sum(1 for gap in overall_gaps if gap < 0.5)
+        
+        gap_distribution = {
+            "large_gaps_1.5+": large_gaps,
+            "medium_gaps_0.5-1.5": medium_gaps,
+            "small_gaps_<0.5": small_gaps,
+            "perfect_matches": small_gaps  # Approximation
+        }
+        
+        # Category analysis
+        category_analysis = self._analyze_categories(gaps)
+        
+        # Red flag analysis
+        red_flag_analysis = self._analyze_red_flags()
+        
+        # Top 5 gap candidates
+        top_gaps = sorted(gaps.items(), key=lambda x: x[1]['overall_gap'], reverse=True)[:5]
+        top_gap_candidates = []
+        for candidate_id, gap_data in top_gaps:
+            top_gap_candidates.append({
+                "candidate_id": candidate_id,
+                "overall_gap": gap_data['overall_gap'],
+                "human_score": gap_data['human_score'],
+                "ai_score": gap_data['ai_score'],
+                "image_file": f"candidate_{candidate_id}.jpg",
+                "gap_breakdown": gap_data['category_gaps'],
+                "human_comments": gap_data['human_comments'],
+                "ai_comments": gap_data['ai_comments'],
+                "red_flags": gap_data['red_flags']
+            })
+        
+        # Identify key patterns
+        ai_overrating_count = sum(1 for gap in gaps.values() if gap['ai_score'] > gap['human_score'])
+        key_patterns = {
+            "ai_overrating_frequency": ai_overrating_count / len(gaps),
+            "common_ai_blindspots": self._identify_blindspots(gaps),
+            "most_problematic_categories": self._get_problematic_categories(category_analysis)
+        }
+        
+        return {
+            "report_metadata": {
+                "generated_at": datetime.now().isoformat(),
+                "total_candidates_analyzed": len(self.ai_ratings),
+                "candidates_with_both_ratings": len(gaps)
+            },
+            "overall_metrics": overall_metrics,
+            "gap_distribution": gap_distribution,
+            "category_analysis": category_analysis,
+            "red_flag_analysis": red_flag_analysis,
+            "top_gap_candidates": top_gap_candidates,
+            "key_patterns": key_patterns
+        }
+    
+    def _calculate_candidate_gap(self, candidate_id: str) -> Dict:
+        """Calculate detailed gap analysis for a single candidate."""
+        human = self.human_ratings[candidate_id]
+        ai = self.ai_ratings[candidate_id]
+        
+        human_score = human.get('overall_weighted_score', 0)
+        ai_score = ai.get('overall_weighted_score', 0)
+        
+        # Category gaps
+        category_gaps = {}
+        human_comments = {}
+        ai_comments = {}
+        
+        for category in ['typography', 'layout_composition', 'color']:
+            h_crit = human.get('criteria', {}).get(category, {})
+            a_crit = ai.get('criteria', {}).get(category, {})
             
-            ai_rating = self.ai_ratings[candidate_id]
+            h_score = h_crit.get('score', 0)
+            a_score = a_crit.get('score', 0)
             
-            # Calculate overall gap
-            human_score = human_rating.get("overall_weighted_score", 0)
-            ai_score = ai_rating.get("overall_weighted_score", 0)
-            overall_gap = abs(human_score - ai_score)
+            category_gaps[category] = {
+                "human": h_score,
+                "ai": a_score,
+                "gap": abs(h_score - a_score)
+            }
             
-            # Calculate per-criteria gaps
-            criteria_gaps = {}
-            for criterion in ["typography", "layout_composition", "color"]:
-                human_crit = human_rating.get("criteria", {}).get(criterion, {}).get("score", 0)
-                ai_crit = ai_rating.get("criteria", {}).get(criterion, {}).get("score", 0)
-                criteria_gaps[criterion] = {
-                    "human_score": human_crit,
-                    "ai_score": ai_crit,
-                    "gap": abs(human_crit - ai_crit),
-                    "direction": "over" if ai_crit > human_crit else "under"
-                }
-            
-            # Extract comments
-            human_comments = {}
-            ai_comments = {}
-            for criterion in ["typography", "layout_composition", "color"]:
-                human_comments[criterion] = human_rating.get("criteria", {}).get(criterion, {}).get("explanation", "")
-                ai_comments[criterion] = ai_rating.get("criteria", {}).get(criterion, {}).get("explanation", "")
-            
-            gaps[candidate_id] = {
-                "overall_gap": overall_gap,
+            human_comments[category] = h_crit.get('explanation', '')
+            ai_comments[category] = a_crit.get('explanation', '')
+        
+        # Red flags comparison
+        human_flags = human.get('red_flags', [])
+        ai_flags = ai.get('red_flags', [])
+        
+        return {
+            "overall_gap": abs(human_score - ai_score),
                 "human_score": human_score,
                 "ai_score": ai_score,
-                "criteria_gaps": criteria_gaps,
+            "category_gaps": category_gaps,
                 "human_comments": human_comments,
                 "ai_comments": ai_comments,
                 "red_flags": {
-                    "human": human_rating.get("red_flags", []),
-                    "ai": ai_rating.get("red_flags", [])
-                }
+                "human": human_flags,
+                "ai": ai_flags
+            }
+        }
+    
+    def _analyze_categories(self, gaps: Dict) -> Dict:
+        """Analyze gaps by category."""
+        categories = ['typography', 'layout_composition', 'color']
+        analysis = {}
+        
+        for category in categories:
+            cat_gaps = [gap['category_gaps'][category]['gap'] for gap in gaps.values()]
+            ai_scores = [gap['category_gaps'][category]['ai'] for gap in gaps.values()]
+            human_scores = [gap['category_gaps'][category]['human'] for gap in gaps.values()]
+            
+            analysis[category] = {
+                "avg_gap": sum(cat_gaps) / len(cat_gaps),
+                "ai_bias": "lenient" if sum(ai_scores) > sum(human_scores) else "strict",
+                "ai_avg": sum(ai_scores) / len(ai_scores),
+                "human_avg": sum(human_scores) / len(human_scores),
+                "worst_gaps": self._get_worst_candidates_for_category(gaps, category)
             }
         
-        return gaps
+        return analysis
     
-    def get_average_gap(self, gaps: Dict[str, Dict]) -> float:
-        """Calculate average overall gap across all candidates."""
-        if not gaps:
-            return 0.0
-        return np.mean([g["overall_gap"] for g in gaps.values()])
+    def _analyze_red_flags(self) -> Dict:
+        """Analyze red flag detection gaps."""
+        flag_types = ['template_scent_high', 'sloppy_images', 'process_soup']
+        analysis = {}
+        
+        for flag_type in flag_types:
+            human_flagged = []
+            ai_flagged = []
+            missed_by_ai = []
+            
+            for candidate_id in self.human_ratings.keys():
+                if candidate_id not in self.ai_ratings:
+                    continue
+                
+                human_flags = self.human_ratings[candidate_id].get('red_flags', [])
+                ai_flags = self.ai_ratings[candidate_id].get('red_flags', [])
+                
+                if flag_type in human_flags:
+                    human_flagged.append(candidate_id)
+                    if flag_type not in ai_flags:
+                        missed_by_ai.append(candidate_id)
+                
+                if flag_type in ai_flags:
+                    ai_flagged.append(candidate_id)
+            
+            analysis[flag_type] = {
+                "human_flagged": len(human_flagged),
+                "ai_flagged": len(ai_flagged),
+                "missed_by_ai": missed_by_ai
+            }
+        
+        return analysis
     
-    def get_top_gaps(self, gaps: Dict[str, Dict], n: int = 10) -> List[Tuple[str, Dict]]:
-        """Get top N candidates with largest gaps."""
-        sorted_gaps = sorted(gaps.items(), key=lambda x: x[1]["overall_gap"], reverse=True)
-        return sorted_gaps[:n]
+    def _identify_blindspots(self, gaps: Dict) -> List[str]:
+        """Identify common AI blindspots."""
+        blindspots = []
+        
+        # Check for template detection issues
+        template_misses = 0
+        for gap in gaps.values():
+            if 'template_scent_high' in gap['red_flags']['human'] and 'template_scent_high' not in gap['red_flags']['ai']:
+                template_misses += 1
+        
+        if template_misses > 2:
+            blindspots.append("Template detection - AI misses obvious template usage")
+        
+        # Check for sloppy execution issues
+        sloppy_misses = 0
+        for gap in gaps.values():
+            if 'sloppy_images' in gap['red_flags']['human'] and 'sloppy_images' not in gap['red_flags']['ai']:
+                sloppy_misses += 1
+        
+        if sloppy_misses > 2:
+            blindspots.append("Sloppy execution - AI sees 'clean' where humans see 'careless'")
+        
+        # Check for general overrating
+        overrating_count = sum(1 for gap in gaps.values() if gap['ai_score'] > gap['human_score'])
+        if overrating_count / len(gaps) > 0.7:
+            blindspots.append("Generic design - AI rates basic/safe choices too highly")
+        
+        return blindspots
+    
+    def _get_problematic_categories(self, category_analysis: Dict) -> List[str]:
+        """Get categories with highest average gaps."""
+        return sorted(category_analysis.keys(), 
+                     key=lambda cat: category_analysis[cat]['avg_gap'], 
+                     reverse=True)
+    
+    def _get_worst_candidates_for_category(self, gaps: Dict, category: str) -> List[str]:
+        """Get candidates with worst gaps for a specific category."""
+        candidates_gaps = [(cid, gap['category_gaps'][category]['gap']) 
+                          for cid, gap in gaps.items()]
+        return [cid for cid, _ in sorted(candidates_gaps, key=lambda x: x[1], reverse=True)[:3]]
 
 
 class PromptImprover:
-    """Generates improved prompts based on gap analysis."""
+    """Generates improved prompts using visual context."""
     
     def __init__(self, provider, base_dir: Path):
         self.provider = provider
         self.base_dir = base_dir
     
-    def analyze_gaps_and_suggest_improvements(self, gaps: Dict[str, Dict], 
-                                            top_gaps: List[Tuple[str, Dict]],
-                                            current_prompt: str) -> Tuple[str, List[str]]:
-        """Analyze gaps and generate improvement suggestions."""
+    def improve_prompt(self, current_prompt: str, gap_report: Dict) -> str:
+        """Generate improved prompt using visual context."""
         
-        # Prepare analysis prompt
-        analysis_prompt = self._create_analysis_prompt(gaps, top_gaps, current_prompt)
+        # Load improvement instructions
+        improvement_instructions = self._load_improvement_instructions()
         
-        # Call GPT-5 to analyze and suggest improvements
-        improvement_response = self._call_model_for_improvements(analysis_prompt)
+        # Prepare context for improvement model
+        improvement_context = self._build_improvement_context(current_prompt, gap_report)
         
-        # Parse improvements and generate new prompt
-        improvements_data = self._parse_improvements(improvement_response)
-        new_prompt = self._apply_improvements_to_prompt(current_prompt, improvements_data)
+        # Call model with visual context (including problem candidate images)
+        new_prompt = self._call_improvement_model(improvement_context, improvement_instructions, gap_report)
         
-        # Convert improvements to string format for version tracking
-        improvement_strings = []
-        for imp in improvements_data:
-            desc = imp.get('pattern_addressed', imp.get('description', 'Improvement'))
-            improvement_strings.append(f"{imp.get('type', 'general')}: {desc}")
-        
-        return new_prompt, improvement_strings
+        return new_prompt
     
-    def _create_analysis_prompt(self, gaps: Dict[str, Dict], 
-                               top_gaps: List[Tuple[str, Dict]], 
-                               current_prompt: str) -> str:
-        """Create prompt for gap analysis."""
+    def _load_improvement_instructions(self) -> str:
+        """Load the improvement prompt template."""
+        instruction_file = self.base_dir / "prompt-improvement-prompt.md"
+        with open(instruction_file, 'r') as f:
+            return f.read()
+    
+    def _build_improvement_context(self, current_prompt: str, gap_report: Dict) -> str:
+        """Build context string for improvement model."""
         
-        avg_gap = GapAnalyzer(None, None).get_average_gap(gaps)
-        
-        # Analyze patterns across all gaps
-        overrate_count = sum(1 for g in gaps.values() if g['ai_score'] > g['human_score'])
-        underrate_count = sum(1 for g in gaps.values() if g['ai_score'] < g['human_score'])
-        
-        # Criteria-specific patterns
-        criteria_stats = {}
-        for criterion in ["typography", "layout_composition", "color"]:
-            overrates = []
-            underrates = []
-            for gap_data in gaps.values():
-                crit_gap = gap_data['criteria_gaps'][criterion]
-                if crit_gap['gap'] > 0.5:
-                    if crit_gap['direction'] == 'over':
-                        overrates.append(crit_gap['gap'])
-                    else:
-                        underrates.append(crit_gap['gap'])
-            
-            criteria_stats[criterion] = {
-                'avg_gap': np.mean([g['criteria_gaps'][criterion]['gap'] for g in gaps.values()]),
-                'overrate_count': len(overrates),
-                'underrate_count': len(underrates),
-                'avg_overrate': np.mean(overrates) if overrates else 0,
-                'avg_underrate': np.mean(underrates) if underrates else 0
-            }
-        
-        prompt = f"""You are an expert in prompt engineering for design evaluation systems. You need to analyze gaps between AI and human portfolio evaluations and suggest SPECIFIC, ACTIONABLE improvements.
+        context = f"""# CURRENT EVALUATION PROMPT
 
-## Overall Gap Analysis
-- Average gap: {avg_gap:.2f}/5 (target: <0.5)
-- AI overrates: {overrate_count}/{len(gaps)} times ({overrate_count/len(gaps)*100:.0f}%)
-- AI underrates: {underrate_count}/{len(gaps)} times ({underrate_count/len(gaps)*100:.0f}%)
+{current_prompt}
 
-## Criteria-Specific Patterns
+---
+
+# GAP ANALYSIS SUMMARY
+
+## Overall Metrics
+- Average Gap: {gap_report['overall_metrics']['average_gap']:.3f}
+- AI Bias: {gap_report['overall_metrics']['ai_bias']} (AI avg: {gap_report['overall_metrics']['ai_average_score']:.2f}, Human avg: {gap_report['overall_metrics']['human_average_score']:.2f})
+- AI Overrating Frequency: {gap_report['key_patterns']['ai_overrating_frequency']:.1%}
+
+## Category Performance
 """
         
-        for criterion, stats in criteria_stats.items():
-            prompt += f"\n**{criterion.replace('_', ' ').title()}:**"
-            prompt += f"\n- Average gap: {stats['avg_gap']:.2f}"
-            if stats['overrate_count'] > 0:
-                prompt += f"\n- Overrates {stats['overrate_count']} times (avg: {stats['avg_overrate']:.1f} points too high)"
-            if stats['underrate_count'] > 0:
-                prompt += f"\n- Underrates {stats['underrate_count']} times (avg: {stats['avg_underrate']:.1f} points too low)"
+        for category, data in gap_report['category_analysis'].items():
+            context += f"""
+### {category.title()}
+- Average Gap: {data['avg_gap']:.3f}
+- AI Bias: {data['ai_bias']} (AI: {data['ai_avg']:.2f}, Human: {data['human_avg']:.2f})
+- Worst Candidates: {', '.join(data['worst_gaps'])}
+"""
         
-        prompt += "\n\n## Detailed Analysis of Largest Gaps\n"
+        context += f"""
+## Red Flag Detection Issues
+"""
         
-        for i, (candidate_id, gap_data) in enumerate(top_gaps[:5], 1):
-            prompt += f"\n### Gap #{i}: Candidate {candidate_id} (Gap: {gap_data['overall_gap']:.2f})"
-            prompt += f"\nHuman: {gap_data['human_score']:.2f} vs AI: {gap_data['ai_score']:.2f}\n"
-            
-            # Find the criterion with the largest gap
-            largest_crit_gap = max(gap_data['criteria_gaps'].items(), key=lambda x: x[1]['gap'])
-            criterion_name, crit_data = largest_crit_gap
-            
-            prompt += f"\n**Biggest issue: {criterion_name} (gap: {crit_data['gap']:.1f})**"
-            prompt += f"\n\nHuman reasoning ({crit_data['human_score']}/5):\n"
-            prompt += f'"{gap_data["human_comments"][criterion_name]}"'
-            prompt += f"\n\nAI reasoning ({crit_data['ai_score']}/5):\n"
-            prompt += f'"{gap_data["ai_comments"][criterion_name]}"'
-            
-            prompt += f"\n\n**Key differences:**"
-            # Analyze specific differences
-            human_comment = gap_data["human_comments"][criterion_name].lower()
-            ai_comment = gap_data["ai_comments"][criterion_name].lower()
-            
-            differences = []
-            if "template" in human_comment and "template" not in ai_comment:
-                differences.append("Human detected template-like qualities, AI missed this")
-            if "inconsistent" in human_comment and "consistent" in ai_comment:
-                differences.append("Human saw inconsistencies that AI described as consistent")
-            if "sloppy" in human_comment or "random" in human_comment:
-                if "clean" in ai_comment or "refined" in ai_comment:
-                    differences.append("Human saw sloppiness/randomness, AI saw cleanliness/refinement")
-            if "too many" in human_comment or "overuse" in human_comment:
-                if "restrained" in ai_comment or "minimal" in ai_comment:
-                    differences.append("Human saw overuse, AI saw restraint")
-            
-            if differences:
-                for diff in differences:
-                    prompt += f"\n- {diff}"
-            else:
-                prompt += "\n- Different interpretation of the same visual elements"
-            
-            # Red flags
-            if gap_data['red_flags']['human'] != gap_data['red_flags']['ai']:
-                prompt += f"\n\n**Red flag mismatch:**"
-                prompt += f"\n- Human flags: {gap_data['red_flags']['human'] or 'None'}"
-                prompt += f"\n- AI flags: {gap_data['red_flags']['ai'] or 'None'}"
+        for flag_type, data in gap_report['red_flag_analysis'].items():
+            if data['missed_by_ai']:
+                context += f"""
+### {flag_type}
+- Human flagged: {data['human_flagged']} candidates
+- AI flagged: {data['ai_flagged']} candidates  
+- Missed by AI: {', '.join(data['missed_by_ai'])}
+"""
         
-        prompt += f"\n\n## Current Prompt Excerpt:\n```\n{current_prompt[:800]}\n```"
+        context += f"""
+## Top 5 Problem Candidates
+
+The following candidates show the largest gaps between AI and human ratings:
+"""
         
-        prompt += """
+        for i, candidate in enumerate(gap_report['top_gap_candidates'], 1):
+            context += f"""
+### {i}. Candidate {candidate['candidate_id']} (Gap: {candidate['overall_gap']:.2f})
+- **Human Score:** {candidate['human_score']:.2f}
+- **AI Score:** {candidate['ai_score']:.2f}
+- **Image:** {candidate['image_file']}
 
-## Your Task:
+**Gap Breakdown:**
+{self._format_gap_breakdown(candidate['gap_breakdown'])}
 
-Based on the patterns above, provide SPECIFIC improvements to reduce the evaluation gap. Focus on:
+**Human Comments:**
+{self._format_comments(candidate['human_comments'])}
 
-1. **Calibration issues**: AI is clearly overrating portfolios. How can we adjust the prompt to be more critical?
-2. **Missing negative indicators**: What specific visual flaws is the AI not noticing?
-3. **Interpretation differences**: Where is the AI seeing "clean" when humans see "sloppy"?
-4. **Red flag detection**: Why is the AI missing template_scent_high and other flags?
+**AI Comments:**
+{self._format_comments(candidate['ai_comments'])}
 
-Provide 3-5 CONCRETE improvements with EXACT wording changes. Each improvement should:
-- Target a specific pattern from the analysis above
-- Include precise language to add/modify in the prompt
-- Explain how it addresses the gap
+**Red Flags:**
+- Human: {candidate['red_flags']['human'] or 'None'}
+- AI: {candidate['red_flags']['ai'] or 'None'}
 
-Format your response as:
-```json
-{
-  "improvements": [
-    {
-      "type": "criteria_clarification|scoring_adjustment|example_addition|red_flag_update|negative_indicator",
-      "target": "typography|layout_composition|color|general|red_flags",
-      "pattern_addressed": "What specific gap pattern this fixes",
-      "current_text": "Exact text in current prompt to modify (or null if adding)",
-      "new_text": "Exact replacement or addition text",
-      "explanation": "How this reduces the gap"
-    }
-  ],
-  "overall_strategy": "Brief explanation of the improvement approach"
-}
-```
-
-Remember: We need to make the AI more critical and better at spotting the flaws humans see."""
+"""
         
-        return prompt
+        return context
     
-    def _call_model_for_improvements(self, analysis_prompt: str) -> str:
-        """Call the model to get improvement suggestions."""
+    def _format_gap_breakdown(self, breakdown: Dict) -> str:
+        """Format category gap breakdown."""
+        lines = []
+        for category, data in breakdown.items():
+            lines.append(f"- {category}: Human {data['human']}, AI {data['ai']} (gap: {data['gap']:.1f})")
+        return '\n'.join(lines)
+    
+    def _format_comments(self, comments: Dict) -> str:
+        """Format comments by category."""
+        lines = []
+        for category, comment in comments.items():
+            if comment:
+                lines.append(f"- {category}: {comment}")
+        return '\n'.join(lines) if lines else "- No comments available"
+
+
+class PromptImprover:
+    """Generates improved prompts using visual context."""
+    
+    def __init__(self, provider, base_dir: Path):
+        self.provider = provider
+        self.base_dir = base_dir
+    
+    def improve_prompt(self, current_prompt: str, gap_report: Dict) -> str:
+        """Generate improved prompt using visual context."""
+        
+        # Load improvement instructions
+        improvement_instructions = self._load_improvement_instructions()
+        
+        # Prepare context for improvement model
+        improvement_context = self._build_improvement_context(current_prompt, gap_report)
+        
+        # Call model with visual context (including problem candidate images)
+        new_prompt = self._call_improvement_model(improvement_context, improvement_instructions, gap_report)
+        
+        return new_prompt
+    
+    def _load_improvement_instructions(self) -> str:
+        """Load the improvement prompt template."""
+        instruction_file = self.base_dir / "prompt-improvement-prompt.md"
+        with open(instruction_file, 'r') as f:
+            return f.read()
+    
+    def _build_improvement_context(self, current_prompt: str, gap_report: Dict) -> str:
+        """Build context string for improvement model."""
+        
+        context = f"""# CURRENT EVALUATION PROMPT
+
+{current_prompt}
+
+---
+
+# GAP ANALYSIS SUMMARY
+
+## Overall Metrics
+- Average Gap: {gap_report['overall_metrics']['average_gap']:.3f}
+- AI Bias: {gap_report['overall_metrics']['ai_bias']} (AI avg: {gap_report['overall_metrics']['ai_average_score']:.2f}, Human avg: {gap_report['overall_metrics']['human_average_score']:.2f})
+- AI Overrating Frequency: {gap_report['key_patterns']['ai_overrating_frequency']:.1%}
+
+## Category Performance
+"""
+        
+        for category, data in gap_report['category_analysis'].items():
+            context += f"""
+### {category.title()}
+- Average Gap: {data['avg_gap']:.3f}
+- AI Bias: {data['ai_bias']} (AI: {data['ai_avg']:.2f}, Human: {data['human_avg']:.2f})
+- Worst Candidates: {', '.join(data['worst_gaps'])}
+"""
+        
+        context += f"""
+## Red Flag Detection Issues
+"""
+        
+        for flag_type, data in gap_report['red_flag_analysis'].items():
+            if data['missed_by_ai']:
+                context += f"""
+### {flag_type}
+- Human flagged: {data['human_flagged']} candidates
+- AI flagged: {data['ai_flagged']} candidates  
+- Missed by AI: {', '.join(data['missed_by_ai'])}
+"""
+        
+        context += f"""
+## Top 5 Problem Candidates
+
+The following candidates show the largest gaps between AI and human ratings:
+"""
+        
+        for i, candidate in enumerate(gap_report['top_gap_candidates'], 1):
+            context += f"""
+### {i}. Candidate {candidate['candidate_id']} (Gap: {candidate['overall_gap']:.2f})
+- **Human Score:** {candidate['human_score']:.2f}
+- **AI Score:** {candidate['ai_score']:.2f}
+- **Image:** {candidate['image_file']}
+
+**Gap Breakdown:**
+{self._format_gap_breakdown(candidate['gap_breakdown'])}
+
+**Human Comments:**
+{self._format_comments(candidate['human_comments'])}
+
+**AI Comments:**
+{self._format_comments(candidate['ai_comments'])}
+
+**Red Flags:**
+- Human: {candidate['red_flags']['human'] or 'None'}
+- AI: {candidate['red_flags']['ai'] or 'None'}
+
+"""
+        
+        return context
+    
+    def _format_gap_breakdown(self, breakdown: Dict) -> str:
+        """Format category gap breakdown."""
+        lines = []
+        for category, data in breakdown.items():
+            lines.append(f"- {category}: Human {data['human']}, AI {data['ai']} (gap: {data['gap']:.1f})")
+        return '\n'.join(lines)
+    
+    def _format_comments(self, comments: Dict) -> str:
+        """Format comments by category."""
+        lines = []
+        for category, comment in comments.items():
+            if comment:
+                lines.append(f"- {category}: {comment}")
+        return '\n'.join(lines) if lines else "- No comments available"
+    
+    def _call_improvement_model(self, context: str, instructions: str, gap_report: Dict) -> str:
+        """Call the model to generate improved prompt."""
+        
+        # Build the complete improvement request
+        full_request = f"""{instructions}
+
+---
+
+{context}
+
+---
+
+Now, please provide a complete rewritten evaluation prompt that addresses these specific issues."""
+        
+        # Prepare content for the model call
+        if hasattr(self.provider, 'client') and 'gpt-5' in self.provider.model:
+            # For GPT-5 Responses API, structure according to docs
+            message_content = [{"type": "input_text", "text": full_request}]
+            
+            # Add images of problem candidates for visual context
+            for candidate in gap_report['top_gap_candidates']:
+                image_path = self.base_dir / "candidate-images" / candidate['image_file']
+                if image_path.exists():
+                    # Add text description
+                    message_content.append({
+                        "type": "input_text", 
+                        "text": f"\n\nProblem Candidate {candidate['candidate_id']} (Gap: {candidate['overall_gap']:.2f}):"
+                    })
+                    
+                    # Add image with base64 encoding
+                    encoded_image = self._encode_image(str(image_path))
+                    message_content.append({
+                        "type": "input_image",
+                        "image_url": f"data:image/jpeg;base64,{encoded_image}"
+                    })
+            
+            # Structure input according to Responses API format
+            input_data = [
+                {
+                    "role": "user",
+                    "content": message_content
+                }
+            ]
+        else:
+            # For Chat Completions API and Claude, use existing format
+            image_content = []
+            image_content.append({"type": "text", "text": full_request})
+            
+            # Add images of problem candidates for visual context
+            for candidate in gap_report['top_gap_candidates']:
+                image_path = self.base_dir / "candidate-images" / candidate['image_file']
+                if image_path.exists():
+                    image_content.append({
+                        "type": "text", 
+                        "text": f"\n\nProblem Candidate {candidate['candidate_id']} (Gap: {candidate['overall_gap']:.2f}):"
+                    })
+                    
+                    # Encode image
+                    encoded_image = self._encode_image(str(image_path))
+                    
+                    if hasattr(self.provider, 'client'):  # OpenAI (non-GPT-5)
+                        image_content.append({
+                            "type": "image_url",
+                            "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}
+                        })
+                    else:  # Claude
+                        image_content.append({
+                            "type": "image",
+                            "source": {"type": "base64", "media_type": "image/jpeg", "data": encoded_image}
+                        })
+        
+        print(f"🔍 Calling {self.provider.__class__.__name__} for prompt improvement...")
+        print(f"   Context length: {len(full_request)} characters")
+        print(f"   Problem candidate images: {len(gap_report['top_gap_candidates'])}")
+        
+        # Call the model
         if hasattr(self.provider, 'client'):  # OpenAI
-            # Use appropriate parameter based on model
-            completion_params = {
-                "model": self.provider.model,
-                "messages": [
-                    {"role": "system", "content": "You are an expert prompt engineer."},
-                    {"role": "user", "content": analysis_prompt}
-                ]
-            }
-            
-            # GPT-5 has specific requirements
             if 'gpt-5' in self.provider.model:
-                completion_params["max_completion_tokens"] = 2000
-                # GPT-5 only supports temperature=1
+                # Use new Responses API for GPT-5 with images
+                response_params = {
+                    "model": self.provider.model,
+                    "input": input_data,  # Array with user message and images
+                    "instructions": "You are an expert prompt engineer specializing in AI evaluation systems.",
+                    "max_output_tokens": 8000
+                    # No temperature for GPT-5 - uses default
+                }
+                
+                # Use the responses endpoint for GPT-5
+                import requests
+                headers = {
+                    "Authorization": f"Bearer {self.provider.client.api_key}",
+                    "Content-Type": "application/json"
+                }
+                
+                response = requests.post(
+                    "https://api.openai.com/v1/responses",
+                    headers=headers,
+                    json=response_params
+                )
+                
+                if response.status_code == 200:
+                    response_data = response.json()
+                    
+                    # Debug: Print response structure
+                    print(f"   📋 Response structure keys: {list(response_data.keys())}")
+                    if 'output' in response_data:
+                        print(f"   📋 Output length: {len(response_data['output'])}")
+                        if response_data['output']:
+                            print(f"   📋 First output keys: {list(response_data['output'][0].keys())}")
+                    
+                    # Extract text from the response - look for message type in output array
+                    if 'output' in response_data and response_data['output']:
+                        # Find the message output item (skip reasoning items)
+                        message_item = None
+                        for output_item in response_data['output']:
+                            print(f"   📋 Output item type: {output_item.get('type')}")
+                            if output_item.get('type') == 'message':
+                                message_item = output_item
+                                break
+                        
+                        if message_item and 'content' in message_item and message_item['content']:
+                            content_item = message_item['content'][0]
+                            print(f"   📋 Content item type: {content_item.get('type')}")
+                            if content_item.get('type') == 'output_text':
+                                result = content_item['text']
+                            else:
+                                raise ValueError(f"Unexpected content type: {content_item.get('type')}")
+                        else:
+                            raise ValueError(f"No message output found. Output items: {[item.get('type') for item in response_data['output']]}")
+                    else:
+                        raise ValueError(f"No output in GPT-5 response. Keys: {list(response_data.keys())}")
+                else:
+                    error_text = response.text
+                    raise ValueError(f"GPT-5 Responses API error: {response.status_code} - {error_text}")
             else:
-                completion_params["max_tokens"] = 2000
-                completion_params["temperature"] = 0.7
-            
-            response = self.provider.client.chat.completions.create(**completion_params)
-            result = response.choices[0].message.content
-            
-            # Debug output
-            print("\n🔍 GPT-5 Improvement Response Preview:")
-            print(result[:500] + "..." if len(result) > 500 else result)
-            
-            return result
+                # Use traditional Chat Completions API for other models
+                completion_params = {
+                    "model": self.provider.model,
+                    "messages": [
+                        {"role": "system", "content": "You are an expert prompt engineer specializing in AI evaluation systems."},
+                        {"role": "user", "content": image_content}
+                    ],
+                    "max_tokens": 8000,
+                    "temperature": 0.3
+                }
+                
+                response = self.provider.client.chat.completions.create(**completion_params)
+                result = response.choices[0].message.content
         else:  # Claude
             response = self.provider.client.messages.create(
                 model=self.provider.model,
-                messages=[
-                    {"role": "user", "content": analysis_prompt}
-                ],
-                max_tokens=2000,
-                temperature=0.7
+                messages=[{"role": "user", "content": image_content}],
+                max_tokens=8000,
+                temperature=0.3
             )
-            return response.content[0].text
+            result = response.content[0].text
+        
+        print(f"✅ Received improved prompt: {len(result)} characters")
+        return result
     
-    def _parse_improvements(self, response: str) -> List[Dict[str, str]]:
-        """Parse improvements from model response."""
-        try:
-            # Extract JSON from response
-            import re
-            json_match = re.search(r'```json\n(.*?)\n```', response, re.DOTALL)
-            if json_match:
-                improvements_data = json.loads(json_match.group(1))
-                # Store the full improvement data for better prompt modification
-                self.last_improvements_data = improvements_data
-                return improvements_data.get('improvements', [])
-        except Exception as e:
-            print(f"Error parsing improvements JSON: {e}")
-            pass
-        
-        # Fallback - try to extract structured improvements
-        improvements = []
-        if "improvement" in response.lower():
-            # Create a basic improvement structure
-            improvements.append({
-                "type": "general",
-                "target": "general",
-                "pattern_addressed": "Overall gap reduction",
-                "new_text": "Be more critical in evaluations",
-                "explanation": "General improvement based on gap analysis"
-            })
-        
-        return improvements if improvements else [{
-            "type": "general",
-            "target": "general", 
-            "pattern_addressed": "Gap reduction",
-            "new_text": "Apply stricter evaluation criteria",
-            "explanation": "Fallback improvement"
-        }]
-    
-    def _apply_improvements_to_prompt(self, current_prompt: str, 
-                                     improvements: List[Dict[str, str]]) -> str:
-        """Apply improvements to create new prompt version."""
-        
-        new_prompt = current_prompt
-        
-        # Remove any existing "Recent Improvements Applied" section
-        improvements_start = new_prompt.find("## Recent Improvements Applied:")
-        if improvements_start > 0:
-            improvements_end = new_prompt.find("\n## ", improvements_start + 1)
-            if improvements_end > 0:
-                new_prompt = new_prompt[:improvements_start] + new_prompt[improvements_end:]
-            else:
-                new_prompt = new_prompt[:improvements_start]
-        
-        # Apply each improvement
-        applied_changes = []
-        for imp in improvements:
-            if imp.get('current_text') and imp['current_text'] != 'null':
-                # Replace existing text
-                if imp['current_text'] in new_prompt:
-                    new_prompt = new_prompt.replace(imp['current_text'], imp['new_text'])
-                    applied_changes.append(f"{imp['type']}: {imp.get('pattern_addressed', imp.get('description', 'Modified text'))}")
-            else:
-                # Add new text at appropriate location
-                target = imp.get('target', 'general')
-                new_text = imp.get('new_text', '')
-                
-                if target == 'red_flags':
-                    # Add to red flags section
-                    red_flag_pos = new_prompt.find("5. **Check for red flags**")
-                    if red_flag_pos > 0:
-                        end_pos = new_prompt.find("\n\n", red_flag_pos)
-                        if end_pos > 0:
-                            new_prompt = new_prompt[:end_pos] + f"\n\n{new_text}" + new_prompt[end_pos:]
-                elif target in ['typography', 'layout_composition', 'color']:
-                    # Add as a note in evaluation rules
-                    rules_pos = new_prompt.find("2. **For each dimension, you MUST:**")
-                    if rules_pos > 0:
-                        end_pos = new_prompt.find("\n\n3.", rules_pos)
-                        if end_pos > 0:
-                            new_prompt = new_prompt[:end_pos] + f"\n\n**{target.replace('_', ' ').title()} Note:** {new_text}" + new_prompt[end_pos:]
-                else:
-                    # Add as general guidance
-                    rules_end = new_prompt.find("## Output Format:")
-                    if rules_end > 0:
-                        new_prompt = new_prompt[:rules_end] + f"\n## Additional Evaluation Guidance:\n{new_text}\n\n" + new_prompt[rules_end:]
-                
-                applied_changes.append(f"{imp['type']}: {imp.get('pattern_addressed', imp.get('description', 'Added guidance'))}")
-        
-        # Add improvement summary
-        improvement_section = "\n## Recent Improvements Applied:\n"
-        for change in applied_changes:
-            improvement_section += f"- {change}\n"
-        improvement_section += "\n"
-        
-        # Insert improvement summary
-        insert_pos = new_prompt.find("## Output Format:")
-        if insert_pos > 0:
-            new_prompt = new_prompt[:insert_pos] + improvement_section + new_prompt[insert_pos:]
-        else:
-            new_prompt += improvement_section
-        
-        return new_prompt
+    def _encode_image(self, image_path: str) -> str:
+        """Encode image to base64."""
+        import base64
+        with open(image_path, "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode('utf-8')
 
 
-class ContinuousImprover:
-    """Main class orchestrating continuous prompt improvement."""
+class SimpleContinuousImprover:
+    """Main class orchestrating the simplified continuous improvement process."""
     
-    def __init__(self, provider, base_dir: Path, test_mode: bool = False, eval_concurrency: int = 8, eval_max_retries: int = 3):
+    def __init__(self, provider, base_dir: Path, eval_concurrency: int = 3):
         self.provider = provider
         self.base_dir = base_dir
-        self.test_mode = test_mode
         self.eval_concurrency = eval_concurrency
-        self.eval_max_retries = eval_max_retries
-        self.version_manager = PromptVersionManager(base_dir)
-        self.prompt_improver = PromptImprover(provider, base_dir)
         
         # Load human ratings once
         human_ratings_file = base_dir / "human-ratings.json"
         with open(human_ratings_file, 'r') as f:
             self.human_ratings = json.load(f)
     
-    def run_improvement_cycle(self, num_iterations: int = 1, 
-                            test_candidates: Optional[List[str]] = None):
-        """Run the improvement cycle for specified iterations."""
+        print(f"📊 Loaded human ratings for {len(self.human_ratings)} candidates")
+    
+    def run_improvement_cycle(self, num_iterations: int = 1, test_candidate_ids: Optional[List[str]] = None):
+        """Run the simplified improvement cycle."""
         
         print(f"\n{'='*80}")
-        print(f"🚀 Starting Continuous Prompt Improvement")
+        print(f"🚀 Starting Simplified Continuous Prompt Improvement")
         print(f"{'='*80}")
-        print(f"Mode: {'TEST' if self.test_mode else 'PRODUCTION'}")
         print(f"Iterations: {num_iterations}")
-        print(f"Candidates: {len(test_candidates) if test_candidates else 'ALL'}")
+        print(f"Evaluation concurrency: {self.eval_concurrency}")
+        print(f"Candidates: {len(test_candidate_ids) if test_candidate_ids else 'ALL'}")
         
-        # Load current prompt
         current_prompt_file = self.base_dir / "prompt.md"
-        with open(current_prompt_file, 'r') as f:
-            current_prompt = f.read()
-        
-        # Save initial version if this is the first run
-        if not self.version_manager.manifest["versions"]:
-            version = self.version_manager.save_new_version(
-                current_prompt, 
-                ["Initial prompt - baseline version"]
-            )
-        else:
-            version = self.version_manager.manifest["current_version"]
-        
-        results = []
         
         for iteration in range(num_iterations):
             print(f"\n\n{'='*60}")
             print(f"📊 ITERATION {iteration + 1}/{num_iterations}")
             print(f"{'='*60}")
             
-            # Run evaluation
-            print("\n1️⃣ Running evaluation...")
-            ai_ratings = self._run_evaluation(test_candidates, version)
+            # Step 1: Run evaluation with current prompt
+            candidate_desc = f"{len(test_candidate_ids)} test candidates" if test_candidate_ids else "all candidates"
+            print(f"\n1️⃣ Running evaluation on {candidate_desc}...")
+            self._run_evaluation(test_candidate_ids)
             
-            # Analyze gaps
-            print("\n2️⃣ Analyzing gaps...")
+            # Step 2: Generate gap analysis report
+            print("\n2️⃣ Generating gap analysis report...")
+            ai_ratings = self._load_latest_ai_ratings()
             gap_analyzer = GapAnalyzer(ai_ratings, self.human_ratings)
-            gaps = gap_analyzer.calculate_gaps()
-            avg_gap = gap_analyzer.get_average_gap(gaps)
-            top_gaps = gap_analyzer.get_top_gaps(gaps, n=10 if not self.test_mode else 5)
+            gap_report = gap_analyzer.generate_comprehensive_report()
             
-            print(f"   Average gap: {avg_gap:.3f}")
-            print(f"   Candidates with gaps: {len(gaps)}")
-            
-            # Generate report
-            print("\n3️⃣ Generating improvement report...")
-            report = self._generate_report(gaps, top_gaps, avg_gap, version, iteration + 1)
-            report_file = self.base_dir / f"prompt-improvement-reports" / f"report_v{version}_iter{iteration+1}.md"
+            # Save gap report
+            report_file = self.base_dir / "gap_reports" / f"gap_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
             report_file.parent.mkdir(exist_ok=True)
             with open(report_file, 'w') as f:
-                f.write(report)
-            print(f"   Report saved: {report_file.name}")
+                json.dump(gap_report, f, indent=2)
             
-            # Generate improved prompt
-            print("\n4️⃣ Generating improved prompt...")
-            new_prompt, improvements = self.prompt_improver.analyze_gaps_and_suggest_improvements(
-                gaps, top_gaps, current_prompt
-            )
+            print(f"   📊 Average gap: {gap_report['overall_metrics']['average_gap']:.3f}")
+            print(f"   📈 AI bias: {gap_report['overall_metrics']['ai_bias']}")
+            print(f"   🎯 Top gap candidate: {gap_report['top_gap_candidates'][0]['candidate_id']} (gap: {gap_report['top_gap_candidates'][0]['overall_gap']:.2f})")
+            print(f"   📄 Report saved: {report_file.name}")
             
-            # Save new version
-            new_version = self.version_manager.save_new_version(
-                new_prompt, improvements, parent_version=version
-            )
-            print(f"   New prompt version: v{new_version}")
+            # Step 3: Automatic prompt improvement
+            print("\n3️⃣ Generating improved prompt...")
+            with open(current_prompt_file, 'r') as f:
+                current_prompt = f.read()
             
-            # Store results
-            results.append({
-                "iteration": iteration + 1,
-                "version": version,
-                "new_version": new_version,
-                "avg_gap": avg_gap,
-                "improvements": improvements,
-                "report_file": str(report_file)
-            })
+            improver = PromptImprover(self.provider, self.base_dir)
+            new_prompt = improver.improve_prompt(current_prompt, gap_report)
             
-            # Update for next iteration
-            current_prompt = new_prompt
-            version = new_version
+            # Step 4: Create new prompt version
+            print("\n4️⃣ Saving new prompt version...")
+            version_num = self._get_next_version_number()
+            version_file = self.base_dir / "prompt-versions" / f"prompt_v{version_num}.md"
+            version_file.parent.mkdir(exist_ok=True)
+            
+            # Add metadata header
+            metadata = f"""<!--
+Version: {version_num}
+Created: {datetime.now().isoformat()}
+Iteration: {iteration + 1}
+Previous Gap: {gap_report['overall_metrics']['average_gap']:.3f}
+Focus Candidates: {', '.join([c['candidate_id'] for c in gap_report['top_gap_candidates'][:3]])}
+-->
+
+"""
+            
+            with open(version_file, 'w') as f:
+                f.write(metadata + new_prompt)
+            
+            print(f"   💾 Saved as: prompt_v{version_num}.md")
+            
+            # Update current prompt for next iteration (Step 5)
+            with open(current_prompt_file, 'w') as f:
+                f.write(new_prompt)
+            
+            print(f"   🔄 Updated prompt.md for next iteration")
             
             # Brief pause before next iteration
             if iteration < num_iterations - 1:
                 print("\n⏳ Waiting before next iteration...")
-                time.sleep(2)
+                import time
+                time.sleep(3)
         
-        # Final summary
-        self._print_summary(results)
+        print(f"\n🎉 Improvement cycle complete!")
+        print(f"📁 All prompt versions saved in: prompt-versions/")
+        print(f"📊 All gap reports saved in: gap_reports/")
     
-    def _run_evaluation(self, candidate_ids: Optional[List[str]], version: int) -> Dict:
-        """Run evaluation and return ratings."""
-        
-        # Create a custom evaluator that uses our versioned prompt
-        class CustomEvaluator(PortfolioEvaluator):
-            def __init__(self, provider, base_dir, prompt_content=None):
-                super().__init__(provider, base_dir)
-                self.custom_prompt = prompt_content
-            
-            def generate_prompt(self):
-                if self.custom_prompt:
-                    return self.custom_prompt
-                return super().generate_prompt()
-        
-        # Get prompt content for this version
-        prompt_content = None
-        if version >= 1:
-            try:
-                prompt_content = self.version_manager.get_version_content(version)
-            except:
-                # Fall back to core prompt
-                pass
-        
-        evaluator = CustomEvaluator(self.provider, self.base_dir, prompt_content)
-        
-        # Run evaluation with parallel processing and retry logic
-        evaluator.evaluate_candidates(candidate_ids, concurrency=self.eval_concurrency, max_retries=self.eval_max_retries)
-        
-        # Load the results
+    def _run_evaluation(self, candidate_ids: Optional[List[str]] = None):
+        """Run evaluation on specified candidates (or all if None)."""
+        evaluator = PortfolioEvaluator(self.provider, self.base_dir)
+        evaluator.evaluate_candidates(candidate_ids=candidate_ids, concurrency=self.eval_concurrency)
+    
+    def _load_latest_ai_ratings(self) -> Dict:
+        """Load the most recent AI evaluation results."""
         results_dir = self.base_dir / "evaluation-results"
         latest_file = max(results_dir.glob("evaluation_*.json"), 
                          key=lambda p: p.stat().st_mtime)
@@ -614,193 +753,51 @@ class ContinuousImprover:
         with open(latest_file, 'r') as f:
             data = json.load(f)
         
-        # Track this run in version manifest
-        self.version_manager.add_evaluation_run(version, {
-            "timestamp": data["evaluation_metadata"]["timestamp"],
-            "file": str(latest_file.name),
-            "candidates_evaluated": len(data["candidate_ratings"])
-        })
-        
-        return data["candidate_ratings"]
+        # Handle both old and new file formats
+        if 'candidate_ratings' in data:
+            return data['candidate_ratings']
+        else:
+            return data
     
-    def _generate_report(self, gaps: Dict, top_gaps: List, avg_gap: float, 
-                        version: int, iteration: int) -> str:
-        """Generate detailed gap analysis report."""
+    def _get_next_version_number(self) -> int:
+        """Get the next prompt version number."""
+        versions_dir = self.base_dir / "prompt-versions"
+        if not versions_dir.exists():
+            return 1
         
-        report = f"""# Prompt Improvement Report
-Version: {version}
-Iteration: {iteration}
-Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-
-## Summary Statistics
-- Average Gap: {avg_gap:.3f}/5
-- Total Candidates Analyzed: {len(gaps)}
-- Candidates Above 1.0 Gap: {sum(1 for g in gaps.values() if g['overall_gap'] > 1.0)}
-
-## Gap Distribution
-"""
+        existing_versions = list(versions_dir.glob("prompt_v*.md"))
+        if not existing_versions:
+            return 1
         
-        # Calculate gap distribution
-        gap_ranges = [(0, 0.5), (0.5, 1.0), (1.0, 1.5), (1.5, 2.0), (2.0, 5.0)]
-        for low, high in gap_ranges:
-            count = sum(1 for g in gaps.values() if low <= g['overall_gap'] < high)
-            report += f"- {low:.1f} - {high:.1f}: {count} candidates\n"
+        # Extract version numbers and find max
+        version_nums = []
+        for version_file in existing_versions:
+            try:
+                num = int(version_file.stem.split('_v')[1])
+                version_nums.append(num)
+            except (IndexError, ValueError):
+                continue
         
-        report += "\n## Top 10 Candidates with Largest Gaps\n"
-        
-        for i, (candidate_id, gap_data) in enumerate(top_gaps[:10], 1):
-            report += f"\n### {i}. Candidate {candidate_id}\n"
-            report += f"**Overall Gap:** {gap_data['overall_gap']:.2f} "
-            report += f"(Human: {gap_data['human_score']:.2f}, AI: {gap_data['ai_score']:.2f})\n\n"
-            
-            report += "**Per-Criteria Breakdown:**\n"
-            for criterion, crit_gap in gap_data['criteria_gaps'].items():
-                report += f"\n**{criterion.replace('_', ' ').title()}:**\n"
-                report += f"- Human Score: {crit_gap['human_score']}\n"
-                report += f"- AI Score: {crit_gap['ai_score']}\n"
-                report += f"- Gap: {crit_gap['gap']:.1f} (AI {crit_gap['direction']}rated)\n"
-                
-                if gap_data['human_comments'][criterion]:
-                    report += f"\nHuman: *{gap_data['human_comments'][criterion]}*\n"
-                if gap_data['ai_comments'][criterion]:
-                    report += f"\nAI: *{gap_data['ai_comments'][criterion]}*\n"
-            
-            # Red flags
-            if gap_data['red_flags']['human'] or gap_data['red_flags']['ai']:
-                report += f"\n**Red Flags:**\n"
-                report += f"- Human: {gap_data['red_flags']['human'] or 'None'}\n"
-                report += f"- AI: {gap_data['red_flags']['ai'] or 'None'}\n"
-        
-        # Pattern analysis
-        report += "\n## Pattern Analysis\n"
-        
-        # Criteria-specific patterns
-        criteria_patterns = defaultdict(list)
-        common_misses = defaultdict(list)
-        
-        for candidate_id, gap_data in gaps.items():
-            for criterion, crit_gap in gap_data['criteria_gaps'].items():
-                if crit_gap['gap'] > 0.5:
-                    criteria_patterns[criterion].append({
-                        'gap': crit_gap['gap'],
-                        'direction': crit_gap['direction'],
-                        'candidate': candidate_id
-                    })
-                    
-                    # Analyze common misses
-                    human_comment = gap_data['human_comments'][criterion].lower()
-                    ai_comment = gap_data['ai_comments'][criterion].lower()
-                    
-                    if crit_gap['direction'] == 'over' and crit_gap['gap'] >= 1.0:
-                        # What did AI miss that human caught?
-                        if 'inconsistent' in human_comment and 'consistent' in ai_comment:
-                            common_misses['inconsistency_blindness'].append(candidate_id)
-                        if ('too many' in human_comment or 'overuse' in human_comment) and ('restrained' in ai_comment or 'minimal' in ai_comment):
-                            common_misses['excess_blindness'].append(candidate_id)
-                        if ('sloppy' in human_comment or 'random' in human_comment) and ('clean' in ai_comment or 'refined' in ai_comment):
-                            common_misses['sloppiness_blindness'].append(candidate_id)
-                        if 'template' in human_comment and 'template' not in ai_comment:
-                            common_misses['template_blindness'].append(candidate_id)
-        
-        for criterion, patterns in criteria_patterns.items():
-            if patterns:
-                avg_crit_gap = np.mean([p['gap'] for p in patterns])
-                over_count = sum(1 for p in patterns if p['direction'] == 'over')
-                under_count = len(patterns) - over_count
-                
-                report += f"\n### {criterion.replace('_', ' ').title()}\n"
-                report += f"- Average gap when misaligned: {avg_crit_gap:.2f}\n"
-                report += f"- AI overrates: {over_count} times\n"
-                report += f"- AI underrates: {under_count} times\n"
-                
-                # List specific problematic candidates
-                if over_count > 0:
-                    overrated = [p['candidate'] for p in patterns if p['direction'] == 'over' and p['gap'] >= 1.5]
-                    if overrated:
-                        report += f"- Severely overrated (1.5+ gap): Candidates {', '.join(overrated)}\n"
-        
-        # Common AI blindspots
-        report += "\n## Common AI Blindspots\n"
-        for blindspot, candidates in common_misses.items():
-            if candidates:
-                report += f"\n**{blindspot.replace('_', ' ').title()}:**\n"
-                report += f"- Occurred in {len(candidates)} candidates: {', '.join(set(candidates))}\n"
-        
-        # Actionable recommendations
-        report += "\n## Recommendations for Prompt Improvement\n"
-        
-        if 'inconsistency_blindness' in common_misses and len(common_misses['inconsistency_blindness']) >= 2:
-            report += "\n1. **Add explicit inconsistency detection:**\n"
-            report += "   - AI is missing width/alignment inconsistencies between sections\n"
-            report += "   - Add specific guidance about checking cross-section consistency\n"
-        
-        if 'excess_blindness' in common_misses and len(common_misses['excess_blindness']) >= 2:
-            report += "\n2. **Clarify 'restraint' vs 'excess':**\n"
-            report += "   - AI interprets many fonts/styles as 'restrained' when humans see excess\n"
-            report += "   - Define specific thresholds (e.g., >3 font sizes = too many)\n"
-        
-        if 'sloppiness_blindness' in common_misses and len(common_misses['sloppiness_blindness']) >= 2:
-            report += "\n3. **Define 'sloppy' indicators:**\n"
-            report += "   - AI sees 'clean' where humans see 'sloppy'\n"
-            report += "   - List specific sloppy indicators: misaligned elements, inconsistent spacing, etc.\n"
-        
-        if 'template_blindness' in common_misses and len(common_misses['template_blindness']) >= 2:
-            report += "\n4. **Improve template detection:**\n"
-            report += "   - AI missing obvious template patterns\n"
-            report += "   - Add specific template indicators to look for\n"
-        
-        # Overall calibration
-        overrate_ratio = sum(1 for g in gaps.values() if g['ai_score'] > g['human_score']) / len(gaps)
-        if overrate_ratio > 0.7:
-            report += "\n5. **General calibration adjustment:**\n"
-            report += f"   - AI overrates {overrate_ratio*100:.0f}% of portfolios\n"
-            report += "   - Consider adding guidance to be more critical overall\n"
-            report += "   - Emphasize looking for flaws before strengths\n"
-        
-        return report
-    
-    def _print_summary(self, results: List[Dict]):
-        """Print final summary of all iterations."""
-        print(f"\n\n{'='*80}")
-        print(f"📈 IMPROVEMENT SUMMARY")
-        print(f"{'='*80}")
-        
-        for result in results:
-            print(f"\nIteration {result['iteration']}:")
-            print(f"  - Prompt Version: v{result['version']} → v{result['new_version']}")
-            print(f"  - Average Gap: {result['avg_gap']:.3f}")
-            print(f"  - Improvements Applied: {len(result['improvements'])}")
-            print(f"  - Report: {result['report_file']}")
-        
-        # Gap trend
-        gaps = [r['avg_gap'] for r in results]
-        if len(gaps) > 1:
-            improvement = gaps[0] - gaps[-1]
-            pct_improvement = (improvement / gaps[0]) * 100 if gaps[0] > 0 else 0
-            print(f"\n📊 Overall Improvement: {improvement:.3f} ({pct_improvement:.1f}%)")
-        
-        print(f"\n✅ All prompt versions saved in: prompt-versions/")
-        print(f"📄 All reports saved in: prompt-improvement-reports/")
+        return max(version_nums) + 1 if version_nums else 1
 
 
 def main():
     """Main execution function."""
+    
     parser = argparse.ArgumentParser(
-        description='Continuously improve evaluation prompts by analyzing AI-human gaps'
+        description='Simplified continuous prompt improvement system'
     )
-    parser.add_argument('--test', action='store_true', 
-                       help='Run in test mode (2 iterations, 5 candidates)')
-    parser.add_argument('--iterations', type=int, default=2,
-                       help='Number of improvement iterations (default: 2)')
-    parser.add_argument('--candidates', nargs='+', 
-                       help='Specific candidate IDs to evaluate')
+    parser.add_argument('--iterations', type=int, default=3,
+                       help='Number of improvement iterations (default: 3)')
     parser.add_argument('--model', default='gpt-5',
                        choices=['gpt-4o', 'gpt-5', 'claude-opus-4.1'],
                        help='Model to use (default: gpt-5)')
-    parser.add_argument('--eval-concurrency', type=int, default=8,
-                       help='Number of parallel evaluation workers (default: 8)')
-    parser.add_argument('--eval-max-retries', type=int, default=3,
-                       help='Maximum retry attempts for rate limited requests (default: 3)')
+    parser.add_argument('--eval-concurrency', type=int, default=10,
+                       help='Number of parallel evaluation workers (default: 10)')
+    parser.add_argument('--test', action='store_true',
+                       help='Run in test mode (2 iterations, 3 candidates only)')
+    parser.add_argument('--test-candidates', type=int, default=3,
+                       help='Number of candidates to use in test mode (default: 3)')
     
     args = parser.parse_args()
     
@@ -808,39 +805,35 @@ def main():
     load_dotenv()
     base_dir = Path(__file__).parent
     
-    # Set up provider [[memory:7530211]]
+    # Set up provider
     if 'claude' in args.model:
         api_key = os.getenv("ANTHROPIC_API_KEY")
         if not api_key:
             print("Error: ANTHROPIC_API_KEY not found in .env file")
-            if args.test:
-                print("Note: To run the test, please set up your API keys in .env file")
             sys.exit(1)
         provider = ClaudeProvider(api_key, model=args.model)
     else:
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
             print("Error: OPENAI_API_KEY not found in .env file")
-            if args.test:
-                print("Note: To run the test, please set up your API keys in .env file")
             sys.exit(1)
         provider = OpenAIProvider(api_key, model=args.model)
     
     # Configure for test mode
     if args.test:
-        print("🧪 Running in TEST MODE")
-        test_candidates = args.candidates or ["1", "10", "11", "12", "13"]
+        print(f"🧪 Running in TEST MODE")
+        print(f"   Test candidates: {args.test_candidates}")
         iterations = 2
+        eval_concurrency = 3  # Use 3 workers for test mode
+        test_candidate_ids = [str(i) for i in range(1, args.test_candidates + 1)]  # Use first N candidates
     else:
-        test_candidates = args.candidates
         iterations = args.iterations
+        eval_concurrency = args.eval_concurrency
+        test_candidate_ids = None  # All candidates
     
     # Run improvement cycle
-    improver = ContinuousImprover(provider, base_dir, test_mode=args.test, eval_concurrency=args.eval_concurrency, eval_max_retries=args.eval_max_retries)
-    improver.run_improvement_cycle(
-        num_iterations=iterations,
-        test_candidates=test_candidates
-    )
+    improver = SimpleContinuousImprover(provider, base_dir, eval_concurrency)
+    improver.run_improvement_cycle(num_iterations=iterations, test_candidate_ids=test_candidate_ids)
 
 
 if __name__ == "__main__":

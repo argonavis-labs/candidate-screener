@@ -63,6 +63,7 @@ class OpenAIProvider(ModelProvider):
         self.client = openai.OpenAI(api_key=api_key)
         self.model = model
         self.debug = debug
+        self.rate_limit_count = 0  # Track 429 errors
         
     def _encode_image(self, image_path: str) -> str:
         """Encode image to base64."""
@@ -86,14 +87,32 @@ class OpenAIProvider(ModelProvider):
                 
                 # Check if it's a rate limit error
                 if "rate limit" in error_str or "429" in error_str:
+                    self.rate_limit_count += 1
+                    candidate_id = Path(image_path).stem.split('_')[1]
+                    
+                    # Enhanced rate limit logging
+                    print(f"🚨 RATE LIMIT #{self.rate_limit_count} - Candidate {candidate_id}")
+                    
+                    # Extract and log rate limit details
+                    import re
+                    limit_match = re.search(r'Limit (\d+), Used (\d+), Requested (\d+)', str(e))
+                    if limit_match:
+                        limit, used, requested = limit_match.groups()
+                        utilization = (int(used) / int(limit)) * 100
+                        print(f"   📊 TPM Utilization: {used}/{limit} ({utilization:.1f}%) - Requesting: {requested}")
+                        
+                        # Log if we're consistently hitting limits
+                        if self.rate_limit_count >= 5:
+                            print(f"   ⚠️  High rate limit frequency detected ({self.rate_limit_count} total)")
+                    
                     if attempt < max_retries:
                         # Exponential backoff with jitter: 2^attempt + random(0-1) seconds
                         wait_time = (2 ** attempt) + random.uniform(0, 1)
-                        print(f"⏳ Rate limited. Retrying in {wait_time:.1f}s... (attempt {attempt + 1}/{max_retries + 1})")
+                        print(f"   ⏳ Retrying in {wait_time:.1f}s... (attempt {attempt + 1}/{max_retries + 1})")
                         time.sleep(wait_time)
                         continue
                     else:
-                        print(f"❌ Max retries reached for rate limiting")
+                        print(f"   ❌ Max retries reached after {self.rate_limit_count} total rate limits")
                         raise
                 else:
                     # For non-rate-limit errors, don't retry
@@ -401,7 +420,7 @@ class ClaudeProvider(ModelProvider):
             # Claude API call
             response = self.client.messages.create(
                 model=self.model,
-                max_tokens=4000,
+                max_tokens=8000,
                 messages=messages,
                 system="You are a senior product design hiring manager. Evaluate portfolios strictly based on visual craft."
             )
@@ -671,6 +690,16 @@ class PortfolioEvaluator:
         print(f"  Latest symlink: ai-ratings.json")
         print(f"  Duration: {duration:.1f} seconds ({duration/60:.1f} minutes)")
         
+        # Log rate limiting statistics
+        if hasattr(self.provider, 'rate_limit_count') and self.provider.rate_limit_count > 0:
+            print(f"  🚨 Rate limits encountered: {self.provider.rate_limit_count}")
+            rate_limit_rate = (self.provider.rate_limit_count / len(candidate_files)) * 100
+            print(f"     Rate limit frequency: {rate_limit_rate:.1f}% of requests")
+            if rate_limit_rate > 20:
+                print(f"     💡 Consider reducing concurrency to avoid rate limits")
+        else:
+            print(f"  ✅ No rate limits encountered")
+        
         # Print summary
         self.print_summary(ai_ratings)
     
@@ -808,8 +837,8 @@ def main():
                         help='Override model selection (gpt-4o, gpt-5, o1, claude-sonnet-4, or claude-opus-4.1)')
     parser.add_argument('--no-exemplars', action='store_true', 
                         help='Skip exemplar images - evaluate using rubric only (for calibration)')
-    parser.add_argument('--concurrency', type=int, default=8,
-                        help='Number of parallel evaluation workers (default: 8)')
+    parser.add_argument('--concurrency', type=int, default=10,
+                        help='Number of parallel evaluation workers (default: 10)')
     parser.add_argument('--save-every', type=int, default=5,
                         help='Save progress every N completions (default: 5)')
     parser.add_argument('--max-retries', type=int, default=3,
