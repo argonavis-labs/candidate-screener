@@ -477,10 +477,11 @@ class ClaudeProvider(ModelProvider):
 class PortfolioEvaluator:
     """Main evaluator class that coordinates the evaluation process."""
     
-    def __init__(self, provider: ModelProvider, base_dir: Path, no_exemplars: bool = False):
+    def __init__(self, provider: ModelProvider, base_dir: Path, no_exemplars: bool = False, custom_prompt_file: Optional[str] = None):
         self.provider = provider
         self.base_dir = base_dir
         self.no_exemplars = no_exemplars
+        self.custom_prompt_file = custom_prompt_file
         self.start_time = None
         self.end_time = None
         self.full_prompt = None
@@ -501,8 +502,15 @@ class PortfolioEvaluator:
     def generate_prompt(self) -> str:
         """Generate the complete prompt from the single prompt file."""
         
-        # Load the consolidated prompt
-        full_prompt = self.load_text("prompt.md")
+        # Use custom prompt file if provided, otherwise default to prompt.md
+        prompt_file = self.custom_prompt_file if self.custom_prompt_file else "prompt.md"
+        
+        # Load the prompt (handle both relative and absolute paths)
+        if self.custom_prompt_file and Path(self.custom_prompt_file).is_absolute():
+            with open(self.custom_prompt_file, 'r') as f:
+                full_prompt = f.read()
+        else:
+            full_prompt = self.load_text(prompt_file)
         
         # Handle no-exemplars mode by modifying the prompt
         if self.no_exemplars:
@@ -575,7 +583,8 @@ class PortfolioEvaluator:
         print(f"Start time: {self.start_time.strftime('%Y-%m-%d %H:%M:%S')}")
         
         # Generate the prompt
-        print("Generating evaluation prompt...")
+        prompt_source = self.custom_prompt_file if self.custom_prompt_file else "prompt.md"
+        print(f"Generating evaluation prompt from: {prompt_source}")
         prompt = self.generate_prompt()
         
         # Get exemplar images (conditionally)
@@ -843,6 +852,8 @@ def main():
                         help='Save progress every N completions (default: 5)')
     parser.add_argument('--max-retries', type=int, default=3,
                         help='Maximum retry attempts for rate limited requests (default: 3)')
+    parser.add_argument('--prompt-file', type=str, 
+                        help='Path to custom prompt file (default: prompt.md)')
     
     args = parser.parse_args()
     
@@ -914,7 +925,7 @@ def main():
             sys.exit(1)
     
     # Create evaluator
-    evaluator = PortfolioEvaluator(provider, base_dir, no_exemplars=args.no_exemplars)
+    evaluator = PortfolioEvaluator(provider, base_dir, no_exemplars=args.no_exemplars, custom_prompt_file=args.prompt_file)
     
     # Run evaluation with parallel processing and retry logic
     evaluator.evaluate_candidates(concurrency=args.concurrency, save_every=args.save_every, max_retries=args.max_retries)
