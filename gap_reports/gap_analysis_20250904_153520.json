@@ -1,0 +1,198 @@
+{
+  "report_metadata": {
+    "generated_at": "2025-09-04T15:35:20.992754",
+    "total_candidates_analyzed": 3,
+    "candidates_with_both_ratings": 3
+  },
+  "overall_metrics": {
+    "average_gap": 0.5499999999999999,
+    "median_gap": 0.6499999999999999,
+    "ai_bias": "strict",
+    "ai_average_score": 3.3333333333333335,
+    "human_average_score": 3.8833333333333333,
+    "bias_magnitude": 0.5500000000000002
+  },
+  "gap_distribution": {
+    "large_gaps_1.5+": 0,
+    "medium_gaps_0.5-1.5": 2,
+    "small_gaps_<0.5": 1,
+    "perfect_matches": 1
+  },
+  "category_analysis": {
+    "typography": {
+      "avg_gap": 0.6666666666666666,
+      "ai_bias": "strict",
+      "ai_avg": 3.3333333333333335,
+      "human_avg": 4.0,
+      "worst_gaps": [
+        "1",
+        "2",
+        "3"
+      ]
+    },
+    "layout_composition": {
+      "avg_gap": 0.3333333333333333,
+      "ai_bias": "strict",
+      "ai_avg": 3.3333333333333335,
+      "human_avg": 3.6666666666666665,
+      "worst_gaps": [
+        "3",
+        "1",
+        "2"
+      ]
+    },
+    "color": {
+      "avg_gap": 0.6666666666666666,
+      "ai_bias": "strict",
+      "ai_avg": 3.3333333333333335,
+      "human_avg": 4.0,
+      "worst_gaps": [
+        "1",
+        "3",
+        "2"
+      ]
+    }
+  },
+  "red_flag_analysis": {
+    "template_scent_high": {
+      "human_flagged": 0,
+      "ai_flagged": 0,
+      "missed_by_ai": []
+    },
+    "sloppy_images": {
+      "human_flagged": 0,
+      "ai_flagged": 0,
+      "missed_by_ai": []
+    },
+    "process_soup": {
+      "human_flagged": 0,
+      "ai_flagged": 0,
+      "missed_by_ai": []
+    }
+  },
+  "top_gap_candidates": [
+    {
+      "candidate_id": "1",
+      "overall_gap": 0.6499999999999999,
+      "human_score": 3.65,
+      "ai_score": 3.0,
+      "image_file": "candidate_1.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 4,
+          "ai": 3,
+          "gap": 1
+        },
+        "layout_composition": {
+          "human": 3,
+          "ai": 3,
+          "gap": 0
+        },
+        "color": {
+          "human": 4,
+          "ai": 3,
+          "gap": 1
+        }
+      },
+      "human_comments": {
+        "typography": "The type chooses a cool serif and it has a strong contrast with some of the small dates. It doesn't do much, but what it does, it does well. My one small feedback is that the work play contact section on the right doesn't seem as well done as the main text. But if you look at the main text, it's pretty good. ",
+        "layout_composition": "I think the layout is a little bit weak here. It doesn't do much, so I expect everything to be really good. But the work-play-contact section feels a little random and not super well-positioned with regard to everything else. ",
+        "color": "This is generally pretty decent. On color usage, it uses one main color which is blue and then it carries it between the background and the highlight for the text. It's not super sophisticated, but what it does, it does decently well. "
+      },
+      "ai_comments": {
+        "typography": "Editorial italic serif throughout the hero creates a distinct voice; tracking and kerning look even and rags are smooth. Accents (name and company) switch to a saturated blue while remaining in the same italic style, which is cohesive. Superscript years are styled smaller and sit consistently after company names. However: links appear color\u2011only (no underline/offset shown), the display lines are quite long for a hero (~80\u201390ch) and the leading is on the tight side for a high\u2011contrast italic (loops and descenders feel close), and there\u2019s no evidence yet of a broader type scale or link states beyond this block.",
+        "layout_composition": "Large left\u2011aligned text block is placed with ample negative space, creating a clear focal area. Vertical side rail with 'Work | Play | Contact' adds a point of view and maintains consistent separators. Spacing between hero lines appears regular and intentional. Limitations: only a single hero view is visible; the small square icon at the top\u2011right feels floaty and not tied to the same grid as the right rail; the side rail\u2019s vertical alignment doesn\u2019t obviously relate to the hero block baseline or center, which slightly weakens cohesion.",
+        "color": "Tuned neutrals: soft gray background with dark gray text avoids harsh #000/#fff. Accent blue is used sparingly on key names, reinforcing hierarchy. Overall contrast is comfortable and readable. Minor concerns: the blue is quite hot against the muted shell and, without visible hover/active variations, the color system\u2019s depth isn\u2019t demonstrated; with only a single section shown there\u2019s limited evidence of palette discipline across components."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "3",
+      "overall_gap": 0.6499999999999999,
+      "human_score": 4,
+      "ai_score": 3.35,
+      "image_file": "candidate_3.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 4,
+          "ai": 4,
+          "gap": 0
+        },
+        "layout_composition": {
+          "human": 4,
+          "ai": 3,
+          "gap": 1
+        },
+        "color": {
+          "human": 4,
+          "ai": 3,
+          "gap": 1
+        }
+      },
+      "human_comments": {
+        "typography": "The type usage here is again very minimal, there's only one size, but he's using color to differentiate things. The paragraph spacing and the line spacing look pretty good. Overall, not much is happening, but everything that is happening here is good. ",
+        "layout_composition": "Layout here is pretty good. Again, not doing much, but what it does, it does well. ",
+        "color": "The color is not doing much here, but I think that the choices are here are relatively harmonious. They are clearly going after a default-looking feeling, preserving some of the blue link effect on the web, but they picked a slightly nicer shade of blue. The restraint and the color usage here is nice - it's like a three-shade. Overall, achieving a good minimalist effect without doing and flexing too much. "
+      },
+      "ai_comments": {
+        "typography": "Text-first, minimal page shows disciplined type. Comfortable measure (~60\u201370ch) with relaxed leading; meta line ('Updated July 8, 2024') is a lighter, smaller style used consistently. Links have a consistent treatment (blue text with a small external-link glyph) and sit cleanly on the baseline. Headings/body/meta create a clear three-level hierarchy without overstyling, and project titles use consistent Title Case. Minor limitations: link hue feels close to default blue and states aren\u2019t visible; the meta grey may be slightly light for some displays; external-link glyph alignment looks a touch low on a few links.",
+        "layout_composition": "Simple single-column layout with ample negative space. The two project rows use a clean three-column structure (year on the left, title centered column, date right) with consistent row height and subtle dividers, indicating a stable grid. Spacing between paragraphs and the list is even and measured. Limitations: evidence is limited to a single minimal view; the left year column is left-aligned which creates a slightly ragged left edge (right-alignment would tighten); the small 'Letting time pass\u2026' line floats and reads a bit disconnected from the grid.",
+        "color": "Neutral shell is controlled: off-white background, off-black body text, soft grey meta/dividers, and a single blue accent for links. Value steps are calm and nothing clashes. Limitations: the blue accent reads default and system-like; link/CTA state logic isn\u2019t visible; the light grey for dividers/meta risks low contrast on some screens."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "2",
+      "overall_gap": 0.3500000000000001,
+      "human_score": 4,
+      "ai_score": 3.65,
+      "image_file": "candidate_2.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 4,
+          "ai": 3,
+          "gap": 1
+        },
+        "layout_composition": {
+          "human": 4,
+          "ai": 4,
+          "gap": 0
+        },
+        "color": {
+          "human": 4,
+          "ai": 4,
+          "gap": 0
+        }
+      },
+      "human_comments": {
+        "typography": "The type design here is fine - it doesn't do much, it's one of those minimal sites. But what it does, it does decently well. I think the approach here is a little bit of elevated basics. It uses a lot of the sort of browser default of black and blue but just does them slightly better. You can tell from the line spacing and the general restraint in the color usage and the stop restraint in the number of styles that it's a someone who is good at typography but didn't necessarily want to push it super far in this specific design. ",
+        "layout_composition": "The layout on this is pretty good. It's a relatively simple layout, but because there's a little bit more content here, we can tell that a little bit more. And generally, I think that there is good use of white space here to create hierarchy and sections. They use a restrained amount of visuals, but all the visuals have a consistent style and layout that is effective. Because the visuals are really strong, they've kept the typography and the layout relatively minimal, which I think was an effective strategy. ",
+        "color": "The color usage here is minimal but also strong. I think that the work is iconography, which means that a lot of the icons are very colorful, and the general minimal palette is working quite well for them. And then you can also tell from their iconography work that they have a very strong command of color usage. "
+      },
+      "ai_comments": {
+        "typography": "Readable, orderly system with a single sans family and comfortable measures. Positive: body copy keeps a steady rag and leading; micro\u2011labels (years) are consistently styled in a lighter grey; headings like 'Icons'/'Software' repeat predictably. However: links use an uncustomized bright blue with default underline thickness/offset throughout (intro, card titles), which feels generic; heading scale is close to body\u2014section headers are small and low\u2011contrast, giving limited hierarchy; body size skews small in the long 'Software' list, reducing ease at this density. No casing drift spotted, but overall voice feels default rather than tuned.",
+        "layout_composition": "Strong, disciplined two\u2011column grid presenting dozens of tiles with matching square aspects, consistent radii, and identical internal mats; captions (title left, year right) repeat precisely, keeping baselines aligned row to row. Vertical spacing between rows and sections is even, producing a calm scroll rhythm. Section sequencing is clear: intro \u2192 grid \u2192 software \u2192 work/press. Minor roughness: the intro text column appears perceptibly narrower than the grid container, creating a small perceived width drift; the very minimal section headers could do more to signal breaks; dense text blocks in 'Software' feel tight against their column compared to the airy grid. Still, asset handling and rhythm show control across a long page.",
+        "color": "Neutral shell (white/soft grey cards) confidently contains highly saturated icon artwork; consistent light card backgrounds and subtle shadows/borders unify varied imagery and prevent value flicker. Accent color is limited to link blue and small grey meta, keeping focus on the icons. Minor issues: the link blue reads default and a bit hot against the otherwise tuned neutrals; text may be near\u2011pure black on pure white, which can feel slightly stark compared to the softly tinted cards."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    }
+  ],
+  "key_patterns": {
+    "ai_overrating_frequency": 0.0,
+    "common_ai_blindspots": [],
+    "most_problematic_categories": [
+      "typography",
+      "color",
+      "layout_composition"
+    ]
+  }
+}

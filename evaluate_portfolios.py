@@ -550,11 +550,73 @@ class PortfolioEvaluator:
         
         return full_prompt
     
+    def _extract_image_names_from_prompt(self) -> List[str]:
+        """Extract image names referenced in calibration examples from the prompt."""
+        import re
+        
+        # Load the prompt content
+        if Path(self.custom_prompt_file).is_absolute():
+            with open(self.custom_prompt_file, 'r') as f:
+                prompt_content = f.read()
+        else:
+            prompt_content = self.load_text(self.custom_prompt_file)
+        
+        # Extract image names from calibration examples
+        # Pattern: img_name: filename.jpg
+        image_names = []
+        pattern = r'img_name:\s*([^.\s]+\.jpg)'
+        matches = re.findall(pattern, prompt_content)
+        
+        for match in matches:
+            image_names.append(match)
+        
+        # Remove duplicates while preserving order
+        seen = set()
+        unique_names = []
+        for name in image_names:
+            if name not in seen:
+                seen.add(name)
+                unique_names.append(name)
+        
+        return unique_names
+    
     def get_exemplar_images(self) -> List[str]:
         """Get list of exemplar image paths."""
-        exemplar_dir = self.base_dir / "examplar-images"
         images: List[str] = []
-
+        
+        # Check if we're using a custom manual prompt file
+        if self.custom_prompt_file:
+            # Extract image names from the prompt file
+            image_names = self._extract_image_names_from_prompt()
+            
+            if image_names:
+                # Determine the manual test images directory based on prompt filename
+                prompt_filename = Path(self.custom_prompt_file).stem  # e.g., "manual-test-prompt-v1"
+                manual_images_dir = self.base_dir / "manual-test-images" / prompt_filename
+                
+                print(f"📁 Looking for manual prompt images in: {manual_images_dir}")
+                
+                # Find the referenced images in the manual test directory
+                for img_name in image_names:
+                    img_path = manual_images_dir / img_name
+                    if img_path.exists():
+                        images.append(str(img_path))
+                        # Store relative path for metadata
+                        self.exemplar_images_used.append(str(img_path.relative_to(self.base_dir)))
+                        print(f"  ✓ Found: {img_name}")
+                    else:
+                        print(f"  ⚠️  Missing: {img_name} (expected at {img_path})")
+                
+                if not images:
+                    print(f"Warning: No referenced images found in {manual_images_dir}")
+                else:
+                    print(f"📷 Loaded {len(images)} images for manual prompt")
+                
+                return images
+        
+        # Default behavior: use standard exemplar directory
+        exemplar_dir = self.base_dir / "examplar-images"
+        
         # Load all exemplar_*.jpg and sort numerically by suffix
         all_exemplars = sorted(
             exemplar_dir.glob("exemplar_*.jpg"),

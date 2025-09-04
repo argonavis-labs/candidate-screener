@@ -664,7 +664,9 @@ class SimpleContinuousImprover:
         print(f"Evaluation concurrency: {self.eval_concurrency}")
         print(f"Candidates: {len(test_candidate_ids) if test_candidate_ids else 'ALL'}")
         
-        current_prompt_file = self.base_dir / "prompt.md"
+        # Always preserve the original prompt.md - use versioned prompts for iterations
+        original_prompt_file = self.base_dir / "prompt.md"
+        current_prompt_file = original_prompt_file  # Start with original for first iteration
         
         for iteration in range(num_iterations):
             print(f"\n\n{'='*60}")
@@ -673,8 +675,8 @@ class SimpleContinuousImprover:
             
             # Step 1: Run evaluation with current prompt
             candidate_desc = f"{len(test_candidate_ids)} test candidates" if test_candidate_ids else "all candidates"
-            print(f"\n1️⃣ Running evaluation on {candidate_desc}...")
-            self._run_evaluation(test_candidate_ids)
+            print(f"\n1️⃣ Running evaluation on {candidate_desc} with: {current_prompt_file.name}")
+            self._run_evaluation(test_candidate_ids, prompt_file=current_prompt_file)
             
             # Step 2: Generate gap analysis report
             print("\n2️⃣ Generating gap analysis report...")
@@ -723,11 +725,9 @@ Focus Candidates: {', '.join([c['candidate_id'] for c in gap_report['top_gap_can
             
             print(f"   💾 Saved as: prompt_v{version_num}.md")
             
-            # Update current prompt for next iteration (Step 5)
-            with open(current_prompt_file, 'w') as f:
-                f.write(new_prompt)
-            
-            print(f"   🔄 Updated prompt.md for next iteration")
+            # DO NOT overwrite original prompt.md - use versioned files for next iteration
+            current_prompt_file = version_file  # Use this version for next iteration
+            print(f"   ✅ Original prompt.md preserved - using prompt_v{version_num}.md for next iteration")
             
             # Brief pause before next iteration
             if iteration < num_iterations - 1:
@@ -739,9 +739,10 @@ Focus Candidates: {', '.join([c['candidate_id'] for c in gap_report['top_gap_can
         print(f"📁 All prompt versions saved in: prompt-versions/")
         print(f"📊 All gap reports saved in: gap_reports/")
     
-    def _run_evaluation(self, candidate_ids: Optional[List[str]] = None):
+    def _run_evaluation(self, candidate_ids: Optional[List[str]] = None, prompt_file: Optional[Path] = None):
         """Run evaluation on specified candidates (or all if None)."""
-        evaluator = PortfolioEvaluator(self.provider, self.base_dir)
+        custom_prompt_file = str(prompt_file) if prompt_file else None
+        evaluator = PortfolioEvaluator(self.provider, self.base_dir, custom_prompt_file=custom_prompt_file)
         evaluator.evaluate_candidates(candidate_ids=candidate_ids, concurrency=self.eval_concurrency)
     
     def _load_latest_ai_ratings(self) -> Dict:
