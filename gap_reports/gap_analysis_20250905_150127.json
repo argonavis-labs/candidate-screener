@@ -1,0 +1,489 @@
+{
+  "report_metadata": {
+    "generated_at": "2025-09-05T15:01:27.005450",
+    "total_candidates_analyzed": 50,
+    "candidates_with_both_ratings": 50,
+    "source_file": "evaluation_20250905_145711.json",
+    "human_ratings_file": "human-ratings.json"
+  },
+  "overall_metrics": {
+    "average_gap": 0.6079999999999999,
+    "median_gap": 0.4500000000000002,
+    "ai_bias": "strict",
+    "ai_average_score": 2.7645999999999993,
+    "human_average_score": 2.883,
+    "bias_magnitude": 0.1184000000000009
+  },
+  "gap_distribution": {
+    "large_gaps_1.5+": 4,
+    "medium_gaps_0.5-1.5": 20,
+    "small_gaps_<0.5": 26,
+    "perfect_matches": 26
+  },
+  "category_analysis": {
+    "typography": {
+      "avg_gap": 0.836,
+      "ai_bias": "lenient",
+      "ai_avg": 3.412,
+      "human_avg": 2.88,
+      "worst_gaps": [
+        "29",
+        "4",
+        "7"
+      ]
+    },
+    "layout_composition": {
+      "avg_gap": 0.7780000000000001,
+      "ai_bias": "strict",
+      "ai_avg": 2.93,
+      "human_avg": 2.98,
+      "worst_gaps": [
+        "13",
+        "10",
+        "15"
+      ]
+    },
+    "color": {
+      "avg_gap": 0.608,
+      "ai_bias": "strict",
+      "ai_avg": 2.98,
+      "human_avg": 3.14,
+      "worst_gaps": [
+        "15",
+        "17",
+        "39"
+      ]
+    }
+  },
+  "red_flag_analysis": {
+    "template_scent_high": {
+      "human_flagged": 6,
+      "ai_flagged": 10,
+      "missed_by_ai": [
+        "11",
+        "26",
+        "49"
+      ]
+    },
+    "sloppy_images": {
+      "human_flagged": 10,
+      "ai_flagged": 23,
+      "missed_by_ai": [
+        "29"
+      ]
+    },
+    "process_soup": {
+      "human_flagged": 0,
+      "ai_flagged": 0,
+      "missed_by_ai": []
+    }
+  },
+  "top_gap_candidates": [
+    {
+      "candidate_id": "29",
+      "overall_gap": 2.32,
+      "human_score": 1.35,
+      "ai_score": 3.67,
+      "image_file": "candidate_29.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 1,
+          "ai": 3.6,
+          "gap": 2.6
+        },
+        "layout_composition": {
+          "human": 2,
+          "ai": 3.7,
+          "gap": 1.7000000000000002
+        },
+        "color": {
+          "human": 2,
+          "ai": 3.7,
+          "gap": 1.7000000000000002
+        }
+      },
+      "human_comments": {
+        "typography": "This is an example of minimalist typography done poorly. Right off the bat, they don't consistently capitalize their sentences. They do it in some places but not others. \n\nThey use emojis instead of bullet points which creates noise and adds a weird indent on the left. Emojis are not always bad, but they were using them pretty badly here. \n\nThere's missing spacing between the bolded three lines and the stuff underneath it. It needs a little bit more separation. \n\nThen there's too much spacing between the case study text, so there's like a title and then there's a lot of space and then there's a label and then there's a lot of space again. But because the label is so small that it makes the spacing look even bigger, so that I would have probably put the label on top of the header text in the case study sections. \n\nThey also use a completely different model space font for the button for no apparent reason. And then the button outline also doesn't match the stroke width of the text inside the button or frankly anything else on the page. ",
+        "layout_composition": "The layout is another one of those examples of just different for every section.\n- The navbar is super wide\n- It narrows down into the hero section (which is fine)\n- It broadens a little wider again in the body where there's like case studies\nI think that the hero and the case study section are technically the same width, but because the text on the hero doesn't run all the way to the right, it feels like it's not the same width. This creates this very awkward and inconsistent right rag.",
+        "color": "There is sort of like an attempt here at doing sort of like an electric blue driven theme here, but because the case studies are also that backgrounds are sort of completely different colors and then they are very loud.\n\nWe're seeing gradients, we're seeing orange, we're seeing very dark blacks. It just takes away from the overall power of the monochrome plus electric blue color palettes. "
+      },
+      "ai_comments": {
+        "typography": "Observations: [hero] large multi-line intro with blue-accented name and a compact resume list; [grid] each project row shows a small uppercase label, title, short description and a pill \u201cVIEW\u201d; [footer] big friendly closing copy in white on blue. Reconstruction: Type scale feels coherent (H1\u224836\u201340, H2\u224820\u201322, body\u224815\u201316; meta uppercase\u224811\u201312 with tracking). Leading ~1.4 and measures ~60\u201370ch keep copy readable. Hierarchy is multi\u2011modal via size + weight + casing. Sub\u2011factor reads: Hierarchy 4.0; Readability 3.5; Consistency 3.5; Micro\u2011craft 3.2 (link underlines look default-ish, CTA pill lettering a bit tight, limited display contrast). Link/State Audit: links appear blue with default underlines in [hero]; CTAs use an outlined pill across [grid] but hover/active states aren\u2019t shown. Consistency Map: repeated label\u2013title\u2013summary\u2013CTA pattern across all case rows; consistent uppercase meta labels; uniform left-align and spacing; footer uses one strong display style consistently. Failure Theme: utilitarian sans-only system with default-styled links\u2014solid but not editorially distinctive. Anchor Comparison: closest to Exemplar 4 (Sally) for straightforward, readable type; deltas\u2014this page has a more editorial hero, stronger footer voice, and tighter meta tracking, while still showing some default link styling. Score Justification: clear, consistent hierarchy and readable copy across multiple sections with minor micro\u2011craft gaps justify 3.6. sections_seen: [nav, hero, grid, footer]; sloppy_count: 2; template_count: 2; caps_applied: []; anchor: Exemplar 4; anchor_deltas: [more editorial hero, stronger display footer, defaultish link styling]",
+        "layout_composition": "Observations: [hero] clean single column with generous margins; [grid] repeated left-image/right-copy rows for case studies with even gutters and strong alignment; [grid] \u201cAdditional Work\u201d switches to a balanced two\u2011column card grid; [footer] wide full-bleed band. Reconstruction: Feels like a 12\u2011col container with a stable two\u2011column module; image mats use consistent radii and padding; captions align on a shared left edge; vertical rhythm is even between rows; scan path is predictable and low-friction. Image presentation is tidy\u2014no cut\u2011offs or jaggy shadows\u2014though a couple of device mocks are a bit small to read. Link/State Audit: one clear CTA style per tile (outlined pill), consistent positioning; section headers (\u201cCASE STUDIES\u201d, \u201cADDITIONAL WORK\u201d) provide structure. Consistency Map: repeated project module; identical spacing stacks (label/title/summary/CTA); consistent image mat sizing; same CTA placement across rows. Failure Theme: slight template scent (repeated module with standard two\u2011column split) and a few small, unreadable device scenes. Anchor Comparison: closest to Exemplar 4/8; deltas\u2014this page maintains tighter left-edge alignment and a stronger footer block; similar reliance on safe two\u2011column patterns; a touch more personality in mats. Score Justification: clear, disciplined grid across multiple sections earns upper\u20113s; minor template feel and small device mocks keep it under 4. sections_seen: [nav, hero, grid, footer]; sloppy_count: 2; template_count: 2; caps_applied: []; anchor: Exemplar 4; anchor_deltas: [tighter alignment, stronger footer block, similar two-column reliance]",
+        "color": "Observations: [hero] neutral black/gray text with a consistent electric blue accent; [grid] image mats in controlled pastels (light blue, beige) plus one dark tile unify mixed screenshots; [footer] bold, full-bleed blue with white type and small emoji accents. Reconstruction: Palette logic = neutral shell + one primary blue accent; mats manage value and hue to harmonize disparate UI imagery; CTAs stay monochrome outlines preventing accent overload; no harsh value flicker between tiles. Link/State Audit: blue links/read more accents are consistent, but hover/visited states aren\u2019t shown. Consistency Map: same accent blue in hero links and footer; pastel mats recur across case tiles; grayscale labels maintain tone; consistent outline CTA color logic. Failure Theme: accent blue is close to default web blue and the footer\u2019s saturated block produces a large value jump (intentional but strong). Anchor Comparison: closest to Exemplar 8 (disciplined mats and neutral shell); deltas\u2014this page uses a bolder footer band, fewer nuanced gray tints, and simpler CTA color logic. Score Justification: cohesive and unifying, with a strong but controlled accent; minor default-ish links and aggressive footer value keep it at 3.7. sections_seen: [hero, grid, footer]; sloppy_count: 2; template_count: 2; caps_applied: []; anchor: Exemplar 8; anchor_deltas: [bolder footer band, simpler gray system, consistent but default-leaning link blue]"
+      },
+      "red_flags": {
+        "human": [
+          "sloppy_images"
+        ],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "15",
+      "overall_gap": 2.15,
+      "human_score": 4,
+      "ai_score": 1.85,
+      "image_file": "candidate_15.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 4,
+          "ai": 3,
+          "gap": 1
+        },
+        "layout_composition": {
+          "human": 4,
+          "ai": 2,
+          "gap": 2
+        },
+        "color": {
+          "human": 4,
+          "ai": 2,
+          "gap": 2
+        }
+      },
+      "human_comments": {
+        "typography": "",
+        "layout_composition": "",
+        "color": ""
+      },
+      "ai_comments": {
+        "typography": "Observations: [hero] Editorial paragraphs in a serif with italic emphasis on a phrase; generous line-height and long measure. [grid] Each project tile has a small caption/label set left-aligned under images. [footer] Very small meta links. Reconstruction: Type Scale shows large paragraph display in hero (approx 20\u201322px) followed by smaller body/captions (~12\u201314px). Hierarchy relies mostly on size and italics rather than multi-level headings; captions feel under-sized which reduces scanning. Readability: hero measure is on the longer side but within tolerance; captions verge on too small. Consistency: serif used across hero and captions; left-aligned rag is consistent; link styling not clearly differentiated. Micro\u2011craft: rags are mostly clean; no visible tuning of link underlines/offsets; no proof of number/punctuation care. Link/State Audit: links/CTAs are not distinct (no clear color state or underline rhythm across [hero], [footer]). Consistency Map: repeated left alignment, serif across sections, caption under-image pattern, restrained weight palette. Failure Theme: limited hierarchy tools (size + italics only) and small captions reduce clarity. Anchor Comparison: anchor: Exemplar 3; anchor_deltas: weaker link/CTA state clarity, fewer heading levels and typographic roles, captions smaller/less readable compared with Exemplar 3's balanced scale. Score Justification: competent editorial voice but limited hierarchy and weak link states keep this at baseline. Checklist: sections_seen: [hero, grid, footer]; sloppy_count: 3; template_count: 0; caps_applied: []; anchor: Exemplar 3; anchor_deltas: [weaker link states, fewer roles, smaller captions]",
+        "layout_composition": "Observations: [grid] Masonry-style project gallery with mixed aspect ratios creates ragged bottoms and uneven rhythm; images range from dark black slides to bright yellow/purple tiles. [hero] Wide single-column intro above the grid with ample whitespace; [footer] sparse and minimal. Reconstruction: Grid appears 2-column with variable tile heights; gutters look inconsistent vertically due to masonry; container width feels fixed but baseline rhythm across rows is broken by uneven crops. Image presentation lacks a consistent mat/border system; some tiles edge-to-edge, others with internal colored mats. Link/State Audit: navigation/CTA placement is minimal; scan path primarily vertical without strong focal anchors per row. Consistency Map: repeated left-aligned captions, similar margins around the main column, consistent column count. Failure Theme: device-mock/visual collage without a unifying image system; irregular masonry gutters and value swings dominate. Anchor Comparison: anchor: Exemplar 3; anchor_deltas: Exemplar 3 keeps matched tile sizes and steady gutters, clearer card blocks with titles; this candidate\u2019s irregular masonry, lack of consistent image framing, and weaker focal hierarchy are regressions. Score Justification: sloppy_images red flag triggered; applying cap \u2192 Layout \u2264 2. Checklist: sections_seen: [hero, grid, footer]; sloppy_count: 3; template_count: 0; caps_applied: [layout<=2]; anchor: Exemplar 3; anchor_deltas: [irregular masonry, no image mat system, weaker focal hierarchy]",
+        "color": "Observations: [grid] Strongly disparate tile backgrounds (pure black, saturated yellow, purple, photographic warm tones) placed adjacent cause value/hue flicker. [hero] Neutral black-on-white copy with minimal accenting; [footer] simple grayscale. Reconstruction: Shell palette is mostly neutral, but there is no unifying mat/border tint to harmonize diverse imagery. Accents/links are not clearly defined; no visible hover/visited states. Unification & State Logic: absent\u2014images dictate color rather than the system. Link/State Audit: links do not present a clear role color across [hero] and [footer]. Consistency Map: neutral shell is consistent; however, imagery overwhelms due to lack of mats/shadows to normalize values. Failure Theme: value flicker from mismatched mats/whites and no accent system. Anchor Comparison: anchor: Exemplar 8; anchor_deltas: Exemplar 8 uses tuned mats and consistent accents to harmonize screenshots, controlled neutrals, and border tints; here, no mats, no role color, high value swings. Score Justification: sloppy_images contributes to value flicker; applying cap \u2192 Color \u2264 2. Checklist: sections_seen: [hero, grid, footer]; sloppy_count: 3; template_count: 0; caps_applied: [color<=2]; anchor: Exemplar 8; anchor_deltas: [no unifying mats, absent role colors, high value swings]"
+      },
+      "red_flags": {
+        "human": [],
+        "ai": [
+          "sloppy_images"
+        ]
+      }
+    },
+    {
+      "candidate_id": "17",
+      "overall_gap": 1.7999999999999998,
+      "human_score": 3.65,
+      "ai_score": 1.85,
+      "image_file": "candidate_17.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 4,
+          "ai": 3,
+          "gap": 1
+        },
+        "layout_composition": {
+          "human": 3,
+          "ai": 2,
+          "gap": 1
+        },
+        "color": {
+          "human": 4,
+          "ai": 2,
+          "gap": 2
+        }
+      },
+      "human_comments": {
+        "typography": "",
+        "layout_composition": "",
+        "color": ""
+      },
+      "ai_comments": {
+        "typography": "Observations: [hero] compact intro paragraph set in a neutral grotesk; measure appears ~65\u201375ch with comfortable leading. [grid] project captions show a consistent pattern: TITLE IN ALL CAPS + year + one-line description; section labels like \u201cWORK \u2014\u201d and \u201cPROJECTS \u2014\u201d use a small uppercase label style. [footer] micro\u2011text row with email and social, separated by middots. Reconstruction: Type scale seems 3\u20134 steps (hero body, section label, card title, meta). Hierarchy mainly via size + casing/weight; leading ~1.4\u20131.5; captions lean small which compresses readability at distance. Consistency Map: repeated meta pattern (title/year/desc) across tiles; consistent left alignment; matching section label styling. Link/State Audit: links show minimal styling (no underline evidence; hover/focus states not visible), so state model is unclear across sections. Failure Theme: competent editorial system but light on micro\u2011craft (all\u2011caps tracking not tuned, link states absent, caption size/leading borderline small). Anchor Comparison: anchor: Exemplar 8. anchor_deltas: [- weaker link/state design (no underline/hover proof), - more cramped caption size/leading, - heavier reliance on all\u2011caps without tuned tracking, - fewer visible type levels and micro\u2011labels]. Score Justification: Solid baseline editorial typography, but lack of state proof and micro\u2011tuning keeps it at 3. Preflight: sloppy_count: 6 (many thumbnails with unreadable tiny UI; mixed white/black tile values causing flicker), template_count: 1 (boilerplate footer). Caps applied to other dims only: caps_applied: []. sections_seen: [hero, grid, footer]; sloppy_count: 6; template_count: 1; caps_applied: []; anchor: Exemplar 8; anchor_deltas: [weaker link/state design, cramped captions, all\u2011caps tracking untuned, fewer levels]",
+        "layout_composition": "Observations: [grid] a 3\u2011column gallery with even gutters and repeated card formula; [hero] simple text block above the grid; [footer] slim single\u2011line footer. Reconstruction: grid rhythm is consistent, but image presentation is weak\u2014most tiles contain tiny, unreadable UI or code; one card is a placeholder \u201cWIP.\u201d No unifying mats or browser frames; background values vary widely. Link/State Audit: navigation is minimal and state is not demonstrated; cards don\u2019t show hover/press behaviors. Consistency Map: consistent card metadata layout; uniform gutters; section labels aligned to the same grid. Failure Theme: image presentation undermines structure\u2014unreadable screenshots, placeholder content, and lack of mats create a collage feel that reduces scannability. Anchor Comparison: anchor: Exemplar 8. anchor_deltas: [- Ex8 uses unified mats/border tints; here raw screenshots cause value chaos, - Ex8 screenshots are legible at card size; here most are not, - presence of a WIP placeholder tile, - fewer structural refinements (no browser frames, no consistent aspect treatment)]. Score Justification: Despite a tidy grid, the Preflight threshold is hit; sloppy_images flag applies, capping Layout at 2. Preflight counts: sloppy_count: 6 (8+ unreadable tiny UI/code tiles; mixed dark/light tiles with no mats), template_count: 1 (boilerplate footer). caps_applied: [layout_cap_2_from_sloppy_images]. sections_seen: [hero, grid, footer]; sloppy_count: 6; template_count: 1; caps_applied: [layout_cap_2_from_sloppy_images]; anchor: Exemplar 8; anchor_deltas: [no mats, low legibility, WIP placeholder, fewer refinements]",
+        "color": "Observations: [grid] tiles range from pure black code windows to teal/blue/gray panels and white browser\u2011like shots; [hero] neutral black-on-white text; [footer] faint gray background/line maintaining neutrality. Reconstruction: Shell neutrals are restrained, but imagery is not unified; no toned mats/borders to harmonize disparate screenshots; some tiles jump to near\u2011#000 backgrounds, others to light pastels. Link/State Audit: no clear accent color or link state across sections; footer links appear same tone as body. Consistency Map: consistent neutral page shell; repeated black titles; but images break harmony. Failure Theme: value flicker from mismatched tile backgrounds; lack of unifying mats or border tints; accent strategy underdefined. Anchor Comparison: anchor: Exemplar 8. anchor_deltas: [- Ex8 uses tuned gray mats to normalize imagery; here none, - harsher contrast jumps (pure black tiles adjacent to light tiles), - unclear accent/link color system, - screenshots not color\u2011corrected]. Score Justification: Because value flicker stems from mismatched whites/mats and many unreadable dark tiles, the sloppy_images condition pulls Color to a max of 2; color harmony is not controlled. Preflight counts: sloppy_count: 6, template_count: 1. caps_applied: [color_cap_2_from_value_flicker]. sections_seen: [hero, grid, footer]; sloppy_count: 6; template_count: 1; caps_applied: [color_cap_2_from_value_flicker]; anchor: Exemplar 8; anchor_deltas: [no mats, harsh contrast jumps, unclear accent system, no color correction]"
+      },
+      "red_flags": {
+        "human": [],
+        "ai": [
+          "sloppy_images"
+        ]
+      }
+    },
+    {
+      "candidate_id": "13",
+      "overall_gap": 1.7200000000000002,
+      "human_score": 2.25,
+      "ai_score": 3.97,
+      "image_file": "candidate_13.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 2,
+          "ai": 4.0,
+          "gap": 2.0
+        },
+        "layout_composition": {
+          "human": 1,
+          "ai": 4.0,
+          "gap": 3.0
+        },
+        "color": {
+          "human": 4,
+          "ai": 3.9,
+          "gap": 0.10000000000000009
+        }
+      },
+      "human_comments": {
+        "typography": "They used a pretty interesting serif here that I think is a sign that they have thought about this. The body also uses a relatively interesting looking model. But the problem is that the way that they use it is kind of bad. For example, a lot of the details around their bulleted list which is too indented, right? There's too much space on the left of their bullets. This subtracts points. The fact that they use a model only for their body is not great. Generally, you don't want to use a model for body text. It makes it a little hard to read. There's also a little bit of overuse of all caps and random tracking. If you look at the work writing dribble about navigation, they have just increased the letter spacing for no really good reason. Similarly, in the navbar, their name is a little too big in contrast to the rest of the navbar and competes with their main title. ",
+        "layout_composition": "The layout suffers from the typical sort of every section has a different width problem, but no intentionality. They also randomly shift from center-aligned to left-aligned.\n\nSo, if you look at the nav bar, it's kinda full-width. The header is quite narrow, and then the body is wide again. The \"See my work\" CTA is also super narrow, so it's kind of a little ragged and random. ",
+        "color": "They chose a pretty interesting pair of colors for the green and the yellow. I think it's actually quite good because of their complementarity"
+      },
+      "ai_comments": {
+        "typography": "Observations: [hero] Big display serif headline \u201cUser Researcher + Designer\u201d split over two lines with even rags; [grid] three columns use uppercase micro\u2011labels and bullets with teal underlined links; [nav] compact word\u2011spaced items top\u2011right. Reconstruction: Type scale is clear (XL display serif H1, small intro, uppercase section labels, paragraph body, bullet links). Leading appears ~1.45\u20131.6 giving readable blocks; measure ~55\u201370ch. Hierarchy uses size + tone (serif vs sans/mono) + casing/letter\u2011spacing for labels. Micro\u2011craft: tuned kerning around the plus sign; consistent tracking for small\u2011caps labels; custom underline thickness/offset on links (not default); bullets and link indents align cleanly; stable baseline rhythm between label \u2192 paragraph \u2192 list across all three columns. Link/State Audit: teal links with consistent underline in lists; nav items echo the same hue; CTA uses outline style\u2014role is clear though hover states aren\u2019t shown. Consistency Map: repeated label style, paragraph style, link style, and icon\u2011caption spacing across the three lanes. Failure Theme: body copy is on the small side; limited proof of interactive states. Anchor Comparison: anchor: Exemplar 3; anchor_deltas: fewer sections/evidence than Ex3, more characterful serif pairing vs Ex3\u2019s neutral grotesk, similarly disciplined link styling. Score Justification: Single\u2011view Pass applied with 4+ micro\u2011signals and no caps; solid hierarchy and readability across hero and grid. Checklist: sections_seen: [nav, hero, grid]; sloppy_count: 0; template_count: 0; caps_applied: []; anchor: Exemplar 3; anchor_deltas: [fewer sections than Ex3, more stylized serif, similar disciplined links].",
+        "layout_composition": "Observations: [hero] generous top whitespace leading to a large headline and short intro; [grid] balanced three\u2011column block with even gutters and identical illustration tiles; [nav] left\u2011aligned name and right\u2011aligned links give a clear frame. Reconstruction: Grid reads as a centered container with three equal columns (~24\u201332px gutters); consistent vertical rhythm (label \u2192 paragraph \u2192 list); illustration mats share size/aspect/radius and align to column edges. Reading path is clear: headline \u2192 intro \u2192 three lanes \u2192 centered CTA. Image presentation is clean (no device frames, crisp SVG\u2011style illustrations, matched radii). Link/State Audit: Primary CTA is a centered outline button; no other competing CTAs; nav affords scanning. Consistency Map: equal column widths, matched illustration mats, repeated list structure, and uniform spacing above/below sections. Failure Theme: minor\u2014CTA sits isolated and could anchor more strongly to content; limited breakpoint evidence. Anchor Comparison: anchor: Exemplar 3; anchor_deltas: less breadth and no case\u2011study grids, stronger process\u2011lane structure here, similarly tidy gutters and spacing. Score Justification: Single\u2011view Pass with multiple micro\u2011signals (even gutters, matched mats/radii, steady vertical rhythm, clear scan path); no preflight caps triggered. Checklist: sections_seen: [nav, hero, grid, cta]; sloppy_count: 0; template_count: 0; caps_applied: []; anchor: Exemplar 3; anchor_deltas: [less breadth, process\u2011lane emphasis, similar spacing discipline].",
+        "color": "Observations: [hero] warm off\u2011white canvas with deep teal headline; [grid] beige illustration mats unify tone; teal links and bullets repeat; [nav] brand teal reused for links for continuity. Reconstruction: Palette centers on deep teal primary, warm neutrals for background, and sand\u2011colored mats; text appears not pure black, improving contrast harmony. Accent strategy is sparse\u2014teal handles brand, links, bullets, and CTA outline. Unification: beige mats normalize the illustration set and tie to the warm background, avoiding value flicker. Link/State Audit: single accent color used for links and CTA; hover/active not shown. Consistency Map: teal accent repeated across headline, links, bullets, and CTA; beige mats consistent across all three tiles; neutral copy color consistent. Failure Theme: limited state proof and slightly similar values between teal outline CTA and surrounding content reduces CTA pop. Anchor Comparison: anchor: Exemplar 3; anchor_deltas: more characterful warm palette here vs cooler neutrals in Ex3, fewer state demonstrations, similar restraint in accent use. Score Justification: Controlled, harmonious palette with clear role of accent; minor deductions for limited state evidence. Single\u2011view Pass acknowledged. Checklist: sections_seen: [nav, hero, grid, cta]; sloppy_count: 0; template_count: 0; caps_applied: []; anchor: Exemplar 3; anchor_deltas: [warmer palette, fewer states shown, similar restraint]."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "39",
+      "overall_gap": 1.4499999999999997,
+      "human_score": 3.3,
+      "ai_score": 1.85,
+      "image_file": "candidate_39.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        },
+        "layout_composition": {
+          "human": 4,
+          "ai": 2,
+          "gap": 2
+        },
+        "color": {
+          "human": 4,
+          "ai": 2,
+          "gap": 2
+        }
+      },
+      "human_comments": {
+        "typography": "",
+        "layout_composition": "",
+        "color": ""
+      },
+      "ai_comments": {
+        "typography": "Observations: [hero] Large display line 'I'm Priyanka' with italicized name and warm accent; long intro paragraph with highlighted inline links. [grid/project] Project captions use small meta rows with icons; titles in bold sentence case. [about] Dark split panel with large headline 'I am a collaborative Product Designer' and small body copy; 'Know more \u2192' link. [footer] Headline 'They say everyone should network.' with orange accent and compact nav list. Reconstruction: Type scale appears ~56\u201364px H1, 28\u201332px section headers, 16px body, 12\u201314px meta; leading ~1.4\u20131.6. Hierarchy is mostly size + weight + color/italics (two\u2011modal). Readability is decent but the [hero] paragraph measure looks >80ch and the [grid] meta lines are tight. Baseline rhythm is mostly stable; minor drift in spacing between titles and meta across cards. Link/State Audit: Links consistently use orange accent with subtle underline/arrow treatment; no hover/visited proof in the capture. Consistency Map: repeated orange link treatment across [hero]/[about]/[footer]; sentence\u2011case titles; small meta with icons; italic for emphasis in [hero] and section label 'Impact'. Failure Theme: overly long measure in [hero], cramped small meta, and reliance on color/italics rather than richer typographic contrast. Anchor Comparison: anchor: Exemplar 7; anchor_deltas: our inline link styling is more considered; however our hero measure is longer, meta is smaller/tighter, and heading weight/scale changes are less disciplined. Score Justification: Multiple sections show competent type with some taste, but issues with measure and small meta keep it at the baseline. Checklist \u2014 sections_seen: [hero, project, grid, about, footer]; sloppy_count: 4; template_count: 2; caps_applied: []; anchor: Exemplar 7; anchor_deltas: [longer hero measure, tighter meta text, less disciplined heading scale].",
+        "layout_composition": "Observations: [hero] Left\u2011aligned text column with a small circular avatar on the right; below it a wide project tile with desktop + phone on a blue mat. [project] A mobile mock on a lime mat with tooltip; next tile is a large black video placeholder. [grid] 'Designing for Impact' masonry with three columns of cards on mixed blue textured mats and white cards; uneven bottoms and irregular vertical rhythm. [about] Split two\u2011column dark section with mirrored illustration panels. Reconstruction: Grid/spacing shows comfortable outer margins but inconsistent module sizing; imagery crops vary, some screens are too small to read; mixed mats (blue, lime, black, textured) break section rhythm and introduce value jumps. The masonry grid has ragged baselines and uneven gutters, which harms scan path. Link/State Audit: Repeated small 'Know more \u2192' CTAs placed inconsistently below cards. Consistency Map: recurring 3\u2011column grid in [grid]; mirrored two\u2011card layout in [about]; centered tiles under [hero]. Failure Theme: sloppy image presentation (unreadable tiny UI, black placeholder, inconsistent mats) and irregular masonry gutters. Anchor Comparison: anchor: Exemplar 7; anchor_deltas: more value flicker from mats, a conspicuous black placeholder tile, ragged masonry baselines, and smaller unreadable screenshots here vs. somewhat more unified tiles in the anchor. Score Justification: Preflight triggers sloppy_images, so Layout is capped at 2. The inconsistent imagery and ragged grid further justify staying at the cap. Checklist \u2014 sections_seen: [hero, project, grid, about, footer]; sloppy_count: 4; template_count: 2; caps_applied: [Layout \u2264 2 due to sloppy_images]; anchor: Exemplar 7; anchor_deltas: [more inconsistent mats, black placeholder, ragged baselines].",
+        "color": "Observations: [shell] Warm beige background with orange accent and muted gray text. [hero/project] Blue mat for first case study, lime mat for second, then a solid black video tile. [grid] Textured denim\u2011blue backdrops paired with orange chips and white cards. [about] Full dark section with white type and orange accents. Reconstruction: Accent role (orange) is consistent for links and emphasis, but image mats jump drastically in hue and value (blue \u2192 lime \u2192 black \u2192 textured blue), creating value flicker and undermining cohesion. Neutrals are warm but not used to unify screenshots via consistent mats/borders. Link/State Audit: Links consistently orange with arrow; no hover/visited proof. Consistency Map: orange accent across [hero]/[about]/[footer]; warm neutral shell; occasional teal dots in metadata. Failure Theme: palette unification\u2014mats introduce harsh jumps and a black slab in the flow; textured backgrounds add noise. Anchor Comparison: anchor: Exemplar 7; anchor_deltas: heavier value jumps here (lime and black mats), more texture noise, less use of subtle tints/shadows to unify imagery. Score Justification: Because the value flicker stems from mismatched mats (part of sloppy imagery), Color is capped at 2 and the evidence supports staying at the cap. Checklist \u2014 sections_seen: [hero, project, grid, about, footer]; sloppy_count: 4; template_count: 2; caps_applied: [Color \u2264 2 due to mismatched mats/value flicker from sloppy_images]; anchor: Exemplar 7; anchor_deltas: [larger value jumps, more texture noise, weaker unifying tints]."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": [
+          "sloppy_images"
+        ]
+      }
+    },
+    {
+      "candidate_id": "26",
+      "overall_gap": 1.3,
+      "human_score": 0.55,
+      "ai_score": 1.85,
+      "image_file": "candidate_26.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        },
+        "layout_composition": {
+          "human": 1,
+          "ai": 2,
+          "gap": 1
+        },
+        "color": {
+          "human": 1,
+          "ai": 2,
+          "gap": 1
+        }
+      },
+      "human_comments": {
+        "typography": "The typography here is really bad. The navbar name is way too big, right? Like Melanie Cernak is huge compared to the rest of the site. It probably is not the most important thing on this page. And also it's in awkward all caps and a font that doesn't look very good all capped. \n\nAnd then the images - all the text is different sizes and different. Some of them even don't have a body, whereas others have a body and a title. They also kept the logos of the people that they work with really big, and every logo is a different type. Again, makes it really noisy. ",
+        "layout_composition": "The composition here is really bad.\n- The images are all cut off.\n- You'll notice that in the Masonry grid of images, the white space around all the images is very inconsistent.\n- The type size is inconsistent, and some of the images are even cut off, which is a big no-no.",
+        "color": "There are too many colors going on here, it's kind of a disaster.\n- There's an attempt at doing a pastel color background for all the images, but because there's so many colors in the UI in the foreground, it effectively loses the effect.\n- They also kept all the logos of the clients they work with really big, and because all the logos have different colors too, it just totally takes away from the intended effect of the pastel palette.\n- There's also some really awkward examples of color usage at the very bottom of the page where they've used full-color social logos (which is already a lot) and on top of it, they've chosen to use a colored outline in teal, which is like tons of color that doesn't mean anything and in a place where it's probably not very important to draw attention to. "
+      },
+      "ai_comments": {
+        "typography": "Observations: [hero] small intro line with emoji and a single paragraph; [grid] large project tiles with display headings, thin rules, and mixed subcopy; [footer] tiny copyright and social icons. Reconstruction: Type Scale shows one sans face with modest steps (nav/intro/body ~14\u201316px, tile headlines ~36\u201356px). Hierarchy relies mostly on size + weight; thin horizontal rules add a secondary signal. Readability is acceptable in hero and nav; tile copy is readable but crowded near imagery. Consistency is mixed\u2014tile headings, separators, and sublabels vary in size/spacing across different tiles; link styles in nav vs body aren\u2019t clearly indicated. Micro\u2011craft: rags are loose (e.g., long headline blocks in the TOPHATTER tile), punctuation/quotes are neutral, baseline rhythm across tiles is uneven. Link/State Audit: nav indicates current page subtly (weight/tint), but no hover/visited states are evident in the shot. Consistency Map: repeated use of thin section rules, uppercase display headings, and left\u2011aligned tile copy appears across multiple tiles and the OTHER PROJECTS section. Failure Theme: uneven hierarchy and weak link/state definition. Anchor Comparison: anchor: Exemplar 7; anchor_deltas: candidate uses less ornamental type than Ex7 (+), but shows more inconsistency across tiles (\u2013), weaker link/state definition (\u2013), and larger display-scale jumps causing ragged rhythm (\u2013). Score Justification: Competent baseline with readable hero/nav, but inconsistency and limited state craft keep it at 3. Preflight: sloppy_count: 4 (multiple unreadable device mocks; value flicker from mixed mats), template_count: 2 (\"I'm ...\" hero, boilerplate footer). Caps: none specific to typography triggered here. Checklist: sections_seen: [nav, hero, grid, footer]; sloppy_count: 4; template_count: 2; caps_applied: []; anchor: Exemplar 7; anchor_deltas: [less ornamental than Ex7, more cross-tile inconsistency, weaker link/state logic]",
+        "layout_composition": "Observations: [grid] two\u2011column mosaic of tiles with varying background mats and embedded device shots; [hero] narrow intro block centered above grid; [footer] centered social row and copyright; [other-projects grid] oversized display heading with phone UI on the right. Reconstruction: Grid uses a loose two\u2011column layout with inconsistent tile heights and gutters; image presentation mixes screenshots, photography, and colored mats without a unifying frame system. Several device mocks are too small to read and one phone appears cropped tight at the bottom/right, reducing clarity. Structural clarity: the page does scan top-to-bottom but focal hierarchy within tiles competes (e.g., very large \u201cCheckout Flow Redesign\u201d next to a small phone mock). Link/State Audit: CTAs are absent; navigation affords basic wayfinding but no section anchors. Consistency Map: repeated hairline separators under headings, left\u2011aligned copy blocks, and photo/screenshot collages. Failure Theme: device\u2011mock collage and value flicker due to non\u2011standardized mats/crops; readability of outcome imagery is low. Anchor Comparison: anchor: Exemplar 7; anchor_deltas: less structural control (\u2013), more unreadable mocks (\u2013), less section framing (\u2013), slightly cleaner nav/hero (+). Score Justification: Preflight sloppy cues \u22653 trigger red_flag and cap layout \u22642; evidence matches. Preflight: sloppy_count: 4 (tiny unreadable device screens across 3 tiles; mismatched mats causing flicker), template_count: 2. Caps applied: layout<=2. Checklist: sections_seen: [hero, grid, other-projects, footer]; sloppy_count: 4; template_count: 2; caps_applied: [layout<=2]; anchor: Exemplar 7; anchor_deltas: [less structure, smaller unreadable mocks, weaker section framing]",
+        "color": "Observations: [grid] each tile uses its own pastel or brand color (light blue, peach, lavender, grey) next to white device frames; [other-projects] large mint panel with black display type and a white phone; [footer] neutral gray/white with colored social icons. Reconstruction: There is no unifying shell\u2014tile backgrounds shift hue and value sharply, creating flicker. Neutrals and shadows are minimal, with little use of tints to unify disparate screenshots. Accent/roles are unclear; only the nav active state has a slight emphasis. Link/State Audit: link color/hover not visible; social icons introduce extra hues without role tie-in. Consistency Map: repeated pastel mats, black display headings, and thin black rules. Failure Theme: value flicker and palette fragmentation from per\u2011tile colors with no mat/border unification. Anchor Comparison: anchor: Exemplar 7; anchor_deltas: fewer gradients/noisy textures than Ex7 (+), but more hue/value jumps across tiles (\u2013), weaker neutral system (\u2013), and less CTA/link role clarity (\u2013). Score Justification: Because the mismatched whites/mats drive clear value flicker and several screenshots are unreadably small, color cohesion is poor; cap Color \u22642 per rules. Preflight: sloppy_count: 4; template_count: 2. Caps applied: color<=2. Checklist: sections_seen: [hero, grid, other-projects, footer]; sloppy_count: 4; template_count: 2; caps_applied: [color<=2]; anchor: Exemplar 7; anchor_deltas: [more hue/value jumps, weaker neutral system, unclear accent roles]"
+      },
+      "red_flags": {
+        "human": [
+          "sloppy_images",
+          "template_scent_high"
+        ],
+        "ai": [
+          "sloppy_images"
+        ]
+      }
+    },
+    {
+      "candidate_id": "46",
+      "overall_gap": 1.2999999999999998,
+      "human_score": 5,
+      "ai_score": 3.7,
+      "image_file": "candidate_46.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 5,
+          "ai": 4.0,
+          "gap": 1.0
+        },
+        "layout_composition": {
+          "human": 5,
+          "ai": 4.0,
+          "gap": 1.0
+        },
+        "color": {
+          "human": 5,
+          "ai": 3.0,
+          "gap": 2.0
+        }
+      },
+      "human_comments": {
+        "typography": "",
+        "layout_composition": "",
+        "color": ""
+      },
+      "ai_comments": {
+        "typography": "Observations: [hero] playful sticky-note intro with large grotesk headline feel via contrast between large empty space and tiny meta; [grid] each project section starts with a large left-aligned title (e.g., \u201cColumn\u201d, \u201cSamsung\u201d, \u201cWebflow Dot Com\u201d) followed by a fine meta row and a tight tile grid; [nav/footer] small-cap navigation and micro labels at page ends are consistent. Reconstruction: Type Scale shows clear levels\u2014XL section titles (~48\u201364), small meta/captions (~12\u201314) with increased letterspacing, body/labels (~14\u201316). Hierarchy uses size + weight + spacing; titles are bold with generous tracking, metas are light with ample leading forming a stable baseline above grids. Readability: measures are short and scannable; line-height for meta looks ~1.5, maintaining rhythm. Consistency: the title/meta/grid pattern repeats across all sections; the S/M/L control chips keep casing, weight, and corner treatment consistent. Micro\u2011craft: careful rag on section titles even when wrapping (\u201cWebflow Dot Com\u201d splits cleanly), optical spacing around bullets/colons in meta, and tidy alignment of baselines to grid tops. Link/State Audit: S/M/L selector shows active/inactive states via filled/outlined circles and weight change; nav links maintain a consistent tone without default-blue underlines. Consistency Map: repeated section headers, meta rows, and 4\u2011across tiles; consistent chip component for S/M/L; identical caption styling across sections. Failure Theme: metas are quite small which risks readability on dense screens; occasional awkward wrap on long two-line section titles. Anchor Comparison: anchor: Exemplar 8; anchor_deltas: [this portfolio pushes larger, bolder section titles, uses playful hero versus Ex8\u2019s neutral grid, slightly smaller meta text here, stronger visual rhythm from repeated chip controls]. Score Justification: Clear multi-level hierarchy and consistent system across many sections outweigh minor scale issues. No caps triggered. Checklist: sections_seen: [hero, grid, nav, footer]; sloppy_count: 2; template_count: 1; caps_applied: []; anchor: Exemplar 8; anchor_deltas: [bolder section titles, playful hero vs. neutral, smaller meta scale, repeated chip controls].",
+        "layout_composition": "Observations: [hero] large white field with single focal sticky-note establishes breathing room; [grid] repeated multi-row thumbnails in strict columns with even gutters; [footer] compact close with centered utilities. Reconstruction: Grid/Spacing appears 4-up tile grid with consistent gutters and fixed aspect tiles; section scaffolding is title \u2192 meta row \u2192 grid, creating a strong scan path. Image presentation: tiles are consistently cropped and aligned; minimal or no shadows keep the surface clean. Navigation/flow remain stable across long scroll. Link/State Audit: S/M/L control sits consistently at left of each section with clear active state; section titles act as anchors by proximity; no template \u201cview project\u201d boilerplate. Consistency Map: identical section framework, uniform tile sizes, repeated left-column controls, consistent vertical rhythm between sections. Failure Theme: value flicker from highly varied tile backgrounds (no unifying mats) and a few thumbnails with dense, unreadable UI when viewed at this reduced size. Anchor Comparison: anchor: Exemplar 8; anchor_deltas: [more playful hero here, slightly tighter gutters here, less use of mats to unify imagery, similar section rhythm]. Score Justification: Disciplined grid and sectioning across many modules merits 4; not higher due to un-matted image variety and occasional tiny-detail tiles reducing clarity. No caps triggered. Checklist: sections_seen: [hero, grid, nav, footer]; sloppy_count: 2; template_count: 1; caps_applied: []; anchor: Exemplar 8; anchor_deltas: [playful hero, tighter gutters, fewer mats, similar rhythm].",
+        "color": "Observations: [hero] neutral white canvas with subtle gray drop for the sticky-note gives a restrained shell; [grid] tiles mix dark, neon, pastel, and white backgrounds without mats, producing strong value shifts; [footer] neutral monochrome. Reconstruction: Unification & State Logic\u2014shell relies on black/white neutrals; accents occur inside project tiles rather than in the chrome. This keeps the frame quiet but does little to harmonize the diverse imagery. Link/State Audit: S/M/L chips use neutral fills/outlines for states; no default blues or harsh hover artifacts observed. Consistency Map: neutral shell repeated across sections; consistent black text; project imagery drives color. Failure Theme: value flicker and saturation spikes (neon gradients adjacent to dark-on-black tiles) with no border tint or mat to normalize, reducing perceived polish. Anchor Comparison: anchor: Exemplar 8; anchor_deltas: [this portfolio shows higher color variance in tiles, fewer unifying mats/borders, similar neutral shell but less hue-tuned grays]. Score Justification: Competent neutral framework, but lack of unifying mats/borders to manage very saturated imagery holds it at 3. Checklist: sections_seen: [hero, grid, footer]; sloppy_count: 2; template_count: 1; caps_applied: []; anchor: Exemplar 8; anchor_deltas: [higher variance, fewer mats, similar neutral shell]."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "4",
+      "overall_gap": 1.2000000000000002,
+      "human_score": 2.65,
+      "ai_score": 3.85,
+      "image_file": "candidate_4.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 2,
+          "ai": 4.0,
+          "gap": 2.0
+        },
+        "layout_composition": {
+          "human": 3,
+          "ai": 4.0,
+          "gap": 1.0
+        },
+        "color": {
+          "human": 3,
+          "ai": 3.5,
+          "gap": 0.5
+        }
+      },
+      "human_comments": {
+        "typography": "The type usage here is medium to maybe slightly below average. I'm between an average to below average here, and so the main issue I have is that it's using a few too many styles, right? For example, I see a serif font that is large and I see a medium size. I see a small size. I see three sizes. I also see two different weights. I see italics too. And then there's a color change in the typography too. It's really using every single style in the book without necessarily thinking too hard about how necessary that is. You probably could've achieved a lot of the same effects with a lot less typography styles, so that it's a little less messy.",
+        "layout_composition": "Layout here is okay, it's not that great, it's not terrible. The main problem here is the navbar and the footer. Let me explain. The navbar is really wide. And the signature of the person in their name, Cecile Parker, at the top is a little too big for the rest of the composition. The footer is actually a little too narrow and is insufficiently separated from the body with white space. The body, the content itself is pretty decent, the layout has enough white space to create hierarchy. And things look decently well organized. ",
+        "color": "There really isn't enough to tell too much about the color here. I think generally it's OK, but this is a low confidence OK. "
+      },
+      "ai_comments": {
+        "typography": "Observations: [hero] long introductory paragraph set in a refined serif with generous leading and even rag; [grid/project] company names and roles form a clear two-line heading with dates in lighter italic; repeated \u201cView work\u201d pills; [footer] small meta with an accent-colored email link. Reconstruction: Type scale shows display (~40\u201348) > section heads (~18\u201320) > body (~15\u201316) > meta (~13\u201314). Hierarchy relies on size + tone (roman vs italic) rather than weight-only; dates use properly spaced en dashes. Readability is strong\u2014measure ~70\u201385ch in hero and ~65\u201375ch in job entries with ~1.5\u20131.6 leading. Consistency: same serif across sections; repeated pattern of company/role/date paragraph; matching link case and punctuation; nav labels align optically with content column. Micro-craft: clean punctuation spacing, consistent sentence casing, balanced paragraph rags, and even spacing between heading stacks and CTAs. Link/State Audit: links appear as neutral-outline pills for \u201cView work\u201d and a warm accent for the email; nav links share tone with body\u2014subtle but consistent. Consistency Map: (1) italicized date meta across entries, (2) recurring outline pill CTA, (3) uniform left-aligned blocks with equal top/bottom rhythm across items. Failure Theme: slightly long hero measure and limited link state variety; typographic palette is single-family. Anchor Comparison: anchor: Exemplar 1 (Charlie Deets). Deltas: this page uses serif vs grotesk; fewer hierarchy levels; less evident link-state system; otherwise similarly disciplined editorial rhythm. Score Justification: clean editorial minimalism with good hierarchy and rhythm; small issues keep it at 4. Checklist: sections_seen: [hero, grid, footer]; sloppy_count: 0; template_count: 2; caps_applied: []; anchor: Exemplar 1; anchor_deltas: [serif vs grotesk, fewer levels/states, slightly longer hero measure]",
+        "layout_composition": "Observations: [hero] left-aligned column with generous top/breathing room; signature mark top-left and compact nav top-right; [grid/project] a vertical sequence of work blocks with consistent spacing, identical CTA placement, and steady paragraph widths; [footer] slim email/social row with ample negative space. Reconstruction: single-column grid (~640\u2013720px container) with consistent 24\u201340px vertical rhythm; clear reading path from intro blurb down through positions; headings, meta, and CTAs lock to the same column edges. Image presentation is largely absent, avoiding common mockup sloppiness. Link/State Audit: CTAs are consistently placed under each block; nav is stable and discoverable; no noisy modules. Consistency Map: (1) identical block structure per role, (2) steady margins and gutters across sections, (3) repeated pill CTA and intro-to-detail stacking. Failure Theme: conservative and somewhat template-like sectioning (repeated blocks) with limited structural variety and no product imagery to showcase complex layout decisions. Anchor Comparison: anchor: Exemplar 1. Deltas: simpler single-column vs Ex1\u2019s richer sections; fewer modules; less interactive structure; but similar discipline and spacing control. Score Justification: strong, controlled editorial grid deserving 4; conservative variety prevents a higher mark. Checklist: sections_seen: [hero, grid, footer]; sloppy_count: 0; template_count: 2; caps_applied: []; anchor: Exemplar 1; anchor_deltas: [simpler single-column, fewer modules, no imagery]",
+        "color": "Observations: [hero] monochrome shell with crisp black-on-white and subtle grays; [grid/project] neutral text blocks with outline CTAs; [footer] a single warm accent used for the email link. Reconstruction: neutral-first palette with tuned grays for meta and borders; accent strategy is minimal and reserved (email link only), while CTAs remain neutral outlines for low visual noise. Link/State Audit: accents are consistent but sparse\u2014no visible hover or secondary/tertiary distinctions. Consistency Map: (1) grayscale body/nav/CTAs, (2) one warm accent for emphasis, (3) consistent border tone for pills across sections. Failure Theme: under-specified role/color states (primary/secondary CTAs not clearly distinguished); very low chroma may reduce focal contrast on CTAs. Anchor Comparison: anchor: Exemplar 1. Deltas: accent used even more sparingly; fewer state distinctions; comparable neutral tuning otherwise. Score Justification: tasteful, coherent neutrals with limited accent usages\u2014solid but not expressive. Checklist: sections_seen: [hero, grid, footer]; sloppy_count: 0; template_count: 2; caps_applied: []; anchor: Exemplar 1; anchor_deltas: [sparser accent usage, fewer states, neutral-dominant]"
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "34",
+      "overall_gap": 1.15,
+      "human_score": 3,
+      "ai_score": 1.85,
+      "image_file": "candidate_34.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 3,
+          "ai": 3,
+          "gap": 0
+        },
+        "layout_composition": {
+          "human": 3,
+          "ai": 2,
+          "gap": 1
+        },
+        "color": {
+          "human": 3,
+          "ai": 2,
+          "gap": 1
+        }
+      },
+      "human_comments": {
+        "typography": "",
+        "layout_composition": "",
+        "color": ""
+      },
+      "ai_comments": {
+        "typography": "Observations: [hero] Large two\u2011line display headline in a heavy grotesk, centered with a single dark\u2011blue color; [testimonials] small body copy under avatars with light gray meta; [project] section headline in the same heavy style; [footer] small meta/navigation in a lighter weight. Reconstruction: Type scale appears to be H1 (very large, tight tracking), H2 section headers, body around 16px with ~1.4\u20131.5 leading; hierarchy relies mostly on size/weight with limited tonal variation; rags are mostly clean; no obvious widows. Link/State Audit: CTAs are pill buttons; inline links styled as \u201cCase Study \u2192\u201d but hover/visited states aren\u2019t shown across sections. Consistency Map: repeated heavy display for big claims (hero, mid\u2011page CTA), consistent body size, consistent pill button shape, and repeated arrow treatment for links. Failure Theme: generic marketing headline voice with weight\u2011only hierarchy and little state proof; type voice feels default (likely Inter/Roboto) without nuanced tracking/optical alignment. Anchor Comparison: anchor: Exemplar 7 (consultant site). anchor_deltas: [- less link/state sophistication (no hover/visited proof), - heavier reliance on size/weight only, - fewer typographic tones (no small\u2011caps/label system), - display tracking feels a bit tight]. Score Justification: Competent baseline across multiple sections but not showing advanced micro\u2011craft or state system; no template cap triggered for type, but red\u2011flag from images noted globally. Checklist: sections_seen: [hero, logos, testimonials, project, cta, footer]; sloppy_count: 4; template_count: 1; caps_applied: [layout\u22642, color\u22642].",
+        "layout_composition": "Observations: [hero] centered stack with single CTA; [logos] one\u2011row brand strip; [testimonials] three\u2011column quotes with avatars; [project] alternating tiles with device mocks (tablet, laptop, phones) and colored mats; [cta] repeated centered band; [footer] boilerplate bar with social icons. Reconstruction: Overall grid is a single column of stacked sections; within the project area the two\u2011up compositions are uneven in height, and the device frames dominate but the UI is too small to read. Vertical rhythm is disrupted by large color blocks that are not baseline\u2011aligned with the devices. Image presentation shows mixed mats (white, bright green, pale blue) and varying frame scales, producing inconsistent gutters and focal points. Link/State Audit: CTAs consistently centered; nav is minimal but scan path is repetitive and template\u2011like. Consistency Map: centered headline + pill CTA pattern, avatar quotes, device\u2011in\u2011frame showcase, color\u2011block project cards. Failure Theme: device\u2011mock collage with unreadable UI and mismatched mats causes rhythm and information\u2011scent issues. Anchor Comparison: anchor: Exemplar 7. anchor_deltas: [- more unreadable device mocks, - stronger value jumps from colored mats, - less controlled gutters and module heights, - heavier reliance on boilerplate sections]. Score Justification: Sloppy images \u22653 (tiny unreadable tablet/laptop/phone UIs, mismatched colored mats) trigger red_flag and cap Layout at 2. Checklist: sections_seen: [hero, logos, testimonials, project, cta, footer]; sloppy_count: 4; template_count: 1; caps_applied: [layout\u22642, color\u22642].",
+        "color": "Observations: [hero] dark\u2011blue display text on white with black pill CTA; [project] bright emerald panel behind the laptop, separate pale\u2011blue mat for another tile, white card next to dark devices; [cta/footer] grayscale neutrals with dark text. Reconstruction: Palette lacks a disciplined accent system\u2014emerald and pale blue appear only within certain tiles and aren\u2019t integrated into nav/links/CTAs; neutrals swing from deep navy headings to black buttons; the bright emerald block creates a strong value spike. Link/State Audit: Links 'Case Study \u2192' use dark text with arrow; button states not evidenced; visited/hover logic not shown. Consistency Map: navy headings repeated; black buttons repeated; color blocks used sporadically in project tiles. Failure Theme: value flicker from mismatched mats and sporadic brights that don\u2019t unify diverse screenshots. Anchor Comparison: anchor: Exemplar 7. anchor_deltas: [- higher value contrast jumps (emerald/pale\u2011blue blocks), - accents not tied to roles, - weaker neutral tuning/border logic]. Score Justification: Due to mismatched whites/mats causing value flicker and the sloppy image flag, Color is capped at 2. Checklist: sections_seen: [hero, project, cta, footer]; sloppy_count: 4; template_count: 1; caps_applied: [layout\u22642, color\u22642]."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": [
+          "sloppy_images"
+        ]
+      }
+    },
+    {
+      "candidate_id": "3",
+      "overall_gap": 1.0,
+      "human_score": 4,
+      "ai_score": 3.0,
+      "image_file": "candidate_3.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 4,
+          "ai": 3,
+          "gap": 1
+        },
+        "layout_composition": {
+          "human": 4,
+          "ai": 3,
+          "gap": 1
+        },
+        "color": {
+          "human": 4,
+          "ai": 3,
+          "gap": 1
+        }
+      },
+      "human_comments": {
+        "typography": "The type usage here is again very minimal, there's only one size, but he's using color to differentiate things. The paragraph spacing and the line spacing look pretty good. Overall, not much is happening, but everything that is happening here is good. ",
+        "layout_composition": "Layout here is pretty good. Again, not doing much, but what it does, it does well. ",
+        "color": "The color is not doing much here, but I think that the choices are here are relatively harmonious. They are clearly going after a default-looking feeling, preserving some of the blue link effect on the web, but they picked a slightly nicer shade of blue. The restraint and the color usage here is nice - it's like a three-shade. Overall, achieving a good minimalist effect without doing and flexing too much. "
+      },
+      "ai_comments": {
+        "typography": "Observations: [about] Clean single-column text with a modest name/header, smaller gray metadata (\u201cUpdated July 8, 2024\u201d), well\u2011spaced paragraphs with several inline links and external-link icons. [grid] Two post rows use a three-column line (year / title / date) with consistent rags and spacing.\nReconstruction: Type scale appears to have 3 levels (name/header ~20\u201324px, body ~16px, meta ~13\u201314px). Leading ~1.5 gives good readability; measure ~60\u201370ch. Hierarchy is mostly size + tint (gray for meta), limited display contrast; no secondary heading levels visible. Pairing is a single grotesk/system sans. Baseline rhythm and paragraph spacing look even.\nLink/State Audit: Inline links use blue with an external-link glyph; states beyond default (hover/visited) aren\u2019t demonstrated across sections.\nConsistency Map: repeated gray meta style; consistent inline link styling with icon; uniform three-column list alignment; matching paragraph spacing rhythm across sections.\nFailure Theme: Under-expressive hierarchy and likely default link styling reduce typographic character; minimal scale depth.\nAnchor Comparison: anchor: Exemplar 5 (Emil Kowalski). anchor_deltas: fewer heading levels; more default link treatment; less editorial scale/play; fewer sections shown. These deltas justify staying at 3 rather than higher.\nScore Justification: Readable and tidy but limited hierarchy and state proof keep this at the competent baseline. No caps triggered; evidence across only about+list keeps ceiling at 3.\nChecklist: sections_seen: [about, grid]; sloppy_count: 0; template_count: 1; caps_applied: []; anchor: Exemplar 5; anchor_deltas: [fewer headings, defaultish links, less scale depth]",
+        "layout_composition": "Observations: [about] Centered content column with comfortable margins and clear vertical rhythm. [grid] Post list uses a clean three-column row (year left, title center, date right) with even spacing; rows align to a consistent baseline.\nReconstruction: Container width ~640\u2013700px; spacing steps feel like 16/24 multiples. The list reads like a lightweight table with precise column alignment. No imagery or complex modules shown; navigation/footer not visible.\nLink/State Audit: Interactive affordances are implicit via blue links; no section-to-section CTA patterns or navigation structure demonstrated.\nConsistency Map: repeated column grid across each row; uniform inset and leading between blocks; consistent meta placement above content; restrained density.\nFailure Theme: Single-view simplicity\u2014no demonstration of responsive behavior, complex grids, or image presentation systems.\nAnchor Comparison: anchor: Exemplar 5 (Emil Kowalski). anchor_deltas: fewer sections/modules; no cards or image mats; less navigational structure; narrower structural variety. Keeps the score at 3.\nScore Justification: Clean and orderly, but with limited breadth and complexity; with only two sections visible, the score is capped at 3 by evidence breadth.\nChecklist: sections_seen: [about, grid]; sloppy_count: 0; template_count: 1; caps_applied: []; anchor: Exemplar 5; anchor_deltas: [no imagery system, limited sections, minimal nav]",
+        "color": "Observations: [about] Neutral background with black body text and soft gray meta; links appear blue. [grid] Years/dates in muted gray for secondary emphasis; titles darker for primary emphasis. Overall contrast is adequate and calm.\nReconstruction: Palette is a restrained neutral stack (black/gray) with a single accent (blue links). No evidence of hover/visited states, border tints, or tinted section mats since there\u2019s no imagery to harmonize.\nLink/State Audit: Blue indicates interactivity but only default/static state is shown; no hover/visited differentiation across sections.\nConsistency Map: consistent gray for metadata, consistent blue for links, same neutral values between about and list, whitespace acting as an additional tonal element.\nFailure Theme: Defaultish link blue keeps the palette generic; limited state logic and no unifying mats or depth cues.\nAnchor Comparison: anchor: Exemplar 1 (Charlie Deets). anchor_deltas: fewer neutral steps and tints; likely default link hue; minimal state/role variation; no image-unification needs. Hence a baseline 3.\nScore Justification: Controlled neutrals and a single accent produce a tidy but generic palette; absence of state logic keeps it at 3.\nChecklist: sections_seen: [about, grid]; sloppy_count: 0; template_count: 1; caps_applied: []; anchor: Exemplar 1; anchor_deltas: [defaultish blue, fewer neutral steps, no state variety]"
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    }
+  ],
+  "key_patterns": {
+    "ai_overrating_frequency": 0.4,
+    "common_ai_blindspots": [
+      "Template detection - AI misses obvious template usage"
+    ],
+    "most_problematic_categories": [
+      "typography",
+      "layout_composition",
+      "color"
+    ]
+  }
+}

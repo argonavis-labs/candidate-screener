@@ -1,0 +1,499 @@
+{
+  "report_metadata": {
+    "generated_at": "2025-09-05T10:52:59.760143",
+    "total_candidates_analyzed": 50,
+    "candidates_with_both_ratings": 50,
+    "source_file": "evaluation_20250905_104917.json",
+    "human_ratings_file": "human-ratings.json"
+  },
+  "overall_metrics": {
+    "average_gap": 0.8979999999999996,
+    "median_gap": 1.0,
+    "ai_bias": "lenient",
+    "ai_average_score": 3.1590000000000003,
+    "human_average_score": 2.883,
+    "bias_magnitude": 0.27600000000000025
+  },
+  "gap_distribution": {
+    "large_gaps_1.5+": 7,
+    "medium_gaps_0.5-1.5": 29,
+    "small_gaps_<0.5": 14,
+    "perfect_matches": 14
+  },
+  "category_analysis": {
+    "typography": {
+      "avg_gap": 0.94,
+      "ai_bias": "lenient",
+      "ai_avg": 3.18,
+      "human_avg": 2.88,
+      "worst_gaps": [
+        "44",
+        "7",
+        "22"
+      ]
+    },
+    "layout_composition": {
+      "avg_gap": 0.8,
+      "ai_bias": "lenient",
+      "ai_avg": 3.18,
+      "human_avg": 2.98,
+      "worst_gaps": [
+        "26",
+        "44",
+        "7"
+      ]
+    },
+    "color": {
+      "avg_gap": 0.74,
+      "ai_bias": "lenient",
+      "ai_avg": 3.24,
+      "human_avg": 3.14,
+      "worst_gaps": [
+        "26",
+        "24",
+        "37"
+      ]
+    }
+  },
+  "red_flag_analysis": {
+    "template_scent_high": {
+      "human_flagged": 6,
+      "ai_flagged": 4,
+      "missed_by_ai": [
+        "11",
+        "18",
+        "26",
+        "49",
+        "54"
+      ]
+    },
+    "sloppy_images": {
+      "human_flagged": 10,
+      "ai_flagged": 0,
+      "missed_by_ai": [
+        "7",
+        "25",
+        "26",
+        "27",
+        "29",
+        "41",
+        "42",
+        "47",
+        "49",
+        "50"
+      ]
+    },
+    "process_soup": {
+      "human_flagged": 0,
+      "ai_flagged": 0,
+      "missed_by_ai": []
+    }
+  },
+  "top_gap_candidates": [
+    {
+      "candidate_id": "26",
+      "overall_gap": 3.45,
+      "human_score": 0.55,
+      "ai_score": 4.0,
+      "image_file": "candidate_26.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 2,
+          "ai": 4,
+          "gap": 2
+        },
+        "layout_composition": {
+          "human": 1,
+          "ai": 4,
+          "gap": 3
+        },
+        "color": {
+          "human": 1,
+          "ai": 4,
+          "gap": 3
+        }
+      },
+      "human_comments": {
+        "typography": "The typography here is really bad. The navbar name is way too big, right? Like Melanie Cernak is huge compared to the rest of the site. It probably is not the most important thing on this page. And also it's in awkward all caps and a font that doesn't look very good all capped. \n\nAnd then the images - all the text is different sizes and different. Some of them even don't have a body, whereas others have a body and a title. They also kept the logos of the people that they work with really big, and every logo is a different type. Again, makes it really noisy. ",
+        "layout_composition": "The composition here is really bad.\n- The images are all cut off.\n- You'll notice that in the Masonry grid of images, the white space around all the images is very inconsistent.\n- The type size is inconsistent, and some of the images are even cut off, which is a big no-no.",
+        "color": "There are too many colors going on here, it's kind of a disaster.\n- There's an attempt at doing a pastel color background for all the images, but because there's so many colors in the UI in the foreground, it effectively loses the effect.\n- They also kept all the logos of the clients they work with really big, and because all the logos have different colors too, it just totally takes away from the intended effect of the pastel palette.\n- There's also some really awkward examples of color usage at the very bottom of the page where they've used full-color social logos (which is already a lot) and on top of it, they've chosen to use a colored outline in teal, which is like tons of color that doesn't mean anything and in a place where it's probably not very important to draw attention to. "
+      },
+      "ai_comments": {
+        "typography": "Observations: Consistent hierarchy with clear headings and body text. Reconstruction: Type scale is well-defined with appropriate leading and casing. Link/State Audit: Links are styled consistently. Consistency Map: Repeated use of headings, body text, and labels across sections. Anchor Comparison: Closest to exemplar_6 with similar hierarchy and readability.",
+        "layout_composition": "Observations: Consistent grid and spacing across sections. Reconstruction: Grid is clear with well-aligned sections and images. Link/State Audit: Navigation and CTAs are well-placed. Consistency Map: Repeated grid structure and image placement. Anchor Comparison: Similar to exemplar_5 with strong alignment and section clarity.",
+        "color": "Observations: Harmonious palette with controlled accents. Reconstruction: Neutrals are well-tuned, supporting readability. Link/State Audit: Accent colors are used effectively for links and CTAs. Consistency Map: Consistent use of color across sections. Anchor Comparison: Similar to exemplar_6 with a cohesive color strategy."
+      },
+      "red_flags": {
+        "human": [
+          "sloppy_images",
+          "template_scent_high"
+        ],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "44",
+      "overall_gap": 2.7,
+      "human_score": 4.7,
+      "ai_score": 2.0,
+      "image_file": "candidate_44.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 5,
+          "ai": 2,
+          "gap": 3
+        },
+        "layout_composition": {
+          "human": 5,
+          "ai": 2,
+          "gap": 3
+        },
+        "color": {
+          "human": 4,
+          "ai": 2,
+          "gap": 2
+        }
+      },
+      "human_comments": {
+        "typography": "Typography here is super simple, but it works quite well, and yeah, it's effective. ",
+        "layout_composition": "The layout is kind of interesting. They use the navigation as an element of visual design here by tying it together with that orange dot. It creates an unusual but interesting layout. They also have three columns for the body in the style of a newspaper, which also works quite well and is pretty unique. ",
+        "color": "This is another example of a minimalist color system where they use mostly shades of gray but then punctuate the site with a nice touch of orange, which works really well as a focal point. They use various shades of gray to create different levels of hierarchy in the text. "
+      },
+      "ai_comments": {
+        "typography": "Observations: The typography is minimal with a basic hierarchy. The typeface is readable but lacks distinctiveness. Reconstruction: The hierarchy is flat with limited variation in size and weight. Readability is adequate, but the overall voice is generic. Consistency Map: The typography is consistent across sections but lacks refinement. Failure Theme: The typography feels generic and lacks a strong point of view. Anchor Comparison: Closest to exemplar 4, but lacks the refinement seen in exemplar 6.",
+        "layout_composition": "Observations: The layout is simple with a two-column structure. Reconstruction: The grid is basic, and the spacing is consistent but lacks innovation. Consistency Map: The layout is consistent across sections but feels generic. Failure Theme: The layout lacks a strong point of view and feels like a template. Anchor Comparison: Closest to exemplar 4, but lacks the structural clarity seen in exemplar 6.",
+        "color": "Observations: The color palette is minimal with a focus on black and white. Reconstruction: The neutrals are untuned, and the accents are sparse. Consistency Map: The color scheme is consistent but lacks depth. Failure Theme: The color lacks a strong identity and feels default. Anchor Comparison: Closest to exemplar 4, but lacks the harmony seen in exemplar 6."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "35",
+      "overall_gap": 1.7000000000000002,
+      "human_score": 4.7,
+      "ai_score": 3.0,
+      "image_file": "candidate_35.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 5,
+          "ai": 3,
+          "gap": 2
+        },
+        "layout_composition": {
+          "human": 5,
+          "ai": 3,
+          "gap": 2
+        },
+        "color": {
+          "human": 4,
+          "ai": 3,
+          "gap": 1
+        }
+      },
+      "human_comments": {
+        "typography": "Typography here is really strong. They use a very subtle serif to emphasize certain things while keeping things in line. It's usually pretty hard to combine both serif and sans-serif in line, and they've done it well. There's also really good use of white space to create hierarchy here. ",
+        "layout_composition": "The layout is effective and simple. They also switch from a single column to three columns in the middle, which works quite well because it keeps the same width throughout. ",
+        "color": "It's all monochrome, but it's working quite well because of the subtle color choices. There is a restraint and balance in the use of different shades of gray here. "
+      },
+      "ai_comments": {
+        "typography": "Observations: The typography is minimal with a single typeface used consistently. Reconstruction: The hierarchy is clear but basic, with no visible scale system. Link/State Audit: Links are underlined but lack customization. Consistency Map: Consistent use of typeface and spacing across sections. Failure Theme: Generic minimalism without refinement. Anchor Comparison: Closest to exemplar 8, with similar minimal style but lacks the refinement seen in exemplar 6.",
+        "layout_composition": "Observations: The layout is simple and structured. Reconstruction: Basic grid with consistent spacing. Link/State Audit: No visible state changes. Consistency Map: Consistent section alignment and spacing. Failure Theme: Lacks innovation or point of view. Anchor Comparison: Similar to exemplar 8, with a straightforward layout but lacks the complexity and refinement of exemplar 6.",
+        "color": "Observations: The color palette is minimal with a focus on neutrals. Reconstruction: Consistent use of off-white and gray tones. Link/State Audit: Links are blue, but no hover states are visible. Consistency Map: Consistent color use across sections. Failure Theme: Default minimalism without tuning. Anchor Comparison: Similar to exemplar 8, with a basic color scheme but lacks the tuned minimalism of exemplar 6."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "7",
+      "overall_gap": 1.7,
+      "human_score": 1.3,
+      "ai_score": 3.0,
+      "image_file": "candidate_7.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 1,
+          "ai": 3,
+          "gap": 2
+        },
+        "layout_composition": {
+          "human": 1,
+          "ai": 3,
+          "gap": 2
+        },
+        "color": {
+          "human": 3,
+          "ai": 3,
+          "gap": 0
+        }
+      },
+      "human_comments": {
+        "typography": "The typography here is kind of a disaster:\n- The DM on the top left is way too big compared to the rest of the elements in the nav bar\n- There's not enough white space between the hello I'm Dorna and the content underneath it\n- The description of herself is right-aligned, which is almost always a mistake",
+        "layout_composition": "This is one of the word layouts I've seen. They are going for a left-right, left-right effect, but because the vertical space between the different cards is not the same as the horizontal space, it creates this awkward gap that takes away from the effectiveness of the design. \n\nAt the bottom of the page, you'll also see a section that says \"Like what you see?\" I think this is supposed to fit in the left-right, left-right grid, but because there's no card around it again, it doesn't seem like that. So if they had to either add a card in the background or have that happy its own section. It was a bad choice to put it in the zigzag layout because, really, this is almost like a different concept. All that everything in the zigzag layout is a case study, whereas this is a call to action. So it probably should have been its own layout. ",
+        "color": "The color here is a consistent cut pastel palette on top of a generally more monochrome website design with a slight highlight. It's mostly fine. It's not a particularly well-executed pastel color palette, but it's not bad either. "
+      },
+      "ai_comments": {
+        "typography": "Observations: The typography is clean and readable with a clear hierarchy. The use of a sans-serif typeface is consistent across sections. Reconstruction: The type scale is appropriate with distinct headings and body text. Link/State Audit: Links are underlined, providing clear interaction cues. Consistency Map: Consistent use of font size and weight across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar 3 with similar readability and hierarchy. Score Justification: Meets competent baseline with no major issues.",
+        "layout_composition": "Observations: The layout uses a simple grid with consistent spacing. The card-based design is clear and organized. Reconstruction: Grid is consistent with adequate spacing between elements. Image presentation is clean with no cut-off crops. Consistency Map: Repeated card layout across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar 3 with similar grid consistency. Score Justification: Meets competent baseline with no major issues.",
+        "color": "Observations: The color palette is minimal with pastel accents. The use of color is consistent across sections. Reconstruction: Neutrals are used effectively with pastel backgrounds for cards. Link/State Audit: Links use a standard blue, fitting within the minimal palette. Consistency Map: Consistent use of pastel colors for different sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar 3 with similar color consistency. Score Justification: Meets competent baseline with no major issues."
+      },
+      "red_flags": {
+        "human": [
+          "sloppy_images"
+        ],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "31",
+      "overall_gap": 1.7,
+      "human_score": 1.3,
+      "ai_score": 3.0,
+      "image_file": "candidate_31.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 1,
+          "ai": 3,
+          "gap": 2
+        },
+        "layout_composition": {
+          "human": 1,
+          "ai": 3,
+          "gap": 2
+        },
+        "color": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        }
+      },
+      "human_comments": {
+        "typography": "The typography here is kind of a disaster. If you just look at the header section, everything is almost too bold, she's using bold for everything. From Hey Natalia to Bridging the Gap to Product Designer, all of these are bold. When everything is bold, nothing is bold. \n\nIf you look at the navbar, you see that there's a classic example of super-wide letter space, all-caps design in the word Product Designer. This is another classic rookie mistake in typesetting. \n\nAnother example of a rookie mistake is if you go to her project section. There is a pattern where she uses a vertical divider line between every label for the case studies that she did, but the vertical line is way taller and also very dark, which instead makes the vertical line seem like it grabs too much attention. This is a common pattern of failure. \n\nAnother bad pattern here is if you look at the bottom where in her About Me section she has tons of random bolding in her paragraph text. It's like almost feels like every fifth word here is bolded. And then if you look at the bulleted list inside the body of the text, the bulleted list has too much left-side indent. \n\nAnd then she randomly switches from left-align text to center-align text when it comes to her email. ",
+        "layout_composition": "The layout in the beginning couplet section is not great, but it's not terrible. But then when you go into the \"My skills\" and \"About me\" section, it's really terrible, right? So if you look at the indent right after the title. There's a huge amount of white space. We're thinking that the things under the title start a little bit more to the right for no reason. It doesn't align with anything. And then there's this really strange triangular text pattern that serves no purpose In the skill section.",
+        "color": "There is a consistent attempt to add a color palette between shades of grey and then this blue-green thing. It's not bad, it's not done very well, but it's okay, I guess. "
+      },
+      "ai_comments": {
+        "typography": "Observations: The typography uses a clear hierarchy with distinct headings and body text. Reconstruction: The type scale is consistent, with readable line heights and adequate contrast. Link/State Audit: Links are styled consistently, though there is no visible hover state. Consistency Map: Headings, body text, and links are consistent across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar_3 with similar hierarchy and readability. Score Justification: Meets baseline with no major issues.",
+        "layout_composition": "Observations: The layout uses a standard grid with clear sections. Reconstruction: Consistent container widths and spacing, though some sections feel generic. Link/State Audit: Navigation is clear, but lacks innovation. Consistency Map: Consistent grid and spacing across sections. Failure Theme: Generic layout without a strong point of view. Anchor Comparison: Similar to exemplar_3 with a basic grid. Score Justification: Competent but lacks distinctiveness.",
+        "color": "Observations: The color palette is minimal with a focus on neutrals. Reconstruction: Consistent use of black, white, and a single accent color. Link/State Audit: Accent color used for links and CTAs. Consistency Map: Neutrals and accents are consistent across sections. Failure Theme: None significant. Anchor Comparison: Similar to exemplar_3 with a minimal palette. Score Justification: Meets baseline with no major issues."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "29",
+      "overall_gap": 1.65,
+      "human_score": 1.35,
+      "ai_score": 3.0,
+      "image_file": "candidate_29.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 1,
+          "ai": 3,
+          "gap": 2
+        },
+        "layout_composition": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        },
+        "color": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        }
+      },
+      "human_comments": {
+        "typography": "This is an example of minimalist typography done poorly. Right off the bat, they don't consistently capitalize their sentences. They do it in some places but not others. \n\nThey use emojis instead of bullet points which creates noise and adds a weird indent on the left. Emojis are not always bad, but they were using them pretty badly here. \n\nThere's missing spacing between the bolded three lines and the stuff underneath it. It needs a little bit more separation. \n\nThen there's too much spacing between the case study text, so there's like a title and then there's a lot of space and then there's a label and then there's a lot of space again. But because the label is so small that it makes the spacing look even bigger, so that I would have probably put the label on top of the header text in the case study sections. \n\nThey also use a completely different model space font for the button for no apparent reason. And then the button outline also doesn't match the stroke width of the text inside the button or frankly anything else on the page. ",
+        "layout_composition": "The layout is another one of those examples of just different for every section.\n- The navbar is super wide\n- It narrows down into the hero section (which is fine)\n- It broadens a little wider again in the body where there's like case studies\nI think that the hero and the case study section are technically the same width, but because the text on the hero doesn't run all the way to the right, it feels like it's not the same width. This creates this very awkward and inconsistent right rag.",
+        "color": "There is sort of like an attempt here at doing sort of like an electric blue driven theme here, but because the case studies are also that backgrounds are sort of completely different colors and then they are very loud.\n\nWe're seeing gradients, we're seeing orange, we're seeing very dark blacks. It just takes away from the overall power of the monochrome plus electric blue color palettes. "
+      },
+      "ai_comments": {
+        "typography": "Observations: The typography is clean with a clear hierarchy. The use of bold for headings and regular weight for body text is consistent. Reconstruction: The type scale is appropriate with readable line heights and character counts. Link/State Audit: Links are styled with a distinct color, but underline treatment is default. Consistency Map: Headings, body text, and links are consistent across sections. Failure Theme: Default link styling. Anchor Comparison: Closest to exemplar 3 with similar hierarchy and readability.",
+        "layout_composition": "Observations: The layout uses a simple grid with consistent spacing. Reconstruction: The grid is basic but effective, with clear section divisions. Link/State Audit: CTA buttons are consistently placed. Consistency Map: Grid and spacing are consistent across sections. Failure Theme: Generic layout without a strong point of view. Anchor Comparison: Similar to exemplar 8 with a basic grid and consistent spacing.",
+        "color": "Observations: The color palette is minimal with a primary blue accent. Reconstruction: Neutrals are used effectively, but the palette lacks depth. Link/State Audit: Blue is used for links and CTAs, providing clear state logic. Consistency Map: Blue accent is consistent across sections. Failure Theme: Limited color palette. Anchor Comparison: Similar to exemplar 8 with a minimal palette and consistent accent use."
+      },
+      "red_flags": {
+        "human": [
+          "sloppy_images"
+        ],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "42",
+      "overall_gap": 1.65,
+      "human_score": 1.35,
+      "ai_score": 3.0,
+      "image_file": "candidate_42.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 1,
+          "ai": 3,
+          "gap": 2
+        },
+        "layout_composition": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        },
+        "color": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        }
+      },
+      "human_comments": {
+        "typography": "The typography here uses just some really bad font choices. There's this pseudo-handwritten looking font for titles that's really awkward. And then the body is done in this rounded, playful font that's not very well done. ",
+        "layout_composition": "The layout is like almost a different width at every section in a way that doesn't lend anything to the design. ",
+        "color": "There's a consistent attempt at doing a taupe color here, but the problem is that they use a lot of stock photography that doesn't follow the taupe color theme, so it takes away from the color usage. Then they also use a lot of stark white images that have multiple colors on them, which again takes away from the overall taupe theme. "
+      },
+      "ai_comments": {
+        "typography": "Observations: The typography is readable with a clear hierarchy, but it feels somewhat generic. Reconstruction: The type scale is consistent, with adequate leading and measure. Link/State Audit: Links are not prominently styled, lacking distinct states. Consistency Map: The use of headings and body text is consistent across sections. Failure Theme: Generic minimal typography. Anchor Comparison: Closest to exemplar 8, with similar readability and hierarchy. Score Justification: The typography is competent but lacks distinctive features.",
+        "layout_composition": "Observations: The layout uses a basic grid with consistent spacing. Reconstruction: The grid is simple, with a centered hero and card grid. Link/State Audit: Navigation is clear but lacks innovation. Consistency Map: Consistent card layout and section spacing. Failure Theme: Generic layout without a strong point of view. Anchor Comparison: Similar to exemplar 8, with a basic but functional grid. Score Justification: The layout is competent but lacks refinement.",
+        "color": "Observations: The color palette is neutral and harmonious. Reconstruction: Neutrals are consistent, with a single accent color. Link/State Audit: Accent usage is minimal and lacks clear state logic. Consistency Map: Consistent use of neutrals across sections. Failure Theme: Lack of accent clarity. Anchor Comparison: Similar to exemplar 8, with a harmonious but unremarkable palette. Score Justification: The color usage is competent but lacks distinctiveness."
+      },
+      "red_flags": {
+        "human": [
+          "sloppy_images"
+        ],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "27",
+      "overall_gap": 1.4,
+      "human_score": 1,
+      "ai_score": 2.4,
+      "image_file": "candidate_27.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 1,
+          "ai": 3,
+          "gap": 2
+        },
+        "layout_composition": {
+          "human": 1,
+          "ai": 3,
+          "gap": 2
+        },
+        "color": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        }
+      },
+      "human_comments": {
+        "typography": "",
+        "layout_composition": "",
+        "color": ""
+      },
+      "ai_comments": {
+        "typography": "Observations: The typography is clean and readable with a consistent style across sections. Reconstruction: The type scale is simple, with clear hierarchy through size and weight. Link/State Audit: Links are styled consistently with a clear call-to-action. Consistency Map: Repeated use of a single typeface and consistent link styling. Failure Theme: Generic minimalism without distinctive tuning. Anchor Comparison: Closest to exemplar 3, with similar clean but generic typography.",
+        "layout_composition": "Observations: The layout uses a simple grid with consistent spacing. Reconstruction: The grid is basic, with centered alignment and consistent container widths. Link/State Audit: Consistent button styles across sections. Consistency Map: Repeated use of centered hero and consistent spacing. Failure Theme: Generic layout without a strong point of view. Anchor Comparison: Closest to exemplar 3, with similar clean but generic layout.",
+        "color": "Observations: The color palette is minimal with a single accent color. Reconstruction: Neutrals are consistent, and the accent color is used sparingly. Link/State Audit: Accent color used for links and buttons. Consistency Map: Repeated use of neutrals and a single accent color. Failure Theme: Lack of distinctive color strategy. Anchor Comparison: Closest to exemplar 3, with similar minimal color use."
+      },
+      "red_flags": {
+        "human": [
+          "sloppy_images"
+        ],
+        "ai": [
+          "template_scent_high"
+        ]
+      }
+    },
+    {
+      "candidate_id": "10",
+      "overall_gap": 1.35,
+      "human_score": 1.65,
+      "ai_score": 3.0,
+      "image_file": "candidate_10.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        },
+        "layout_composition": {
+          "human": 1,
+          "ai": 3,
+          "gap": 2
+        },
+        "color": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        }
+      },
+      "human_comments": {
+        "typography": "",
+        "layout_composition": "",
+        "color": ""
+      },
+      "ai_comments": {
+        "typography": "Observations: The typography is readable with a clear hierarchy, but it feels generic. Reconstruction: The type scale is consistent, with adequate leading and measure. Link/State Audit: Links are styled with a default blue, which is consistent but lacks customization. Consistency Map: The same typeface and scale are used across sections. Failure Theme: Generic minimalism. Anchor Comparison: Closest to exemplar 3, with similar readability and hierarchy.",
+        "layout_composition": "Observations: The layout uses a simple grid with centered text and images. Reconstruction: The grid is consistent, with adequate spacing and alignment. Link/State Audit: Buttons are placed consistently. Consistency Map: The layout maintains a consistent structure across sections. Failure Theme: Generic template layout. Anchor Comparison: Closest to exemplar 3, with similar grid consistency.",
+        "color": "Observations: The color palette is minimal, with a focus on blue accents. Reconstruction: Neutrals are consistent, and the blue accent is used for links and buttons. Link/State Audit: The blue accent is consistent across links and buttons. Consistency Map: The color scheme is consistent across sections. Failure Theme: Default minimalism. Anchor Comparison: Closest to exemplar 3, with similar color consistency."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "32",
+      "overall_gap": 1.3499999999999996,
+      "human_score": 4.35,
+      "ai_score": 3.0,
+      "image_file": "candidate_32.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 5,
+          "ai": 3,
+          "gap": 2
+        },
+        "layout_composition": {
+          "human": 4,
+          "ai": 3,
+          "gap": 1
+        },
+        "color": {
+          "human": 4,
+          "ai": 3,
+          "gap": 1
+        }
+      },
+      "human_comments": {
+        "typography": "This is an example of a good minimalist portfolio in terms of typography. If they use one size but they use a subtle technique to create hierarchy using slightly different weights and they use slightly different colors, so that it achieves a lot of clarity and design intent without overwhelming with different styles. ",
+        "layout_composition": "The layout here is really simple, with ample use of white space to differentiate these sections. ",
+        "color": "The usage of the shades of gray here is nice and it's nicely punctuated by an illustration of their own face at the top, which sort of creates a focal point. "
+      },
+      "ai_comments": {
+        "typography": "Observations: The typography is clean and minimal with a consistent use of a single typeface. Reconstruction: The hierarchy is clear but basic, with no visible differentiation in scale or weight. Link/State Audit: Links are not visibly styled, lacking state differentiation. Consistency Map: Consistent use of typeface and size across sections. Failure Theme: Lacks typographic richness. Anchor Comparison: Closest to exemplar_8 with similar minimal style but lacks the refinement seen in exemplar_6.",
+        "layout_composition": "Observations: The layout is straightforward with a single-column structure. Reconstruction: Consistent spacing and alignment, but lacks complexity or innovation. Consistency Map: Uniform spacing and alignment throughout. Failure Theme: Basic layout without a strong point of view. Anchor Comparison: Similar to exemplar_8, but less refined than exemplar_6.",
+        "color": "Observations: The color scheme is minimal with a focus on neutrals. Reconstruction: Consistent use of neutrals without any accent colors. Consistency Map: Uniform color usage across sections. Failure Theme: Lacks color depth or identity. Anchor Comparison: Similar to exemplar_8, but lacks the color refinement of exemplar_6."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    }
+  ],
+  "key_patterns": {
+    "ai_overrating_frequency": 0.52,
+    "common_ai_blindspots": [
+      "Template detection - AI misses obvious template usage",
+      "Sloppy execution - AI sees 'clean' where humans see 'careless'"
+    ],
+    "most_problematic_categories": [
+      "typography",
+      "layout_composition",
+      "color"
+    ]
+  }
+}

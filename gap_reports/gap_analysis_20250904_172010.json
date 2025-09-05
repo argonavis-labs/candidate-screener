@@ -1,0 +1,294 @@
+{
+  "report_metadata": {
+    "generated_at": "2025-09-04T17:20:10.752791",
+    "total_candidates_analyzed": 50,
+    "candidates_with_both_ratings": 50,
+    "source_file": "evaluation_20250904_171239.json",
+    "human_ratings_file": "human-ratings.json"
+  },
+  "overall_metrics": {
+    "average_gap": 0.6870000000000002,
+    "median_gap": 0.6000000000000001,
+    "ai_bias": "lenient",
+    "ai_average_score": 3.234,
+    "human_average_score": 2.883,
+    "bias_magnitude": 0.35099999999999965
+  },
+  "gap_distribution": {
+    "large_gaps_1.5+": 6,
+    "medium_gaps_0.5-1.5": 23,
+    "small_gaps_<0.5": 21,
+    "perfect_matches": 21
+  },
+  "category_analysis": {
+    "typography": {
+      "avg_gap": 0.8,
+      "ai_bias": "lenient",
+      "ai_avg": 3.44,
+      "human_avg": 2.88,
+      "worst_gaps": [
+        "20",
+        "4",
+        "7"
+      ]
+    },
+    "layout_composition": {
+      "avg_gap": 0.78,
+      "ai_bias": "lenient",
+      "ai_avg": 3.4,
+      "human_avg": 2.98,
+      "worst_gaps": [
+        "13",
+        "7",
+        "10"
+      ]
+    },
+    "color": {
+      "avg_gap": 0.56,
+      "ai_bias": "lenient",
+      "ai_avg": 3.34,
+      "human_avg": 3.14,
+      "worst_gaps": [
+        "20",
+        "37",
+        "9"
+      ]
+    }
+  },
+  "red_flag_analysis": {
+    "template_scent_high": {
+      "human_flagged": 6,
+      "ai_flagged": 11,
+      "missed_by_ai": [
+        "26",
+        "49"
+      ]
+    },
+    "sloppy_images": {
+      "human_flagged": 10,
+      "ai_flagged": 3,
+      "missed_by_ai": [
+        "7",
+        "25",
+        "26",
+        "29",
+        "42",
+        "47",
+        "49"
+      ]
+    },
+    "process_soup": {
+      "human_flagged": 0,
+      "ai_flagged": 0,
+      "missed_by_ai": []
+    }
+  },
+  "top_gap_candidates": [
+    {
+      "candidate_id": "20",
+      "overall_gap": 2.6500000000000004,
+      "human_score": 2,
+      "ai_score": 4.65,
+      "image_file": "candidate_20.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 2,
+          "ai": 5,
+          "gap": 3
+        },
+        "layout_composition": {
+          "human": 2,
+          "ai": 4,
+          "gap": 2
+        },
+        "color": {
+          "human": 2,
+          "ai": 5,
+          "gap": 3
+        }
+      },
+      "human_comments": {
+        "typography": "",
+        "layout_composition": "",
+        "color": ""
+      },
+      "ai_comments": {
+        "typography": "Custom wordmark with balanced kerning and a subtle two\u2011color treatment sets hierarchy without shouting. Nav items are styled as consistent pills (lowercase casing, even letter\u2011spacing, identical padding) rather than default blue links. Footer copy uses a lighter grey with adequate contrast and comfortable measure; quotes/ampersands are consistent and rags are clean. No default link styles anywhere; type scales and spacing are disciplined and repeat across header, nav, and footer. Limitation: very little body copy on this page limits evidence of longer\u2011form rhythm.",
+        "layout_composition": "Tight, centered grid of 3\u00d74 tiles with identical square aspect ratios and even gutters creates a clear scan pattern. The central content column maintains a steady width; header (logo + pills) is aligned and breathes with ample top/side whitespace. Thumbnails sit on an even baseline with consistent internal mats/shadows, avoiding pixel wobble. Limitation: visual weight varies between photo device mocks and flat graphics causing minor rhythm flicker, and the overall structure is conventional rather than inventive.",
+        "color": "Restrained shell (soft white center with pale grey side texture) lets varied thumbnail colors read without clashing. Accent system is minimal yet coherent\u2014the teal/purple in the logo echoes subtly while nav pills remain neutral. Values are well controlled: tiles pop against neutral chrome; shadows are soft and non\u2011muddy. No harsh #000/#fff pairs or default blues; overall harmony across a wide range of imagery. Limitation: a couple of highly saturated tiles (e.g., magenta/purple poster) momentarily dominate but the neutral frame contains them well."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "26",
+      "overall_gap": 2.45,
+      "human_score": 0.55,
+      "ai_score": 3.0,
+      "image_file": "candidate_26.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        },
+        "layout_composition": {
+          "human": 1,
+          "ai": 3,
+          "gap": 2
+        },
+        "color": {
+          "human": 1,
+          "ai": 3,
+          "gap": 2
+        }
+      },
+      "human_comments": {
+        "typography": "The typography here is really bad. The navbar name is way too big, right? Like Melanie Cernak is huge compared to the rest of the site. It probably is not the most important thing on this page. And also it's in awkward all caps and a font that doesn't look very good all capped. \n\nAnd then the images - all the text is different sizes and different. Some of them even don't have a body, whereas others have a body and a title. They also kept the logos of the people that they work with really big, and every logo is a different type. Again, makes it really noisy. ",
+        "layout_composition": "The composition here is really bad.\n- The images are all cut off.\n- You'll notice that in the Masonry grid of images, the white space around all the images is very inconsistent.\n- The type size is inconsistent, and some of the images are even cut off, which is a big no-no.",
+        "color": "There are too many colors going on here, it's kind of a disaster.\n- There's an attempt at doing a pastel color background for all the images, but because there's so many colors in the UI in the foreground, it effectively loses the effect.\n- They also kept all the logos of the clients they work with really big, and because all the logos have different colors too, it just totally takes away from the intended effect of the pastel palette.\n- There's also some really awkward examples of color usage at the very bottom of the page where they've used full-color social logos (which is already a lot) and on top of it, they've chosen to use a colored outline in teal, which is like tons of color that doesn't mean anything and in a place where it's probably not very important to draw attention to. "
+      },
+      "ai_comments": {
+        "typography": "Readable, conservative sans throughout the shell with comfortable leading (~1.4\u20131.6) and a short, ~60\u201370ch intro line. Nav labels (Portfolio/About/Resume) are consistent and the all\u2011caps nameplate has controlled tracking. However, there\u2019s little evidence of a typographic system beyond the hero/nav: project tiles are flattened images so heading/caption styles aren\u2019t demonstrated; link styling/states aren\u2019t visible; scale feels generic with small intro text followed by image-only tiles. Minor imbalance where the nameplate is much louder than the small intro copy.",
+        "layout_composition": "A clear two\u2011column grid with consistent gutters separates tiles; rows align cleanly and a full\u2011width feature tile (TOPHATTER) provides hierarchy. Device mock on the right sits flush to the tile edge for a tidy focal point. Limitations: image handling shows a few rough edges\u2014the upper\u2011right tile includes a dark strip along the bottom that reads like a mis\u2011cropped internal mat; the giant 'OTHER PROJECTS' tile introduces a heavy typographic block that disrupts the otherwise even row rhythm; overall composition relies on brand-heavy thumbnails instead of a unified site-level system.",
+        "color": "Neutral white shell lets work tiles carry color. Pastel mats (lavender, peach, light blue, mint) keep most tiles light, and text contrasts well. That said, color isn\u2019t unified across the grid: the saturated purple logotype in the center tile dominates, the dark strip at the bottom of the top\u2011right tile creates a value jump, and there\u2019s no clear, consistent accent color in the site chrome to tie pieces together."
+      },
+      "red_flags": {
+        "human": [
+          "sloppy_images",
+          "template_scent_high"
+        ],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "13",
+      "overall_gap": 1.75,
+      "human_score": 2.25,
+      "ai_score": 4.0,
+      "image_file": "candidate_13.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 2,
+          "ai": 4,
+          "gap": 2
+        },
+        "layout_composition": {
+          "human": 1,
+          "ai": 4,
+          "gap": 3
+        },
+        "color": {
+          "human": 4,
+          "ai": 4,
+          "gap": 0
+        }
+      },
+      "human_comments": {
+        "typography": "They used a pretty interesting serif here that I think is a sign that they have thought about this. The body also uses a relatively interesting looking model. But the problem is that the way that they use it is kind of bad. For example, a lot of the details around their bulleted list which is too indented, right? There's too much space on the left of their bullets. This subtracts points. The fact that they use a model only for their body is not great. Generally, you don't want to use a model for body text. It makes it a little hard to read. There's also a little bit of overuse of all caps and random tracking. If you look at the work writing dribble about navigation, they have just increased the letter spacing for no really good reason. Similarly, in the navbar, their name is a little too big in contrast to the rest of the navbar and competes with their main title. ",
+        "layout_composition": "The layout suffers from the typical sort of every section has a different width problem, but no intentionality. They also randomly shift from center-aligned to left-aligned.\n\nSo, if you look at the nav bar, it's kinda full-width. The header is quite narrow, and then the body is wide again. The \"See my work\" CTA is also super narrow, so it's kind of a little ragged and random. ",
+        "color": "They chose a pretty interesting pair of colors for the green and the yellow. I think it's actually quite good because of their complementarity"
+      },
+      "ai_comments": {
+        "typography": "Distinctive serif display for the hero with tight but non\u2011colliding leading; strong pairing with a clean sans for body. Clear scale steps: very large hero, small intro, micro\u2011headers in small caps with even letter\u2011spacing, and consistent bullet/link style below. Links are customized (teal hue with underlines matching offset/weight) rather than defaults. Body copy sits at a comfortable ~60\u201370ch with steady rags and no widows. Limitation: body size and grey tone are on the small/light side, and the centered intro plus left\u2011aligned columns introduce a slight rhythm shift.",
+        "layout_composition": "Three equal columns with matched illustration tiles (identical aspect ratios and mats) show disciplined grid use; gutters and vertical rhythm appear consistent across headings, descriptions, and link lists. The CTA button sits centered with ample breathing room, and spacing respects a clear system of multiples. Overall structure is simple but controlled with clear hierarchy from hero to columns to CTA. Limitation: only one page view is visible, so multi\u2011section consistency can\u2019t be verified; the centered hero vs left\u2011aligned column content creates a mild alignment shift.",
+        "color": "Cohesive palette: off\u2011white background, dark teal accent for links/CTA, and warm beige illustration panels that harmonize well. Neutrals feel tuned (not pure #000/#fff), and accent usage is restrained and consistent across headings, links, and the outline button. Value control keeps illustrations from overpowering text. Limitation: small body copy appears a bit low\u2011contrast, and no hover/active state evidence is visible."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "42",
+      "overall_gap": 1.65,
+      "human_score": 1.35,
+      "ai_score": 3.0,
+      "image_file": "candidate_42.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 1,
+          "ai": 3,
+          "gap": 2
+        },
+        "layout_composition": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        },
+        "color": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        }
+      },
+      "human_comments": {
+        "typography": "The typography here uses just some really bad font choices. There's this pseudo-handwritten looking font for titles that's really awkward. And then the body is done in this rounded, playful font that's not very well done. ",
+        "layout_composition": "The layout is like almost a different width at every section in a way that doesn't lend anything to the design. ",
+        "color": "There's a consistent attempt at doing a taupe color here, but the problem is that they use a lot of stock photography that doesn't follow the taupe color theme, so it takes away from the color usage. Then they also use a lot of stark white images that have multiple colors on them, which again takes away from the overall taupe theme. "
+      },
+      "ai_comments": {
+        "typography": "Readable sans for body with comfortable measure (~60\u201370ch) and adequate 1.4\u20131.6 leading. Display/script face used for the hero and section headings adds personality. Headline/subcopy spacing is even and the nav labels are restrained. However: mixed type voices (handwritten script + geometric sans) feel inconsistent; overlay captions on the work tiles are small and sit on busy photography reducing legibility; casing varies (e.g., \u201cConnect With Me\u201d title\u2011case vs other headings), and there\u2019s no visible custom link styling or state system.",
+        "layout_composition": "Clear sectioning and a predictable flow: centered hero \u2192 3\u2011card work grid with equal gutters \u2192 2\u2011card process \u2192 recommendations \u2192 contact. Card radii and shadows are consistent and crops are clean. Limitations: modules feel pieced together\u2014some sections sit inside rounded containers while \u201cMy Process\u201d floats without one; default slider arrows/dots in Work/Recommendations introduce UI\u2011kit scent; the arched photo in Contact breaks the otherwise rounded\u2011rect language; gradient bands behind sections create value seams that cut through content.",
+        "color": "Warm beige/neutral gradient establishes a soft tone; off\u2011black text keeps contrast comfortable; card backgrounds and soft shadows are cohesive. Issues: heavy gradient banding creates distracting stripes across section transitions; white text overlays on lighter imagery in the work tiles risk low contrast; accent roles are unclear with very subtle variations between card fills and background washes."
+      },
+      "red_flags": {
+        "human": [
+          "sloppy_images"
+        ],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "52",
+      "overall_gap": 1.65,
+      "human_score": 2,
+      "ai_score": 3.65,
+      "image_file": "candidate_52.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        },
+        "layout_composition": {
+          "human": 2,
+          "ai": 4,
+          "gap": 2
+        },
+        "color": {
+          "human": 2,
+          "ai": 4,
+          "gap": 2
+        }
+      },
+      "human_comments": {
+        "typography": "",
+        "layout_composition": "",
+        "color": ""
+      },
+      "ai_comments": {
+        "typography": "Readable sans with a clear hierarchy: a large all\u2011caps hero heading with generous tracking, a small uppercase subhead, and compact caption styles under each project. Project captions show a left label ('Sunflower', 'Xbox', 'UCLA Library') paired with right\u2011aligned meta using a consistent ' | ' separator. Body copy in the 'Let's chat!' area has comfortable leading and measure. However, links in the contact section appear as plain underlined text (default\u2011leaning), casing mixes (all\u2011caps hero vs. sentence\u2011case 'Let's chat!'), and there\u2019s limited evidence of tuned link states or a refined type scale beyond a few sizes.",
+        "layout_composition": "Consistent single\u2011column structure with disciplined spacing; three project tiles share identical container width and even vertical rhythm. Captions form a clean two\u2011column baseline (project name left, description/date right), giving order without heavy UI. The hero uses a textured banner and a patterned strip as a clear transition into the work list. The footer/contact area is split into two balanced columns with sensible margins. Minor roughness: project tile heights vary slightly causing small rhythm flicker, and the 'Made in Framer' badge floats off\u2011grid at the bottom right.",
+        "color": "Distinctive yet controlled palette: deep maroon hero, olive patterned band, and collage\u2011style project mats in muted, paper\u2011like tones unify otherwise varied screenshots. Whites and neutrals keep the shell quiet, letting the illustrated textures carry character. Accents are used sparingly and consistently across tiles. Minor issues: the green patterned band is higher chroma than the rest and can pull attention, and link/CTA color states aren\u2019t clearly defined."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    }
+  ],
+  "key_patterns": {
+    "ai_overrating_frequency": 0.56,
+    "common_ai_blindspots": [
+      "Sloppy execution - AI sees 'clean' where humans see 'careless'"
+    ],
+    "most_problematic_categories": [
+      "typography",
+      "layout_composition",
+      "color"
+    ]
+  }
+}

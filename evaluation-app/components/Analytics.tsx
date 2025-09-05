@@ -309,6 +309,9 @@ export default function Analytics({
                       {new Date(run.timestamp).toLocaleDateString()} •{" "}
                       {run.model}
                     </h2>
+                    <div className="text-sm text-muted-foreground font-mono bg-stone-100 px-2 py-1 rounded">
+                      {run.filename}
+                    </div>
                     {Object.values(allAiRatings[run.filename] || {}).some(
                       (e: any) => e?.evaluation_metadata?.no_exemplars_mode
                     ) && (

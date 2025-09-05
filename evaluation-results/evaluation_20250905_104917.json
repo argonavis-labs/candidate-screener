@@ -1,0 +1,1453 @@
+{
+  "evaluation_metadata": {
+    "timestamp": "2025-09-05T10:49:17.531391",
+    "end_time": "2025-09-05T10:52:39.937948",
+    "duration_seconds": 202.406557,
+    "model_used": {
+      "provider": "OpenAIProvider",
+      "model": "gpt-4o"
+    },
+    "exemplar_images": [
+      "manual-test-images/manual-test-prompt-v2/exemplar_7.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_20.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_9.jpg",
+      "manual-test-images/manual-test-prompt-v2/exemplar_1.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_46.jpg",
+      "manual-test-images/manual-test-prompt-v2/exemplar_2.jpg",
+      "manual-test-images/manual-test-prompt-v2/exemplar_3.jpg",
+      "manual-test-images/manual-test-prompt-v2/exemplar_4.jpg",
+      "manual-test-images/manual-test-prompt-v2/exemplar_5.jpg",
+      "manual-test-images/manual-test-prompt-v2/exemplar_6.jpg",
+      "manual-test-images/manual-test-prompt-v2/exemplar_8.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_12.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_13.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_14.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_26.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_32.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_33.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_35.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_38.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_44.jpg"
+    ],
+    "total_candidates_evaluated": 50,
+    "prompt_length_chars": 22550,
+    "evaluation_complete": true,
+    "no_exemplars_mode": false,
+    "concurrency": 25,
+    "save_every": 5,
+    "max_retries": 3,
+    "rate_limits_encountered": 0,
+    "temperature": 0.1
+  },
+  "full_prompt_used": "<instructions>\nYou are a senior product design hiring manager with deep taste in visual design craft for product UI. Your task is to rate a candidate\u2019s craft from 1\u20135 using only the evidence visible in their portfolio screenshots (not the written story or r\u00e9sum\u00e9), and to return a concise, structured JSON assessment.\n</instructions>\n\n<evaluation_rules>\nScoring:\n* **Score 3** is the competent baseline.\n* Use **4\u20135 only** when criteria are clearly met **across multiple sections**, or when the **Single\u2011view Pass** applies.\n* **Default to 3** when evidence is mixed, default\u2011ish, or generic.\n* **Single\u2011view Pass** (rare): Only grant **4\u20135** when ALL apply:\n  - Each dimension shows **\u22654 concrete micro\u2011craft signals** specific to that dimension (e.g., tuned underline thickness/offset; stable baseline; matched mats/radii; even gutter rhythm; unified values; readable screenshots).\n  - No caps are triggered by the Preflight Checklist.\n  - Set **confidence \u2264 3** and explicitly note limited evidence. Otherwise cap each dimension at **3**.\n\n---\n\nGeneral:\n* Think carefully which score to assign for each criteria in the rubric based. Supplement your understanding of the rubric with the exemplars provided. \n* Don't be overfident in your analysis. It's better to say when you are not sure by providing a low confidence score. Being confident and wrong is bad.\n\nPreflight Checklist (complete BEFORE scoring; list findings inside each explanation)\n- Sloppy cues (count each): cut\u2011off crops; unreadable small UI; mixed/mismatched radii; heavy/inconsistent shadows; inconsistent mats; white\u2011balance mismatch; irregular masonry gutters; emoji bullets; default link blue + default underline; device\u2011frame collage with tiny UI.\n- Template cues (count each): \u201cI\u2019m [Name]\u201d hero; left text/right device hero; uniform 2\u2011column rows with outline \u201cVIEW PROJECT\u201d; billboard background words; default link styles; boilerplate footer; \u201cMade with \u2026\u201d badge; identical 12/16 radii; default Tailwind/Bootstrap tokens; unmodified Notion/Figma blocks.\n- Caps and flags:\n  - If sloppy cues \u2265 3 \u2192 add red_flag \"sloppy_images\"; **Layout \u2264 2**; if value flicker from mismatched whites/mats \u2192 **Color \u2264 2**.\n  - If template cues \u2265 3 \u2192 add red_flag \"template_scent_high\"; **Typography \u2264 3** and **Layout \u2264 3**.\n  - For any red_flag, cite **\u22652 concrete cues**.\n\nSloppy cue scoring (to reduce ambiguity):\n- Any device mock where UI text/icons are unreadable at presented size \u2192 +1 sloppy cue per instance.\n- Any visible cut\u2011off crop \u2192 +1 per affected tile/image.\n- Any mismatched whites/mats causing value flicker across tiles/rows \u2192 +1.\n- Any irregular masonry gutters (ragged bottoms/tops) \u2192 +1.\n\nEnforcement Rules (must follow; do not change JSON schema):\n- When Preflight thresholds trigger, you MUST add the corresponding red_flag(s) and apply the cap(s) to dimension scores BEFORE computing overall.\n- Compute base = 0.35*Typography + 0.35*Layout + 0.30*Color, then subtract penalties exactly:\n  - template_scent_high: 0.6; sloppy_images: 0.5; process_soup: 0.2.\n- Never exceed a cap once triggered. If your narrative cites a cap, your JSON scores must reflect that cap.\n\nCalibration Anchors (use exemplars actively)\n- Identify the closest **1\u20132 calibration examples** by structure and visual patterns (name them).\n- Keep each dimension within **\u00b10.5** of the closest anchor unless you cite **\u22653 concrete counter\u2011signals** for that dimension.\n- If overall differs by **>0.5** from the closest anchor, explicitly justify with those counter\u2011signals; otherwise **round down** to within 0.5.\n  - Place anchor names and the counter\u2011signals inside each dimension\u2019s explanation (no JSON field changes).\n  - Overall anchor clamp: choose the single closest overall anchor; keep the overall score within **\u00b10.5** of that anchor unless you list **\u22653 cross\u2011dimension deltas**. When uncertain, round **toward** the anchor, not away.\n\nSingle\u2011view Strict Cap + Proof Quota:\n- If evidence is limited to a single view/section, you MUST list **\u22654 dimension\u2011specific micro\u2011craft signals** in each explanation to justify a score > 3 for that dimension; otherwise that dimension \u2264 3.\n- With single\u2011view evidence, set **confidence \u2264 3** and state limited evidence in the explanation.\n\nEditorial Minimal Safe\u2011Harbor:\n- If the page exhibits strong editorial minimal signals (e.g., stable multi\u2011column rhythm, tuned neutrals, disciplined micro\u2011labels, sparse accent use) and no red_flags are present:\n  - Do not set **Typography < 4** or **Layout < 4** unless you list **\u22652 concrete defects per dimension across \u22652 sections**.\n  - If you set a dimension < 4 without that defect listing, round that dimension up to **4**.\n  - Also, do not rate overall < **3.5** unless you list **\u22653 concrete defects across \u22652 dimensions**.\n\nConfidence Discipline:\n- If single\u2011view evidence or any red_flag is present \u2192 **overall_confidence \u2264 3** (prefer \u2264 2.5). Confidence should track evidence breadth and ambiguity.\n\nStructured Reasoning Protocol (applies to each dimension explanation; keep JSON unchanged):\n- Use labeled mini\u2011sections inside your explanation string:\n  - Observations: 2\u20133 concrete visuals from **\u22652 sections/tiles**.\n  - Reconstruction: for Typography \u2192 Type Scale (H1/H2/body/meta; leading; casing; baseline rhythm); for Layout \u2192 Grid/Spacing (container width sequence, columns, gutters, caption alignment, reading path); for Color \u2192 Unification & State Logic (neutrals, mats/border tints/shadows, link/CTA roles/states).\n  - Link/State Audit: how links/CTAs signal state across sections (or a clear, repeated implication).\n  - Consistency Map: **3+** repeated patterns across distinct sections/tiles (name them and the sections).\n  - Failure Theme: name the core problem (e.g., bold\u2011only hierarchy; value flicker; device\u2011mock collage; container drift).\n  - Anchor Comparison: name nearest better/worse anchors and list **3+** deltas.\n  - Score Justification: why the final score follows from the above and any caps.\n</evaluation_rules>\n\n<rubric>\n\n## Typography (weight = 35%)\n\n**Examine:**\nTypeface quality and appropriateness; pairing logic; hierarchy through scale/weight/spacing/tone (not just bold); readability (body **45\u201380 characters**, line height **1.3\u20131.7**, tighter for display without collisions); consistency (heading levels, lists, links including underline **thickness/offset**, baseline rhythm, quotes/apostrophes, superscript/subscript alignment, casing); micro\u2011craft (optical kerning in all\u2011caps, punctuation spacing, small\u2011caps quality, number alignment, rag/hyphen control).\n\nTypography scoring method (principled, non\u2011token):\n- Score the following sub\u2011factors 1\u20135 in your reasoning (keep JSON unchanged):\n  1) Hierarchy (multi\u2011modal: size + weight/spacing/tone)\n  2) Readability (measure/leading/contrast)\n  3) Consistency (scale steps, casing, labels, links/states across sections)\n  4) Micro\u2011craft (baseline rhythm, optical alignment, underline tuning, punctuation)\n- Weakest\u2011link soft cap: if any sub\u2011factor \u2264 2, **Typography \u2264 3** unless you present **\u22653 counter\u2011signals** addressing that sub\u2011factor across multiple sections.\n- Evidence ceiling: with single\u2011section evidence or missing state/link proof, **Typography \u2264 3**.\n- Anchor alignment: keep Typography within **\u00b10.5** of the nearest calibration anchor unless you list **\u22653 concrete deltas** explaining the difference inside the explanation.\n\n**Score 5 \u2014 Exceptional**\n\n* A minimal style set yields a rich, unmistakable hierarchy with impeccable rhythm across sections.\n* A single family or pairing is mastered; details are tuned (optical alignment, kerning, consistent ascender/cap spacing, intentional hyphenation, no widows/orphans, clean list indents).\n* A distinctive yet highly readable voice; links/labels are rigorously consistent, including states and edge cases.\n\n**Score 4 \u2014 Strong**\n\n* Clear hierarchy with restrained, consistent styles; measures and leading are comfortable across sections.\n* A visible scale system (e.g., modular ratios) spans multiple elements; link styling is customized and consistent or intentionally conservative.\n* **Common system faces can earn 4** when rhythm, measures, punctuation, casing, and link treatment are disciplined and repeat. Minor issues only.\n\n**Score 3 \u2014 Competent baseline**\n\n* Readable with adequate hierarchy using a limited style set; may feel generic.\n* Defaults (system sans + near\u2011default link blue) are acceptable but not broken.\n* Small inconsistencies may appear (close heading levels, uneven list indents, occasional baseline drift or widows/orphans, inconsistent smart quotes, one over\u2011tracked all\u2011caps, minor nav/hero mismatches).\n\n**Score 2 \u2014 Below average**\n\n* Multiple issues reduce clarity/polish: inconsistent casing; \u201ceverything bold\u201d; random word\u2011level bolding; emoji bullets that break rhythm; over\u2011indented lists; heavy dividers; random tracking or all\u2011caps; display/mono used for body; mixed fonts between buttons and body; default link styling with thick default underline; mixed link treatments; repeated widows/orphans or unstable baselines. Voice reads junior despite legibility.\n\n**Score 1 \u2014 Poor**\n\n* Flat or confusing hierarchy; style proliferation; unreadable measures (e.g., \\~90\u2013100ch hero); collisions/overlaps; inconsistent quotes/apostrophes; broken lists/labels.\n\n**Pull\u2011downs to 2 (or 1 if frequent):** default link blue with default underline; unreasoned serif/sans mixing; visible reflow collisions; mismatched button fonts or strokes; harsh, oversized nameplate in navigation.\n\n**Refined minimal vs generic minimal:**\n\n* **Refined**: tuned neutrals; customized underline weight/offset; disciplined scale steps; stable baselines; optical alignment of icons/marks; consistent micro\u2011labels/dates; intentional hyphenation; bullets align with text; consistent casing.\n* **Generic**: default link blue/underline; uneven paragraph spacing; arbitrary size jumps; mixed alignment without rationale; unmodified \u201cNotion\u2011export\u201d toggles/dividers; emoji bullets; oversized or over\u2011tracked all\u2011caps; nav/hero compete for scale.\n\n---\n\n## Layout (weight = 35%)\n\n**Examine:**\nGrid usage (columns, gutters, container widths) and spacing system (multiples of 4/8/12); structural clarity (sections, scan paths, focal points, navigation affordances); image presentation (consistent crops, device\u2011frame consistency or bespoke mats, matched radii/borders/shadows, readable screenshots); innovation with control (novel structures that aid comprehension); breadth of evidence across sections and visible breakpoints.\n\n**Score 5 \u2014 Exceptional**\n\n* Masterful, point\u2011of\u2011view structure that elevates clarity while remaining disciplined.\n* Immaculate rhythm and alignment at visible breakpoints; optical fixes for asymmetric content; long, complex grids stay in sync.\n* Assets are harmonized (radii, borders, shadows, captions) with flawless consistency; even large galleries maintain exact mats/captions/gutters.\n\n**Score 4 \u2014 Strong**\n\n* Consistent grid and spacing; clear section hierarchy; strong alignment across sections.\n* Image/asset handling is deliberate and cohesive; cards/tiles feel unified.\n* Long repeated grids are disciplined (identical mats, radii, caption positions, gutter rhythm). Minor roughness is acceptable.\n* Uniform card grids may earn 4 only when mats/radii/spacing are notably refined and captions/labels are disciplined. Considered collage can also earn 4 when gutters, baselines, and captions repeat exactly and no crops are cut off.\n\n**Score 3 \u2014 Competent baseline**\n\n* A basic grid is present and mostly consistent; sections are readable with adequate spacing.\n* Common patterns (single column, centered hero, simple card grid, left\u2011text/right\u2011image hero) are executed decently but without a clear point of view.\n* Some inconsistencies may appear (gutters, container widths, vertical rhythm, image placement); device frames show light tuning.\n\n**Score 2 \u2014 Below average**\n\n* Structural problems: drifting container widths without rationale; unexplained switches between centered and left alignment; awkward rags; floaty calls to action that ignore the grid; masonry/collage tiles with inconsistent whitespace or cut\u2011off crops; small unreadable screenshots in generic device mocks; mixed tile ratios that cause rhythm flicker; inconsistent internal mats; oversized headings that overpower content; misaligned buttons/captions; billboard backgrounds crowd real content. Layout feels like an uncustomized template.\n\n**Score 1 \u2014 Poor**\n\n* Random placement; competing focal points; inconsistent widths/gutters; severe readability issues.\n* Haphazard screenshot handling; inconsistent radii/shadows; elements hug edges or overflow at visible breakpoints.\n\n**Common deductions and caps:**\n\n* Evidence limited to a **single hero or short view \u2192 cap at 3**, unless **Single\u2011view Pass** applies.\n* \u201cClean but generic\u201d templates (centered hero + simple grid with soft shadows/rounded corners and no point of view) should **not exceed 3** without visible refinement.\n* Repeated template modules with little customization: **cap at 3** and note **template scent high**.\n* If **\u22653 sloppy\u2011image cues** (cut\u2011offs, unreadable mocks, mixed radii/crops), **cap Layout at 2** and pull **Color** down when value flicker comes from mismatched whites/mats.\n\n---\n\n## Color (weight = 30%)\n\n**Examine:**\nPalette quality (harmony, hue/value control, consistency); neutrals (tuned grays/blacks, hue\u2011shifted borders/shadows, subtle overlays); accent strategy (sparseness and role clarity, link/call\u2011to\u2011action states); integration with imagery (does the shell unify diverse screenshots via mats, border tints, shadow logic, and sequencing).\n\n**Score 5 \u2014 Exceptional**\n\n* A sophisticated palette with precise value control; accents are sparse yet effective.\n* Neutrals and shadows are tuned; borders/overlays have intentional tints; varied content is unified effortlessly, including complex artwork.\n* Color expresses identity without noise and remains consistent across sections and states.\n\n**Score 4 \u2014 Strong**\n\n* A harmonious palette with controlled accents; link/call\u2011to\u2011action logic is clear or strongly implied by usage.\n* Neutrals are intentionally tuned (off\u2011black/off\u2011white) to support readability and hierarchy; gradients/illustrations sit comfortably within the system.\n* Conservative blue accents can still earn 4 when mats, borders, and grays are tuned and unify colorful content. Minor issues only.\n\n**Score 3 \u2014 Competent baseline**\n\n* A serviceable palette; the shell uses a single accent or default\u2011ish link blue acceptably.\n* When colorful tiles carry most color, the chrome does not clash but lacks unifying tactics that would lift it to 4.\n* States may be missing but are implied by stable patterns.\n\n**Score 2 \u2014 Below average**\n\n* Too many hues or values with little throughline; loud tiles overpower a claimed single\u2011accent scheme.\n* Flat, untuned grays; stark #000/#fff pairs; default bright link blue; inconsistent state colors.\n* Mixed tile backgrounds or mismatched whites cause grid flicker; full\u2011color social icons/client logos add noise; unnecessary colored outlines.\n* Pastel mats are attempted but overwhelmed by saturated foregrounds; value jumps (e.g., a saturated footer) break the page\u2019s structure.\n\n**Score 1 \u2014 Poor**\n\n* Clashing gradients; muddy overlays; illegible contrast; chaotic color with no role clarity.\n\n**Pull\u2011downs to 2:** pure #000/#fff with harsh default blue; mismatched tile backgrounds; muddy overlays; random hover colors; inconsistent visited link behavior; pastel mats that fail to unify saturated UIs; noisy social/logo rows; aggressive value jumps.\n\n**Tuned minimal vs default minimal:**\n\n* **Tuned**: slightly desaturated or hue\u2011shifted blue; consistent underline thickness/offset; hover/visited handled or implied; off\u2011black/off\u2011white neutrals; very light, even dividers; unified mats/shadows.\n* **Default**: pure black/white; harsh default blues; heavy generic shadows; inconsistent border tints; tile radii/shadows that do not match; multicolor logos/emoji adding noise.\n\n---\n\n# Red flags\n\nFlag these when clearly present and reflect them in explanations. Only add a flag when you can name at least two matching cues from the lists above; otherwise omit and reduce confidence.\n\n- template_scent_high:\n\n  - Obvious boilerplate patterns with minimal customization: centered \u201cI\u2019m [Name]\u201d hero with left text/right device, generic down arrow \u201cSee projects,\u201d uniform 2\u2011column rows with outline \u201cVIEW PROJECT\u201d buttons, billboard background words, stock \u201cAbout\u201d block, boilerplate footer, default link styles and underlines, visible \u201cMade with \u2026\u201d badge.\n  - Tokens that mirror popular UI kits without page\u2011level decisions: identical 12/16px radii everywhere; 24/24 paddings; Tailwind/Bootstrap default blues; identical card shadows; Inter/Roboto with untouched link defaults; Notion\u2011style layouts with unmodified toggles and dividers; emoji bullets as structure; oversized personal nameplate in nav.\n  - Repeated canned sections with identical structure, no bespoke visual decisions, and no tuning of mats, shadows, or link treatments; unexplained alternating center/left alignment and container widths that follow theme defaults.\n\n- sloppy_images:\n\n  - Inconsistent crops/aspect ratios; mixed/mismatched corner radii; aliasing/jaggies; compression artifacts; non\u2011retina blurriness; screenshots cut off or too zoomed out to read; tiny UI inside device frames.\n  - Generic device frames without customization; screenshots small/unreadable inside mocks; inconsistent mats/shadows/border weights; white\u2011balance mismatch across tiles; irregular masonry gutters.\n  - Misaligned captions/labels; inconsistent drop\u2011shadow directions; pixel wobble across a grid; outline/button strokes that do not match text weight; full\u2011color social/client logos used as graphic tiles without harmonization.\n\n- process_soup:\n  - Long timelines/diagrams overwhelming final visuals; walls of sticky\u2011note photos overshadowing product.\n  - Persona/journey maps with unreadable small text; very little outcome imagery; excessive wireframes with no polished result.\n\nNote: If uncertain, omit the flag and reduce confidence instead. If you do flag, list the cues you observed in your explanations.\n\n</rubric>\n\n<scoring_calculation> \n- base_score = (typography \u00d7 0.35) + (layout_composition \u00d7 0.35) + (color \u00d7 0.30)\n- penalty = sum of red flag penalties:\n  - template_scent_high: 0.6 points\n  - sloppy_images: 0.5 points\n  - process_soup: 0.2 points\n- overall_weighted_score = base_score - penalty\n- overall_confidence = average of individual dimension confidences\n</scoring_calculation>\n\n\n<output_format>\n\nReturn only valid JSON matching this exact structure:\n\n```json\n{\n  \"candidate_id\": \"X\",\n  \"scores\": {\n    \"typography\": {\n      \"score\": 1-5,\n      \"explanation\": \"detailed reasoning with specific evidence\",\n      \"confidence\": 1-5\n    },\n    \"layout_composition\": {\n      \"score\": 1-5,\n      \"explanation\": \"detailed reasoning with specific evidence\",\n      \"confidence\": 1-5\n    },\n    \"color\": {\n      \"score\": 1-5,\n      \"explanation\": \"detailed reasoning with specific evidence\",\n      \"confidence\": 1-5\n    }\n  },\n  \"red_flags\": [\"list any that apply\"],\n  \"overall_weighted_score\": calculated_number,\n  \"overall_confidence\": calculated_number\n}\n```\n</output_format>\n\n<calibration_examples>\n\n<calibration_example_1>\nimg_name: exemplar_7.jpg\noverall_score: 0.5\ntypography: 1\nlayout_composition: 1\ncolor: 2\nred_flags: [\"template_scent_high\", \"sloppy_images\"]\n</calibration_example_1>\n\n<calibration_example_2>\nimg_name: candidate_20.jpg\noverall_score: 2.0\ntypography: 2\nlayout_composition: 2\ncolor: 2\nred_flags: []\n</calibration_example_2>\n\n<calibration_example_3>\nimg_name: candidate_9.jpg\noverall_score: 3.0\ntypography: 3\nlayout_composition: 3\ncolor: 3\nred_flags: []\n</calibration_example_3>\n\n<calibration_example_4>\nimg_name: exemplar_1.jpg\noverall_score: 4.0\ntypography: 4\nlayout_composition: 4\ncolor: 4\nred_flags: []\n</calibration_example_4>\n\n<calibration_example_5>\nimg_name: candidate_46.jpg\noverall_score: 5.0\ntypography: 5\nlayout_composition: 5\ncolor: 5\nred_flags: []\n</calibration_example_5>\n\n<calibration_example_6>\nimg_name: exemplar_2.jpg\noverall_score: 4.65\ntypography: 5\nlayout_composition: 4\ncolor: 5\nred_flags: []\n</calibration_example_6>\n\n<calibration_example_7>\nimg_name: exemplar_3.jpg\noverall_score: 1.7\ntypography: 2\nlayout_composition: 2\ncolor: 1\nred_flags: []\n</calibration_example_7>\n\n<calibration_example_8>\nimg_name: exemplar_4.jpg\noverall_score: 1.65\ntypography: 2\nlayout_composition: 1\ncolor: 2\nred_flags: []\n</calibration_example_8>\n\n<calibration_example_9>\nimg_name: exemplar_5.jpg\noverall_score: 4.7\ntypography: 5\nlayout_composition: 5\ncolor: 4\nred_flags: []\n</calibration_example_9>\n\n<calibration_example_10>\nimg_name: exemplar_6.jpg\noverall_score: 4.35\ntypography: 5\nlayout_composition: 4\ncolor: 4\nred_flags: []\n</calibration_example_10>\n\n<calibration_example_11>\nimg_name: exemplar_8.jpg\noverall_score: 2.65\ntypography: 2\nlayout_composition: 3\ncolor: 3\nred_flags: []\n</calibration_example_11>\n\n<calibration_example_12>\nimg_name: candidate_12.jpg\noverall_score: 4.65\ntypography: 4\nlayout_composition: 5\ncolor: 5\nred_flags: []\n</calibration_example_12>\n\n<calibration_example_13>\nimg_name: candidate_13.jpg\noverall_score: 2.25\ntypography: 2\nlayout_composition: 1\ncolor: 4\nred_flags: []\n</calibration_example_13>\n\n<calibration_example_14>\nimg_name: candidate_14.jpg\noverall_score: 4.7\ntypography: 5\nlayout_composition: 5\ncolor: 4\nred_flags: []\n</calibration_example_14>\n\n<calibration_example_15>\nimg_name: candidate_26.jpg\noverall_score: 0.55\ntypography: 2\nlayout_composition: 1\ncolor: 1\nred_flags: [\"sloppy_images\", \"template_scent_high\"]\n</calibration_example_15>\n\n<calibration_example_16>\nimg_name: candidate_32.jpg\noverall_score: 4.35\ntypography: 5\nlayout_composition: 4\ncolor: 4\nred_flags: []\n</calibration_example_16>\n\n<calibration_example_17>\nimg_name: candidate_33.jpg\noverall_score: 3.0\ntypography: 3\nlayout_composition: 3\ncolor: 3\nred_flags: []\n</calibration_example_17>\n\n<calibration_example_18>\nimg_name: candidate_35.jpg\noverall_score: 4.7\ntypography: 5\nlayout_composition: 5\ncolor: 4\nred_flags: []\n</calibration_example_18>\n\n<calibration_example_19>\nimg_name: candidate_38.jpg\noverall_score: 2.95\ntypography: 3\nlayout_composition: 2\ncolor: 4\nred_flags: []\n</calibration_example_19>\n\n<calibration_example_20>\nimg_name: candidate_44.jpg\noverall_score: 4.7\ntypography: 5\nlayout_composition: 5\ncolor: 4\nred_flags: []\n</calibration_example_20>\n\n</calibration_examples>\n",
+  "candidate_ratings": {
+    "1": {
+      "candidate_id": "1",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_1.jpg",
+      "evaluated_at": "2025-09-05T10:50:44.887013",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography uses a serif typeface with a distinct style. The hierarchy is clear with the name in blue and larger size. Reconstruction: The type scale is evident with different weights and sizes for emphasis. Link/State Audit: Links are styled in blue, providing a clear indication of interactivity. Consistency Map: Consistent use of serif typeface and blue for links. Failure Theme: Limited evidence to assess full hierarchy and readability. Anchor Comparison: Closest to exemplar 3 with similar serif usage but lacks full evidence for higher score.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout is centered with a clear focal point on the text. Reconstruction: The grid is simple with centered alignment. Link/State Audit: Vertical navigation on the right is clear. Consistency Map: Consistent centered layout. Failure Theme: Limited evidence to assess full layout structure. Anchor Comparison: Closest to exemplar 3 with similar centered layout but lacks full evidence for higher score.",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal with blue accents. Reconstruction: Blue is used for links, providing a clear accent. Neutrals are used for the background. Consistency Map: Consistent use of blue for links. Failure Theme: Limited evidence to assess full color strategy. Anchor Comparison: Closest to exemplar 3 with similar minimal color usage but lacks full evidence for higher score.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 2.5
+    },
+    "23": {
+      "candidate_id": "23",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_23.jpg",
+      "evaluated_at": "2025-09-05T10:50:45.646795",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Observations: The typography is clean with a clear hierarchy. The use of size and weight is consistent across sections. Reconstruction: The type scale is well-defined with appropriate leading and spacing. Link/State Audit: Links are clearly styled with consistent underlines. Consistency Map: Repeated use of bold headings, consistent body text, and uniform link styling. Failure Theme: None observed. Anchor Comparison: Closest to exemplar_6 with similar hierarchy and readability. Score Justification: Strong hierarchy and readability with minor issues.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Observations: The layout is structured with a clear grid system. Images are well-aligned and consistent. Reconstruction: Grid and spacing are consistent, with clear section hierarchy. Link/State Audit: Navigation and CTAs are well-placed and consistent. Consistency Map: Consistent card layouts, uniform image presentation, and clear section breaks. Failure Theme: None observed. Anchor Comparison: Similar to exemplar_6 with strong grid usage and alignment. Score Justification: Consistent and clear layout with minor roughness.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Observations: The color palette is harmonious with controlled accents. Neutrals are well-tuned. Reconstruction: The use of color is consistent, with clear accent roles. Link/State Audit: Links and CTAs have clear color states. Consistency Map: Repeated use of accent colors, consistent neutrals, and unified imagery. Failure Theme: None observed. Anchor Comparison: Similar to exemplar_6 with a harmonious palette and controlled accents. Score Justification: Strong color usage with minor issues.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 3
+    },
+    "13": {
+      "candidate_id": "13",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_13.jpg",
+      "evaluated_at": "2025-09-05T10:50:46.979239",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "Observations: The typography uses a single typeface with limited hierarchy. Reconstruction: The type scale lacks variation, with similar sizes for headings and body text. Link/State Audit: Links are underlined but lack customization. Consistency Map: Consistent use of font across sections but lacks differentiation. Failure Theme: Flat hierarchy with minimal variation. Anchor Comparison: Closest to exemplar_8 with similar lack of hierarchy.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 1,
+          "explanation": "Observations: The layout is simple with a centered structure. Reconstruction: Basic grid with minimal variation in spacing. Link/State Audit: No clear navigation or section differentiation. Consistency Map: Uniform structure across sections. Failure Theme: Lacks structural clarity and innovation. Anchor Comparison: Closest to exemplar_4 with similar simplicity.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Observations: The color palette is harmonious with a consistent use of green accents. Reconstruction: Neutrals are well-tuned, supporting readability. Link/State Audit: Links use a consistent color. Consistency Map: Repeated use of green across sections. Failure Theme: None. Anchor Comparison: Similar to exemplar_6 with a strong color palette.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 2.25,
+      "penalty_applied": 0,
+      "overall_weighted_score": 2.25,
+      "overall_confidence": 3
+    },
+    "22": {
+      "candidate_id": "22",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_22.jpg",
+      "evaluated_at": "2025-09-05T10:50:48.541256",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Observations: Consistent use of type across sections with clear hierarchy. Reconstruction: Type scale is well-defined with appropriate leading and casing. Link/State Audit: Links are styled consistently. Consistency Map: Repeated use of type styles across sections. Failure Theme: None. Anchor Comparison: Closest to exemplar_6 with strong hierarchy and readability.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Observations: Grid is consistent with clear section hierarchy. Reconstruction: Grid/Spacing is well-executed with even gutters and alignment. Consistency Map: Repeated grid patterns across sections. Failure Theme: None. Anchor Comparison: Similar to exemplar_5 with disciplined grid and spacing.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Observations: Harmonious palette with controlled accents. Reconstruction: Neutrals are tuned, and accents are used sparingly. Consistency Map: Consistent color use across sections. Failure Theme: None. Anchor Comparison: Similar to exemplar_6 with a harmonious palette.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 3
+    },
+    "29": {
+      "candidate_id": "29",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_29.jpg",
+      "evaluated_at": "2025-09-05T10:50:49.194803",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean with a clear hierarchy. The use of bold for headings and regular weight for body text is consistent. Reconstruction: The type scale is appropriate with readable line heights and character counts. Link/State Audit: Links are styled with a distinct color, but underline treatment is default. Consistency Map: Headings, body text, and links are consistent across sections. Failure Theme: Default link styling. Anchor Comparison: Closest to exemplar 3 with similar hierarchy and readability.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a simple grid with consistent spacing. Reconstruction: The grid is basic but effective, with clear section divisions. Link/State Audit: CTA buttons are consistently placed. Consistency Map: Grid and spacing are consistent across sections. Failure Theme: Generic layout without a strong point of view. Anchor Comparison: Similar to exemplar 8 with a basic grid and consistent spacing.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal with a primary blue accent. Reconstruction: Neutrals are used effectively, but the palette lacks depth. Link/State Audit: Blue is used for links and CTAs, providing clear state logic. Consistency Map: Blue accent is consistent across sections. Failure Theme: Limited color palette. Anchor Comparison: Similar to exemplar 8 with a minimal palette and consistent accent use.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3.0
+    },
+    "19": {
+      "candidate_id": "19",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_19.jpg",
+      "evaluated_at": "2025-09-05T10:50:49.453797",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clear with a strong hierarchy using size and weight. The main headings are bold and large, while body text is smaller and readable. Reconstruction: The type scale is consistent, with clear differentiation between headings and body text. Link/State Audit: Links are styled with a distinct color, but there is no visible hover state. Consistency Map: The use of bold headings, consistent body text size, and link color is repeated across sections. Failure Theme: The typography is competent but lacks unique refinement. Anchor Comparison: Closest to exemplar 3, with similar clarity but lacking the refinement of exemplar 1. Score Justification: The typography is competent but does not exceed baseline due to lack of unique styling.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a simple grid with clear sections. Images and text are aligned well, but there are no innovative structures. Reconstruction: The grid is basic, with centered text and images. There is adequate spacing between sections. Link/State Audit: Navigation is clear, but there are no visible interactive states. Consistency Map: Consistent use of centered text and image alignment across sections. Failure Theme: The layout is functional but lacks a strong point of view. Anchor Comparison: Similar to exemplar 8, with a basic grid and clear sections. Score Justification: The layout is competent but does not show advanced structuring or innovation.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is bright with a focus on blue accents. The background is mostly white, with some gradient sections. Reconstruction: The use of blue for links and accents is consistent, but the overall palette lacks depth. Link/State Audit: Links are clearly colored but lack hover states. Consistency Map: Consistent use of blue accents and white backgrounds. Failure Theme: The color scheme is basic and lacks sophistication. Anchor Comparison: Closest to exemplar 8, with a similar use of color but lacking the refinement of exemplar 6. Score Justification: The color usage is competent but does not demonstrate advanced control or unification.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "16": {
+      "candidate_id": "16",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_16.jpg",
+      "evaluated_at": "2025-09-05T10:50:49.454386",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Observations: The typography is clear with a strong hierarchy, using large, bold headings and readable body text. Reconstruction: The type scale is consistent, with appropriate leading and spacing. Link/State Audit: Links are clearly styled and consistent. Consistency Map: Repeated use of bold headings, consistent body text, and uniform link styling. Anchor Comparison: Closest to exemplar_6 with similar clarity and hierarchy. Score Justification: Strong hierarchy and readability justify a score of 4.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Observations: The layout uses a clear grid system with well-aligned sections. Reconstruction: Consistent spacing and alignment across sections, with a clear reading path. Consistency Map: Repeated grid structure, consistent section alignment, and uniform image presentation. Anchor Comparison: Similar to exemplar_6 with disciplined grid use. Score Justification: The layout's clarity and consistency support a score of 4.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Observations: The color palette is harmonious with controlled accents. Reconstruction: Neutrals are well-tuned, and accents are used sparingly. Consistency Map: Consistent use of neutrals and accents across sections. Anchor Comparison: Comparable to exemplar_6 with a similar palette strategy. Score Justification: The controlled use of color and harmony justify a score of 4.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 3
+    },
+    "3": {
+      "candidate_id": "3",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_3.jpg",
+      "evaluated_at": "2025-09-05T10:50:50.144708",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean with a simple hierarchy. Reconstruction: The type scale is consistent, with readable body text and clear headings. Link/State Audit: Links are underlined, providing clear interaction cues. Consistency Map: Consistent use of font size and weight across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar_3 with similar simplicity but lacks the depth of hierarchy. Score Justification: Meets baseline expectations with no major issues.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout is straightforward with a single-column structure. Reconstruction: Consistent spacing and alignment are maintained. Link/State Audit: Links are clearly defined within the layout. Consistency Map: Consistent section spacing and alignment. Failure Theme: None significant. Anchor Comparison: Similar to exemplar_3, with a simple and effective layout. Score Justification: Adequate layout with no major issues.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal with a focus on neutrals. Reconstruction: Consistent use of color for links and text. Link/State Audit: Links are clearly distinguished by color. Consistency Map: Consistent use of color across sections. Failure Theme: None significant. Anchor Comparison: Similar to exemplar_3, with a minimal color approach. Score Justification: Meets baseline expectations with no major issues.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3.0
+    },
+    "14": {
+      "candidate_id": "14",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_14.jpg",
+      "evaluated_at": "2025-09-05T10:50:50.479910",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Observations: Consistent typography with clear hierarchy and readability. Reconstruction: Type Scale is well-managed with appropriate leading and casing. Link/State Audit: Links are clear and consistent. Consistency Map: Repeated patterns in headings, body text, and links. Failure Theme: None. Anchor Comparison: Closest to exemplar_1 with similar hierarchy and readability. Score Justification: Strong hierarchy and readability with minor issues.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Observations: Consistent grid and spacing with clear section hierarchy. Reconstruction: Grid/Spacing is well-structured with clear reading paths. Link/State Audit: Navigation and section transitions are clear. Consistency Map: Repeated patterns in section layout and image presentation. Failure Theme: None. Anchor Comparison: Closest to exemplar_1 with similar grid consistency. Score Justification: Strong layout with clear structure and minor roughness.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Observations: Harmonious palette with controlled accents. Reconstruction: Neutrals and accents are well-tuned. Link/State Audit: Accent strategy is clear and consistent. Consistency Map: Repeated use of neutrals and accents across sections. Failure Theme: None. Anchor Comparison: Closest to exemplar_1 with similar color harmony. Score Justification: Strong color use with minor issues.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 3
+    },
+    "31": {
+      "candidate_id": "31",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_31.jpg",
+      "evaluated_at": "2025-09-05T10:50:50.733430",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography uses a clear hierarchy with distinct headings and body text. Reconstruction: The type scale is consistent, with readable line heights and adequate contrast. Link/State Audit: Links are styled consistently, though there is no visible hover state. Consistency Map: Headings, body text, and links are consistent across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar_3 with similar hierarchy and readability. Score Justification: Meets baseline with no major issues.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a standard grid with clear sections. Reconstruction: Consistent container widths and spacing, though some sections feel generic. Link/State Audit: Navigation is clear, but lacks innovation. Consistency Map: Consistent grid and spacing across sections. Failure Theme: Generic layout without a strong point of view. Anchor Comparison: Similar to exemplar_3 with a basic grid. Score Justification: Competent but lacks distinctiveness.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal with a focus on neutrals. Reconstruction: Consistent use of black, white, and a single accent color. Link/State Audit: Accent color used for links and CTAs. Consistency Map: Neutrals and accents are consistent across sections. Failure Theme: None significant. Anchor Comparison: Similar to exemplar_3 with a minimal palette. Score Justification: Meets baseline with no major issues.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "27": {
+      "candidate_id": "27",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_27.jpg",
+      "evaluated_at": "2025-09-05T10:50:51.420125",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean and readable with a consistent style across sections. Reconstruction: The type scale is simple, with clear hierarchy through size and weight. Link/State Audit: Links are styled consistently with a clear call-to-action. Consistency Map: Repeated use of a single typeface and consistent link styling. Failure Theme: Generic minimalism without distinctive tuning. Anchor Comparison: Closest to exemplar 3, with similar clean but generic typography.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a simple grid with consistent spacing. Reconstruction: The grid is basic, with centered alignment and consistent container widths. Link/State Audit: Consistent button styles across sections. Consistency Map: Repeated use of centered hero and consistent spacing. Failure Theme: Generic layout without a strong point of view. Anchor Comparison: Closest to exemplar 3, with similar clean but generic layout.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal with a single accent color. Reconstruction: Neutrals are consistent, and the accent color is used sparingly. Link/State Audit: Accent color used for links and buttons. Consistency Map: Repeated use of neutrals and a single accent color. Failure Theme: Lack of distinctive color strategy. Anchor Comparison: Closest to exemplar 3, with similar minimal color use.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.4,
+      "overall_confidence": 3
+    },
+    "10": {
+      "candidate_id": "10",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_10.jpg",
+      "evaluated_at": "2025-09-05T10:50:51.533517",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is readable with a clear hierarchy, but it feels generic. Reconstruction: The type scale is consistent, with adequate leading and measure. Link/State Audit: Links are styled with a default blue, which is consistent but lacks customization. Consistency Map: The same typeface and scale are used across sections. Failure Theme: Generic minimalism. Anchor Comparison: Closest to exemplar 3, with similar readability and hierarchy.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a simple grid with centered text and images. Reconstruction: The grid is consistent, with adequate spacing and alignment. Link/State Audit: Buttons are placed consistently. Consistency Map: The layout maintains a consistent structure across sections. Failure Theme: Generic template layout. Anchor Comparison: Closest to exemplar 3, with similar grid consistency.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal, with a focus on blue accents. Reconstruction: Neutrals are consistent, and the blue accent is used for links and buttons. Link/State Audit: The blue accent is consistent across links and buttons. Consistency Map: The color scheme is consistent across sections. Failure Theme: Default minimalism. Anchor Comparison: Closest to exemplar 3, with similar color consistency.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "28": {
+      "candidate_id": "28",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_28.jpg",
+      "evaluated_at": "2025-09-05T10:50:51.802322",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean with a clear hierarchy, using a sans-serif typeface. Reconstruction: The type scale is consistent with clear headings and body text differentiation. Link/State Audit: Links are underlined and consistent. Consistency Map: Consistent use of typeface and hierarchy across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar_3 with similar hierarchy and readability. Score Justification: Meets baseline with no major issues.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout is structured with clear sections for experience, education, and skills. Reconstruction: Uses a simple grid with adequate spacing. Link/State Audit: Consistent alignment and spacing. Consistency Map: Repeated section structure and alignment. Failure Theme: None significant. Anchor Comparison: Closest to exemplar_3 with similar grid usage. Score Justification: Competent baseline with clear structure.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal with a focus on black, white, and a subtle gradient. Reconstruction: Neutrals are consistent, and the gradient adds a slight accent. Link/State Audit: Links are blue, consistent with the minimal palette. Consistency Map: Consistent use of color across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar_3 with similar minimal color use. Score Justification: Meets baseline with no major issues.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "12": {
+      "candidate_id": "12",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_12.jpg",
+      "evaluated_at": "2025-09-05T10:50:51.992555",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Observations: The typography is clean with a consistent hierarchy. Reconstruction: The type scale is well-defined with clear differentiation between headings and body text. Link/State Audit: Links are clearly styled and consistent. Consistency Map: Consistent use of font size and weight across sections. Anchor Comparison: Closest to exemplar_6 with similar clean typography but lacks the same level of refinement.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 5,
+          "explanation": "Observations: The layout is innovative with a chat-like structure that guides the viewer. Reconstruction: The grid is consistent, and the spacing is well-managed. Link/State Audit: Interactive elements are clearly defined. Consistency Map: Consistent spacing and alignment throughout. Anchor Comparison: Similar to exemplar_5 with a unique layout approach.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 5,
+          "explanation": "Observations: The color palette is harmonious with effective use of accents. Reconstruction: Neutrals are well-tuned, and accents are used sparingly but effectively. Link/State Audit: Color is used to differentiate interactive elements. Consistency Map: Consistent color usage across sections. Anchor Comparison: Comparable to exemplar_5 with a strong color strategy.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.65,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.65,
+      "overall_confidence": 3
+    },
+    "33": {
+      "candidate_id": "33",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_33.jpg",
+      "evaluated_at": "2025-09-05T10:50:52.208319",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is minimal with a focus on logo presentation. Reconstruction: The type scale is limited, with emphasis on brand names. Link/State Audit: Limited evidence of link styling. Consistency Map: Consistent use of brand logos and minimal text. Failure Theme: Lack of diverse typographic hierarchy. Anchor Comparison: Closest to exemplar 8, with similar minimal typography. Score Justification: Limited evidence restricts score to 3.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: Simple grid layout with large image tiles. Reconstruction: Basic grid with consistent spacing. Link/State Audit: No visible links or CTAs. Consistency Map: Consistent tile sizes and spacing. Failure Theme: Lack of complex grid usage. Anchor Comparison: Similar to exemplar 8, with basic grid structure. Score Justification: Limited layout complexity keeps score at 3.",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: Neutral background with colorful brand logos. Reconstruction: Color palette is minimal, focusing on brand colors. Link/State Audit: No visible link color states. Consistency Map: Consistent use of brand colors. Failure Theme: Lack of color unification beyond brand logos. Anchor Comparison: Similar to exemplar 8, with minimal color use. Score Justification: Limited color strategy keeps score at 3.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 2.5
+    },
+    "11": {
+      "candidate_id": "11",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_11.jpg",
+      "evaluated_at": "2025-09-05T10:50:52.279351",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean and readable with a simple hierarchy. The use of a single typeface maintains consistency. Reconstruction: The type scale is basic, with clear headings and body text. Link/State Audit: Links are underlined, but no hover states are visible. Consistency Map: Consistent use of font size and weight across sections. Failure Theme: Generic minimal typography. Anchor Comparison: Closest to exemplar 3, with similar simplicity but lacks the refinement of exemplar 1.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The grid is simple and consistent, with a clear structure. Reconstruction: The layout uses a basic grid with equal spacing between tiles. Link/State Audit: Navigation is straightforward, but lacks interactive elements. Consistency Map: Consistent tile sizes and spacing. Failure Theme: Generic grid layout without a strong point of view. Anchor Comparison: Similar to exemplar 3, with a basic grid but lacking the complexity of exemplar 5.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is vibrant and consistent across tiles. Reconstruction: The use of bright colors is balanced, with no clashing hues. Link/State Audit: No visible state changes for links. Consistency Map: Consistent use of color across different sections. Failure Theme: Lacks a sophisticated color strategy. Anchor Comparison: Closest to exemplar 3, with a similar use of color but without the refinement of exemplar 6.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "20": {
+      "candidate_id": "20",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_20.jpg",
+      "evaluated_at": "2025-09-05T10:50:53.023419",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean and readable with a consistent use of sans-serif fonts. Reconstruction: The type scale is simple, with clear headings and body text. Link/State Audit: No visible link styles or states. Consistency Map: Consistent font usage across tiles. Failure Theme: Generic sans-serif usage without distinct hierarchy. Anchor Comparison: Closest to exemplar_3 with similar clean but generic typography.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a simple grid with evenly spaced tiles. Reconstruction: A basic grid structure with consistent spacing and alignment. Link/State Audit: No visible links or states. Consistency Map: Uniform tile sizes and spacing. Failure Theme: Generic grid without a strong point of view. Anchor Comparison: Similar to exemplar_3 with a basic grid layout.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is varied with each tile having its own scheme. Reconstruction: No unifying color strategy across the portfolio. Link/State Audit: No visible link or CTA colors. Consistency Map: Each project uses its own color scheme. Failure Theme: Lack of a cohesive color strategy. Anchor Comparison: Similar to exemplar_3 with varied colors but no unifying theme.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "25": {
+      "candidate_id": "25",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_25.jpg",
+      "evaluated_at": "2025-09-05T10:50:53.218614",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean and readable with a clear hierarchy. Reconstruction: The type scale is consistent with adequate leading and measure. Link/State Audit: Links are styled conservatively. Consistency Map: Consistent use of headings and body text across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar_8 with similar readability and hierarchy. Score Justification: Meets competent baseline with no major issues.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a simple grid with consistent spacing. Reconstruction: Grid/Spacing is consistent with clear section separation. Image presentation is adequate with readable screenshots. Consistency Map: Repeated use of section headers and image placement. Failure Theme: None significant. Anchor Comparison: Similar to exemplar_8 with basic grid execution. Score Justification: Competent baseline with no major structural issues.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is harmonious with a single accent color. Reconstruction: Neutrals are used effectively, and accents are controlled. Link/State Audit: Link colors are consistent. Consistency Map: Consistent use of accent colors across sections. Failure Theme: None significant. Anchor Comparison: Similar to exemplar_8 with a serviceable palette. Score Justification: Meets competent baseline with no major color issues.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "32": {
+      "candidate_id": "32",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_32.jpg",
+      "evaluated_at": "2025-09-05T10:50:53.916078",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean and minimal with a consistent use of a single typeface. Reconstruction: The hierarchy is clear but basic, with no visible differentiation in scale or weight. Link/State Audit: Links are not visibly styled, lacking state differentiation. Consistency Map: Consistent use of typeface and size across sections. Failure Theme: Lacks typographic richness. Anchor Comparison: Closest to exemplar_8 with similar minimal style but lacks the refinement seen in exemplar_6.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout is straightforward with a single-column structure. Reconstruction: Consistent spacing and alignment, but lacks complexity or innovation. Consistency Map: Uniform spacing and alignment throughout. Failure Theme: Basic layout without a strong point of view. Anchor Comparison: Similar to exemplar_8, but less refined than exemplar_6.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color scheme is minimal with a focus on neutrals. Reconstruction: Consistent use of neutrals without any accent colors. Consistency Map: Uniform color usage across sections. Failure Theme: Lacks color depth or identity. Anchor Comparison: Similar to exemplar_8, but lacks the color refinement of exemplar_6.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "15": {
+      "candidate_id": "15",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_15.jpg",
+      "evaluated_at": "2025-09-05T10:50:54.008320",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean with a clear hierarchy. The use of scale and weight is consistent across sections. Reconstruction: The type scale is appropriate with readable body text and distinct headings. Link/State Audit: Links are not prominently featured, limiting state assessment. Consistency Map: Consistent use of type across sections. Failure Theme: None evident. Anchor Comparison: Closest to exemplar_8 with similar hierarchy and readability. Score Justification: Meets competent baseline with no major issues.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout is structured with clear sections. Images are well-placed but some are slightly cut off. Reconstruction: Grid is consistent with adequate spacing. Link/State Audit: Limited evidence of interactive elements. Consistency Map: Consistent section spacing and alignment. Failure Theme: Slight image cut-offs. Anchor Comparison: Closest to exemplar_8 with similar grid consistency. Score Justification: Basic grid present with minor image issues.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is harmonious with controlled accents. Reconstruction: Neutrals are well-tuned, and accents are used sparingly. Link/State Audit: Limited evidence of link states. Consistency Map: Consistent use of color across sections. Failure Theme: None evident. Anchor Comparison: Closest to exemplar_8 with similar color harmony. Score Justification: Serviceable palette with no major issues.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "24": {
+      "candidate_id": "24",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_24.jpg",
+      "evaluated_at": "2025-09-05T10:50:54.291730",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "Observations: The typography uses a basic sans-serif font with limited hierarchy. The text is readable but lacks distinctiveness. Reconstruction: The type scale is minimal with little variation in size or weight. Link/State Audit: Links are not clearly differentiated. Consistency Map: The typography is consistent but lacks refinement. Failure Theme: Generic minimal typography without strong hierarchy. Anchor Comparison: Closest to exemplar 8, but with less hierarchy.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Observations: The layout is simple with a centered hero and grid of images. Reconstruction: The grid is basic with consistent spacing but lacks innovation. Link/State Audit: Navigation is straightforward but lacks visual interest. Consistency Map: Consistent grid but lacks a strong point of view. Failure Theme: Template-like layout without unique structure. Anchor Comparison: Similar to exemplar 8, but with less structural clarity.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal with a focus on neutrals and a single accent color. Reconstruction: The neutrals are consistent, and the accent color is used sparingly. Link/State Audit: Color states are not clearly defined. Consistency Map: Consistent use of color but lacks depth. Failure Theme: Default minimal color palette. Anchor Comparison: Similar to exemplar 8, with a slightly more cohesive color scheme.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.3,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.15,
+      "overall_confidence": 3
+    },
+    "2": {
+      "candidate_id": "2",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_2.jpg",
+      "evaluated_at": "2025-09-05T10:50:58.254368",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean and readable, with a consistent style across sections. Reconstruction: The type scale is simple, with clear hierarchy through size and weight. Link/State Audit: Links are clear but lack distinctive styling. Consistency Map: Consistent use of font size and weight across sections. Failure Theme: Generic minimal style. Anchor Comparison: Closest to exemplar 3, with similar readability and hierarchy.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout is straightforward with a grid structure. Reconstruction: Consistent spacing and alignment, but lacks innovation. Consistency Map: Uniform grid and spacing across icon displays. Failure Theme: Basic grid without a strong point of view. Anchor Comparison: Similar to exemplar 3, with a basic but consistent layout.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is harmonious with consistent use of accents. Reconstruction: Neutrals are well-tuned, and accents are used sparingly. Consistency Map: Consistent color use across icons and sections. Failure Theme: Lacks distinctive color strategy. Anchor Comparison: Similar to exemplar 3, with a competent but unremarkable color scheme.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "17": {
+      "candidate_id": "17",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_17.jpg",
+      "evaluated_at": "2025-09-05T10:50:58.939193",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean and readable with a consistent hierarchy. Reconstruction: The type scale is clear with distinct headings and body text. Link/State Audit: Links are not prominently styled, which maintains a minimal aesthetic. Consistency Map: Consistent use of type across sections. Failure Theme: None evident. Anchor Comparison: Closest to exemplar 8 with similar minimal style. Score Justification: Meets competent baseline with no major issues.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout is structured with a clear grid system. Reconstruction: Grid/Spacing is consistent with evenly spaced projects. Link/State Audit: Navigation is straightforward. Consistency Map: Consistent project tile layout. Failure Theme: None evident. Anchor Comparison: Similar to exemplar 8 with a straightforward grid. Score Justification: Competent baseline with no major structural issues.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal with a focus on neutrals. Reconstruction: Unification & State Logic is maintained with consistent use of color. Link/State Audit: Color use is subtle and does not distract. Consistency Map: Consistent use of color across sections. Failure Theme: None evident. Anchor Comparison: Similar to exemplar 8 with a minimal color approach. Score Justification: Competent baseline with no major color issues.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "18": {
+      "candidate_id": "18",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_18.jpg",
+      "evaluated_at": "2025-09-05T10:51:03.855709",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is readable with a clear hierarchy, but it feels somewhat generic. Reconstruction: The type scale is consistent, but there are no standout features in terms of optical alignment or micro-craft. Link/State Audit: Links are styled conservatively without customization. Consistency Map: The typography is consistent across sections, but lacks distinctive features. Failure Theme: Generic minimal typography. Anchor Comparison: Closest to exemplar 3, with similar readability and hierarchy. Score Justification: The typography is competent but lacks the refinement needed for a higher score.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a basic grid structure with consistent spacing. Reconstruction: The grid is simple and mostly consistent, with adequate spacing and alignment. Link/State Audit: The layout supports clear navigation paths. Consistency Map: The grid and spacing are consistent across sections. Failure Theme: Generic layout without a strong point of view. Anchor Comparison: Similar to exemplar 3, with a basic but functional grid. Score Justification: The layout is competent but lacks the innovation or refinement for a higher score.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is serviceable, with a single accent color used sparingly. Reconstruction: Neutrals are used effectively, but there is no standout color strategy. Link/State Audit: Color usage is consistent but lacks distinctive roles. Consistency Map: The color scheme is consistent across sections. Failure Theme: Default minimal color usage. Anchor Comparison: Closest to exemplar 3, with a similar approach to color. Score Justification: The color usage is competent but lacks the sophistication needed for a higher score.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "26": {
+      "candidate_id": "26",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_26.jpg",
+      "evaluated_at": "2025-09-05T10:51:09.116388",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Observations: Consistent hierarchy with clear headings and body text. Reconstruction: Type scale is well-defined with appropriate leading and casing. Link/State Audit: Links are styled consistently. Consistency Map: Repeated use of headings, body text, and labels across sections. Anchor Comparison: Closest to exemplar_6 with similar hierarchy and readability.",
+          "confidence": 3.5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Observations: Consistent grid and spacing across sections. Reconstruction: Grid is clear with well-aligned sections and images. Link/State Audit: Navigation and CTAs are well-placed. Consistency Map: Repeated grid structure and image placement. Anchor Comparison: Similar to exemplar_5 with strong alignment and section clarity.",
+          "confidence": 3.5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Observations: Harmonious palette with controlled accents. Reconstruction: Neutrals are well-tuned, supporting readability. Link/State Audit: Accent colors are used effectively for links and CTAs. Consistency Map: Consistent use of color across sections. Anchor Comparison: Similar to exemplar_6 with a cohesive color strategy.",
+          "confidence": 3.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 3.5
+    },
+    "35": {
+      "candidate_id": "35",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_35.jpg",
+      "evaluated_at": "2025-09-05T10:51:31.661359",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is minimal with a single typeface used consistently. Reconstruction: The hierarchy is clear but basic, with no visible scale system. Link/State Audit: Links are underlined but lack customization. Consistency Map: Consistent use of typeface and spacing across sections. Failure Theme: Generic minimalism without refinement. Anchor Comparison: Closest to exemplar 8, with similar minimal style but lacks the refinement seen in exemplar 6.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout is simple and structured. Reconstruction: Basic grid with consistent spacing. Link/State Audit: No visible state changes. Consistency Map: Consistent section alignment and spacing. Failure Theme: Lacks innovation or point of view. Anchor Comparison: Similar to exemplar 8, with a straightforward layout but lacks the complexity and refinement of exemplar 6.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal with a focus on neutrals. Reconstruction: Consistent use of off-white and gray tones. Link/State Audit: Links are blue, but no hover states are visible. Consistency Map: Consistent color use across sections. Failure Theme: Default minimalism without tuning. Anchor Comparison: Similar to exemplar 8, with a basic color scheme but lacks the tuned minimalism of exemplar 6.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "34": {
+      "candidate_id": "34",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_34.jpg",
+      "evaluated_at": "2025-09-05T10:51:55.657449",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography uses a consistent sans-serif typeface with clear hierarchy through size and weight. Reconstruction: Headings are bold and larger, while body text is smaller and readable. Link/State Audit: Links are underlined and consistent. Consistency Map: Consistent use of typeface and hierarchy across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar 3 with similar hierarchy and readability.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a centered hero and simple grid structure. Reconstruction: Consistent grid with adequate spacing and alignment. Link/State Audit: Clear call-to-action buttons. Consistency Map: Repeated grid patterns and alignment across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar 3 with similar grid and spacing.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal with a focus on black, white, and blue accents. Reconstruction: Neutrals are used effectively, and accents are consistent. Link/State Audit: Blue accents for links and CTAs. Consistency Map: Consistent use of color across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar 3 with similar color usage.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "38": {
+      "candidate_id": "38",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_38.jpg",
+      "evaluated_at": "2025-09-05T10:52:02.210755",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean with a clear hierarchy, using a sans-serif typeface. Reconstruction: The type scale is consistent with readable body text and distinct headings. Link/State Audit: Links are not visibly styled, which may imply a conservative approach. Consistency Map: Consistent use of type across sections. Failure Theme: Generic minimalism. Anchor Comparison: Closest to exemplar 3, with similar hierarchy and readability.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a simple grid with clear sections. Reconstruction: The grid is consistent, with adequate spacing and alignment. Link/State Audit: No visible link states. Consistency Map: Consistent grid and spacing across sections. Failure Theme: Basic grid without a strong point of view. Anchor Comparison: Similar to exemplar 3, with a basic but consistent layout.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal, with a focus on neutrals. Reconstruction: The use of color is conservative, with no strong accents. Link/State Audit: No visible link states. Consistency Map: Consistent use of neutrals across sections. Failure Theme: Lack of color unification tactics. Anchor Comparison: Similar to exemplar 3, with a minimal color approach.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3.0
+    },
+    "37": {
+      "candidate_id": "37",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_37.jpg",
+      "evaluated_at": "2025-09-05T10:52:05.926182",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography uses a clear hierarchy with bold headings and readable body text. Reconstruction: The type scale is consistent, with distinct headings and body text. Link/State Audit: Links are underlined and consistent. Consistency Map: The use of bold for emphasis is repeated across sections. Failure Theme: Slightly generic hierarchy. Anchor Comparison: Closest to exemplar_3 with similar hierarchy but lacks refinement.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout is structured with clear sections and adequate spacing. Reconstruction: A basic grid is used with consistent spacing and alignment. Link/State Audit: Navigation is clear with distinct sections. Consistency Map: Consistent section spacing and alignment. Failure Theme: Generic layout without a strong point of view. Anchor Comparison: Similar to exemplar_3 with a basic grid but lacks innovation.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is simple with a primary accent color. Reconstruction: Neutrals are used effectively with a single accent color. Link/State Audit: Accent color is used for emphasis and links. Consistency Map: Consistent use of accent color across sections. Failure Theme: Lacks a sophisticated palette. Anchor Comparison: Similar to exemplar_3 with a simple palette but lacks depth.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "36": {
+      "candidate_id": "36",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_36.jpg",
+      "evaluated_at": "2025-09-05T10:52:06.473286",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Observations: The typography is clean and consistent across the sections. The hierarchy is clear with distinct headings and body text. Reconstruction: The type scale is well-defined with appropriate leading and measure. Link/State Audit: Links are subtly styled, maintaining readability. Consistency Map: Consistent use of font size and weight across sections. Failure Theme: None observed. Anchor Comparison: Closest to exemplar_1 with similar clarity and hierarchy, but lacks the same level of micro-craft detail.",
+          "confidence": 3.5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Observations: The layout is structured with a clear grid system. Reconstruction: The grid is consistent with adequate spacing and alignment. Link/State Audit: Navigation is clear and intuitive. Consistency Map: Consistent section spacing and alignment. Failure Theme: None observed. Anchor Comparison: Similar to exemplar_1 with a clear structure but lacks some of the innovative layout elements.",
+          "confidence": 3.5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Observations: The color palette is harmonious with a focus on neutrals. Reconstruction: Neutrals are well-tuned, supporting readability. Link/State Audit: Link colors are consistent and subtle. Consistency Map: Consistent use of color across sections. Failure Theme: None observed. Anchor Comparison: Similar to exemplar_1 with a cohesive color strategy.",
+          "confidence": 3.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 3.5
+    },
+    "4": {
+      "candidate_id": "4",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_4.jpg",
+      "evaluated_at": "2025-09-05T10:52:09.859074",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean and readable with a consistent hierarchy. Reconstruction: The type scale is clear with distinct headings and body text. Link/State Audit: Links are styled consistently. Consistency Map: Repeated use of a single typeface across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar 3 with similar readability and hierarchy.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout is structured with clear sections. Reconstruction: A basic grid is present with consistent spacing. Link/State Audit: Buttons are consistently placed. Consistency Map: Uniform section spacing and alignment. Failure Theme: None significant. Anchor Comparison: Closest to exemplar 3 with similar grid usage.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal and consistent. Reconstruction: Neutrals are used effectively with a single accent color. Link/State Audit: Accent color is used for links and CTAs. Consistency Map: Consistent use of color across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar 3 with similar color usage.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "49": {
+      "candidate_id": "49",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_49.jpg",
+      "evaluated_at": "2025-09-05T10:52:14.029183",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean and readable with a simple hierarchy. Reconstruction: The type scale is consistent, with clear headings and body text. Link/State Audit: Links are not prominently styled, but the overall text is readable. Consistency Map: The typography is consistent across the sections. Failure Theme: Generic minimal style. Anchor Comparison: Closest to exemplar 3, with similar readability and hierarchy. Score Justification: The typography is competent but lacks distinctive features.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a simple grid with consistent spacing. Reconstruction: The grid is basic but functional, with clear sections and alignment. Link/State Audit: Navigation is straightforward, but no advanced layout techniques are evident. Consistency Map: Consistent use of grid and spacing across sections. Failure Theme: Generic layout without a strong point of view. Anchor Comparison: Closest to exemplar 3, with similar grid usage. Score Justification: The layout is competent but lacks innovation.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal, with a focus on neutrals. Reconstruction: The use of color is conservative, with no strong accents. Link/State Audit: Color is used sparingly, mainly for text and minor accents. Consistency Map: Consistent use of neutrals across sections. Failure Theme: Lack of color innovation. Anchor Comparison: Closest to exemplar 3, with similar neutral palette. Score Justification: The color usage is competent but lacks distinctiveness.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3.0
+    },
+    "44": {
+      "candidate_id": "44",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_44.jpg",
+      "evaluated_at": "2025-09-05T10:52:14.256144",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "Observations: The typography is minimal with a basic hierarchy. The typeface is readable but lacks distinctiveness. Reconstruction: The hierarchy is flat with limited variation in size and weight. Readability is adequate, but the overall voice is generic. Consistency Map: The typography is consistent across sections but lacks refinement. Failure Theme: The typography feels generic and lacks a strong point of view. Anchor Comparison: Closest to exemplar 4, but lacks the refinement seen in exemplar 6.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Observations: The layout is simple with a two-column structure. Reconstruction: The grid is basic, and the spacing is consistent but lacks innovation. Consistency Map: The layout is consistent across sections but feels generic. Failure Theme: The layout lacks a strong point of view and feels like a template. Anchor Comparison: Closest to exemplar 4, but lacks the structural clarity seen in exemplar 6.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 2,
+          "explanation": "Observations: The color palette is minimal with a focus on black and white. Reconstruction: The neutrals are untuned, and the accents are sparse. Consistency Map: The color scheme is consistent but lacks depth. Failure Theme: The color lacks a strong identity and feels default. Anchor Comparison: Closest to exemplar 4, but lacks the harmony seen in exemplar 6.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 2.0,
+      "overall_confidence": 3
+    },
+    "39": {
+      "candidate_id": "39",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_39.jpg",
+      "evaluated_at": "2025-09-05T10:52:15.558052",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography uses a clean sans-serif with a clear hierarchy. Reconstruction: Headings are distinct but not overly bold, and body text is readable. Link/State Audit: Links are underlined with a consistent style. Consistency Map: Consistent use of font size and weight across sections. Failure Theme: Slightly generic hierarchy. Anchor Comparison: Closest to exemplar 3, with similar readability and hierarchy.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout is structured with clear sections. Reconstruction: Uses a grid system with adequate spacing. Link/State Audit: Navigation is straightforward. Consistency Map: Consistent section spacing and alignment. Failure Theme: Lacks a strong point of view. Anchor Comparison: Similar to exemplar 3, with a basic grid and clear sections.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is neutral with occasional accents. Reconstruction: Neutrals are consistent, and accents are used sparingly. Link/State Audit: Accent colors are used for emphasis. Consistency Map: Consistent use of color for emphasis across sections. Failure Theme: Lacks a distinctive color identity. Anchor Comparison: Similar to exemplar 3, with a serviceable palette.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "46": {
+      "candidate_id": "46",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_46.jpg",
+      "evaluated_at": "2025-09-05T10:52:15.839979",
+      "criteria": {
+        "typography": {
+          "score": 5,
+          "explanation": "Observations: Consistent use of type across sections with clear hierarchy and readability. Reconstruction: Type Scale is well-defined with clear headings and body text differentiation. Link/State Audit: Links are consistently styled with clear states. Consistency Map: Repeated patterns in headings, body text, and link styles across sections. Failure Theme: None observed. Anchor Comparison: Closest to exemplar_9 with similar strong typographic hierarchy and consistency. Score Justification: Strong hierarchy and consistent application across sections justify a score of 5.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 5,
+          "explanation": "Observations: Consistent grid usage and spacing across sections. Reconstruction: Grid/Spacing is well-structured with clear container widths and alignment. Link/State Audit: Navigation and focal points are clear and consistent. Consistency Map: Repeated grid patterns and alignment across sections. Failure Theme: None observed. Anchor Comparison: Closest to exemplar_9 with similar strong layout consistency and structure. Score Justification: The disciplined grid and consistent layout across sections justify a score of 5.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Observations: Harmonious palette with controlled accents. Reconstruction: Unification & State Logic is evident with consistent neutrals and accents. Link/State Audit: Accent colors are used sparingly and effectively. Consistency Map: Repeated use of color palette across sections. Failure Theme: None observed. Anchor Comparison: Closest to exemplar_9 with similar color harmony and control. Score Justification: The controlled use of color and consistent palette justify a score of 4.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.7,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.7,
+      "overall_confidence": 4
+    },
+    "5": {
+      "candidate_id": "5",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_5.jpg",
+      "evaluated_at": "2025-09-05T10:52:17.592539",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean with a clear hierarchy. The use of a single typeface maintains consistency. Reconstruction: The type scale is appropriate with readable body text and distinct headings. Link/State Audit: Links are underlined, providing a clear indication of interactivity. Consistency Map: The same typeface and style are used across sections. Failure Theme: None. Anchor Comparison: Closest to exemplar 8 with similar typography execution.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout is straightforward with a clear grid structure. Reconstruction: The grid is consistent with evenly spaced sections. Image presentation is cohesive with no cut-off crops. Link/State Audit: The layout supports easy navigation. Consistency Map: Consistent grid and spacing across sections. Failure Theme: None. Anchor Comparison: Closest to exemplar 8 with similar layout execution.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal, focusing on neutrals with occasional accents. Reconstruction: The use of color is consistent, with a focus on product imagery. Link/State Audit: Links are clearly distinguished by color. Consistency Map: Consistent use of color across sections. Failure Theme: None. Anchor Comparison: Closest to exemplar 8 with similar color execution.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3.0
+    },
+    "42": {
+      "candidate_id": "42",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_42.jpg",
+      "evaluated_at": "2025-09-05T10:52:17.743862",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is readable with a clear hierarchy, but it feels somewhat generic. Reconstruction: The type scale is consistent, with adequate leading and measure. Link/State Audit: Links are not prominently styled, lacking distinct states. Consistency Map: The use of headings and body text is consistent across sections. Failure Theme: Generic minimal typography. Anchor Comparison: Closest to exemplar 8, with similar readability and hierarchy. Score Justification: The typography is competent but lacks distinctive features.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a basic grid with consistent spacing. Reconstruction: The grid is simple, with a centered hero and card grid. Link/State Audit: Navigation is clear but lacks innovation. Consistency Map: Consistent card layout and section spacing. Failure Theme: Generic layout without a strong point of view. Anchor Comparison: Similar to exemplar 8, with a basic but functional grid. Score Justification: The layout is competent but lacks refinement.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is neutral and harmonious. Reconstruction: Neutrals are consistent, with a single accent color. Link/State Audit: Accent usage is minimal and lacks clear state logic. Consistency Map: Consistent use of neutrals across sections. Failure Theme: Lack of accent clarity. Anchor Comparison: Similar to exemplar 8, with a harmonious but unremarkable palette. Score Justification: The color usage is competent but lacks distinctiveness.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "6": {
+      "candidate_id": "6",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_6.jpg",
+      "evaluated_at": "2025-09-05T10:52:18.316647",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Observations: The typography is clean with a clear hierarchy. The use of different weights and sizes is consistent across sections. Reconstruction: The type scale is well-defined with appropriate leading and casing. Consistency Map: Consistent use of fonts and styles across different sections. Failure Theme: None observed. Anchor Comparison: Closest to exemplar_6 with similar hierarchy and readability. Score Justification: The typography is strong with minor issues, hence a score of 4.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Observations: The layout is structured with a clear grid system. Images are well-aligned and consistent. Reconstruction: Grid and spacing are consistent, with clear section hierarchy. Consistency Map: Repeated use of grid and spacing across sections. Failure Theme: None observed. Anchor Comparison: Similar to exemplar_6 with strong layout consistency. Score Justification: The layout is strong with minor roughness, hence a score of 4.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Observations: The color palette is harmonious with controlled accents. Neutrals are well-tuned. Reconstruction: The use of color is consistent across sections, with clear link/CTA logic. Consistency Map: Consistent use of color across different sections. Failure Theme: None observed. Anchor Comparison: Similar to exemplar_6 with a harmonious palette. Score Justification: The color usage is strong with minor issues, hence a score of 4.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 3
+    },
+    "53": {
+      "candidate_id": "53",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_53.jpg",
+      "evaluated_at": "2025-09-05T10:52:18.524153",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is readable with a clear hierarchy, using a limited style set. Reconstruction: The type scale is consistent, with adequate leading and measure. Link/State Audit: Links are styled conservatively. Consistency Map: Consistent use of headings and body text across sections. Failure Theme: Generic minimal typography. Anchor Comparison: Closest to exemplar 3 with similar readability and hierarchy.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: Basic grid structure with readable sections. Reconstruction: Consistent container widths and spacing. Link/State Audit: Navigation is clear and consistent. Consistency Map: Repeated layout patterns across sections. Failure Theme: Generic layout without a strong point of view. Anchor Comparison: Similar to exemplar 3 with basic grid execution.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is serviceable with a single accent. Reconstruction: Neutrals are consistent, supporting readability. Link/State Audit: Accent colors are used sparingly. Consistency Map: Consistent use of color across sections. Failure Theme: Lack of unifying tactics. Anchor Comparison: Similar to exemplar 3 with a basic color scheme.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "50": {
+      "candidate_id": "50",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_50.jpg",
+      "evaluated_at": "2025-09-05T10:52:18.785247",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is readable with a basic hierarchy. Reconstruction: The type scale is consistent, but lacks distinctiveness. Link/State Audit: No clear link styling observed. Consistency Map: Consistent use of type across sections. Failure Theme: Generic hierarchy. Anchor Comparison: Closest to exemplar_3 with similar readability and hierarchy.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: Basic grid structure with readable sections. Reconstruction: Consistent spacing and alignment. Link/State Audit: No clear link or CTA state observed. Consistency Map: Consistent layout across sections. Failure Theme: Generic layout without a strong point of view. Anchor Comparison: Similar to exemplar_3 with basic grid execution.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is serviceable with no clashing hues. Reconstruction: Neutrals are consistent, but accents lack distinctiveness. Link/State Audit: No clear link or CTA color logic observed. Consistency Map: Consistent color use across sections. Failure Theme: Lack of unifying color strategy. Anchor Comparison: Similar to exemplar_3 with a basic color palette.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "43": {
+      "candidate_id": "43",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_43.jpg",
+      "evaluated_at": "2025-09-05T10:52:18.886658",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean and readable with a clear hierarchy. Reconstruction: The type scale is consistent with appropriate leading and spacing. Link/State Audit: Links are underlined, but no hover states are visible. Consistency Map: Consistent use of font size and weight across sections. Failure Theme: Generic minimal style. Anchor Comparison: Closest to exemplar_3 with similar hierarchy and readability. Score Justification: Meets competent baseline with no major issues.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout is simple with a centered hero and two-column section. Reconstruction: Basic grid with consistent spacing and alignment. Link/State Audit: No visible state changes for links. Consistency Map: Consistent section alignment and spacing. Failure Theme: Generic layout without a strong point of view. Anchor Comparison: Similar to exemplar_3 with basic grid execution. Score Justification: Competent baseline with no structural issues.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal with black, white, and a single accent. Reconstruction: Neutrals are consistent, but no advanced color strategies are visible. Link/State Audit: Links use a standard blue. Consistency Map: Consistent use of neutrals across sections. Failure Theme: Default minimal color scheme. Anchor Comparison: Closest to exemplar_3 with similar color usage. Score Justification: Meets baseline with no clashing or noise.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.4,
+      "overall_confidence": 3
+    },
+    "47": {
+      "candidate_id": "47",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_47.jpg",
+      "evaluated_at": "2025-09-05T10:52:18.963982",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography uses a clear hierarchy with distinct headings and body text. Reconstruction: The type scale is consistent with readable body text and clear headings. Link/State Audit: Links are styled consistently. Consistency Map: Repeated use of similar font sizes and styles across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar_8 with similar hierarchy and readability.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a basic grid with consistent spacing. Reconstruction: Grid/Spacing is adequate with clear sections and readable spacing. Link/State Audit: Navigation is straightforward. Consistency Map: Consistent section alignment and spacing. Failure Theme: None significant. Anchor Comparison: Closest to exemplar_8 with similar grid usage and spacing.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is simple with a primary accent color. Reconstruction: Neutrals are used effectively, and accents are controlled. Link/State Audit: Accent colors are used for links and CTAs. Consistency Map: Consistent use of color across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar_8 with similar color strategy.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "40": {
+      "candidate_id": "40",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_40.jpg",
+      "evaluated_at": "2025-09-05T10:52:19.192302",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography uses a bold, large-scale hero text with a clear hierarchy. Reconstruction: The type scale is evident with distinct headings and body text, but lacks fine-tuning in micro-craft such as kerning and baseline rhythm. Link/State Audit: Links are not clearly differentiated in style. Consistency Map: Consistent use of bold for emphasis across sections. Failure Theme: Generic hierarchy without nuanced micro-craft. Anchor Comparison: Closest to exemplar_3 with similar hierarchy but lacks refinement.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout features a centered hero and a simple grid for projects. Reconstruction: Basic grid structure with adequate spacing, but lacks innovation or a strong point of view. Image presentation is consistent but not exceptional. Consistency Map: Repeated use of centered elements and grid layout. Failure Theme: Generic layout without a distinctive structure. Anchor Comparison: Similar to exemplar_3 with basic grid execution.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette uses a dominant red accent with neutral backgrounds. Reconstruction: The palette is harmonious but lacks depth in hue variation. Link/State Audit: Accent color is used consistently for emphasis. Consistency Map: Red accent repeated across sections. Failure Theme: Limited color exploration. Anchor Comparison: Similar to exemplar_3 with a basic color scheme.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.4,
+      "overall_confidence": 3
+    },
+    "52": {
+      "candidate_id": "52",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_52.jpg",
+      "evaluated_at": "2025-09-05T10:52:21.594183",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is readable with a clear hierarchy. The main header uses a large, bold typeface, while body text is smaller and lighter. Reconstruction: The type scale is consistent, with clear differentiation between headings and body text. Link/State Audit: Links are underlined, providing a clear indication of interactivity. Consistency Map: The typography maintains a consistent style across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar 3, with similar readability and hierarchy. Score Justification: The typography is competent but lacks distinctive refinement.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a simple grid structure with clear sections. Reconstruction: The grid is consistent, with adequate spacing between sections. Images are aligned and not cut off. Link/State Audit: Navigation is clear and consistent. Consistency Map: The layout maintains a consistent structure across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar 3, with similar grid consistency. Score Justification: The layout is competent but lacks innovative structure.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is cohesive, with a dominant maroon and green theme. Reconstruction: The colors are consistent across sections, with no clashing hues. Link/State Audit: Links are clearly differentiated by color. Consistency Map: The color scheme is maintained throughout the portfolio. Failure Theme: None significant. Anchor Comparison: Closest to exemplar 3, with similar color consistency. Score Justification: The color usage is competent but lacks distinctive refinement.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3.0
+    },
+    "48": {
+      "candidate_id": "48",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_48.jpg",
+      "evaluated_at": "2025-09-05T10:52:22.299356",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean with a simple sans-serif typeface. Reconstruction: The hierarchy is minimal but clear, with consistent font size and spacing. Link/State Audit: Links are underlined, providing a clear indication of interactivity. Consistency Map: Consistent use of typeface and spacing throughout. Failure Theme: Lacks distinctive hierarchy. Anchor Comparison: Closest to exemplar 8, with similar minimal style.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout is straightforward with a single-column structure. Reconstruction: Consistent spacing and alignment are maintained. Link/State Audit: Navigation links are clearly separated. Consistency Map: Consistent column width and alignment. Failure Theme: Lacks complexity or innovation. Anchor Comparison: Similar to exemplar 8, with a basic but functional layout.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color scheme is minimal with a focus on black and white. Reconstruction: Neutrals are used effectively to maintain readability. Link/State Audit: Links are highlighted with a subtle color change. Consistency Map: Consistent use of color for text and links. Failure Theme: Limited color palette. Anchor Comparison: Similar to exemplar 8, with a minimal color approach.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "54": {
+      "candidate_id": "54",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_54.jpg",
+      "evaluated_at": "2025-09-05T10:52:22.408545",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean with a clear hierarchy. The use of sans-serif fonts is consistent across sections. Reconstruction: The type scale is appropriate with readable body text and distinct headings. Link/State Audit: Links are styled conservatively with no visible states. Consistency Map: Consistent use of font size and weight across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar_3 with similar hierarchy and readability. Score Justification: Meets competent baseline with no major issues.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a grid system with consistent spacing. Reconstruction: The grid is simple but effective, with clear section divisions. Image presentation is consistent, though some screenshots are small. Link/State Audit: Navigation is straightforward. Consistency Map: Consistent grid and spacing across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar_3 with similar grid usage. Score Justification: Competent baseline with no major issues.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal with a focus on dark neutrals. Reconstruction: Neutrals are consistent, and accents are used sparingly. Link/State Audit: No visible link states. Consistency Map: Consistent use of dark backgrounds and light text. Failure Theme: None significant. Anchor Comparison: Closest to exemplar_3 with similar neutral palette. Score Justification: Competent baseline with no major issues.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3
+    },
+    "9": {
+      "candidate_id": "9",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_9.jpg",
+      "evaluated_at": "2025-09-05T10:52:23.356493",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Observations: Consistent use of a sans-serif typeface with clear hierarchy. Reconstruction: Headings are bold and larger, body text is readable with appropriate line height. Link/State Audit: Links are styled consistently. Consistency Map: Typography is consistent across sections. Failure Theme: None. Anchor Comparison: Closest to exemplar_1 with similar hierarchy and readability. Score Justification: Strong hierarchy and readability with minor issues.",
+          "confidence": 3.5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Observations: Consistent grid with clear sections. Reconstruction: Grid is well-structured with even spacing and alignment. Link/State Audit: Navigation and sections are clear. Consistency Map: Layout is consistent across sections. Failure Theme: None. Anchor Comparison: Similar to exemplar_1 with disciplined grid usage. Score Justification: Strong layout with minor inconsistencies.",
+          "confidence": 3.5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Observations: Harmonious color palette with controlled accents. Reconstruction: Neutrals are well-tuned, and accents are used sparingly. Link/State Audit: Accent colors are consistent for links and CTAs. Consistency Map: Color usage is consistent across sections. Failure Theme: None. Anchor Comparison: Similar to exemplar_1 with a cohesive palette. Score Justification: Strong color usage with minor issues.",
+          "confidence": 3.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 3.5
+    },
+    "41": {
+      "candidate_id": "41",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_41.jpg",
+      "evaluated_at": "2025-09-05T10:52:25.081935",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean with a clear hierarchy, but it lacks distinctiveness. Reconstruction: The type scale is consistent, but the hierarchy is not particularly rich or varied. Link/State Audit: Link styles are not prominently featured, limiting state audit. Consistency Map: Consistent use of type across sections. Failure Theme: Generic hierarchy. Anchor Comparison: Closest to exemplar 3, with similar generic hierarchy. Score Justification: Limited evidence and generic style cap the score at 3.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout is structured with a basic grid, but lacks innovation. Reconstruction: Grid and spacing are consistent, but not particularly refined. Link/State Audit: No clear link or CTA state logic. Consistency Map: Consistent grid use across sections. Failure Theme: Generic layout without a strong point of view. Anchor Comparison: Closest to exemplar 3, with similar basic grid execution. Score Justification: Limited evidence and generic layout cap the score at 3.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is serviceable but lacks sophistication. Reconstruction: The palette is harmonious but not particularly refined. Link/State Audit: No clear link or CTA state logic. Consistency Map: Consistent use of color across sections. Failure Theme: Generic color use without strong identity. Anchor Comparison: Closest to exemplar 3, with similar basic color use. Score Justification: Limited evidence and generic color use cap the score at 3.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3.0
+    },
+    "7": {
+      "candidate_id": "7",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_7.jpg",
+      "evaluated_at": "2025-09-05T10:52:27.600037",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Observations: The typography is clean and readable with a clear hierarchy. The use of a sans-serif typeface is consistent across sections. Reconstruction: The type scale is appropriate with distinct headings and body text. Link/State Audit: Links are underlined, providing clear interaction cues. Consistency Map: Consistent use of font size and weight across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar 3 with similar readability and hierarchy. Score Justification: Meets competent baseline with no major issues.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Observations: The layout uses a simple grid with consistent spacing. The card-based design is clear and organized. Reconstruction: Grid is consistent with adequate spacing between elements. Image presentation is clean with no cut-off crops. Consistency Map: Repeated card layout across sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar 3 with similar grid consistency. Score Justification: Meets competent baseline with no major issues.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Observations: The color palette is minimal with pastel accents. The use of color is consistent across sections. Reconstruction: Neutrals are used effectively with pastel backgrounds for cards. Link/State Audit: Links use a standard blue, fitting within the minimal palette. Consistency Map: Consistent use of pastel colors for different sections. Failure Theme: None significant. Anchor Comparison: Closest to exemplar 3 with similar color consistency. Score Justification: Meets competent baseline with no major issues.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 3.0
+    },
+    "51": {
+      "candidate_id": "51",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_51.jpg",
+      "evaluated_at": "2025-09-05T10:52:39.933861",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Observations: The typography is clear with a strong hierarchy, using a mix of bold and regular weights effectively. Reconstruction: The type scale is consistent, with readable body text and well-spaced headings. Link/State Audit: Links are clearly styled and consistent across sections. Consistency Map: Consistent use of font weights, sizes, and spacing across sections. Anchor Comparison: Closest to exemplar_6 with similar clarity and hierarchy. Score Justification: The typography is strong with minor issues, justifying a score of 4.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Observations: The layout uses a clear grid system with consistent spacing and alignment. Reconstruction: The grid is well-structured, with even gutters and aligned sections. Image presentation is consistent with readable screenshots. Consistency Map: Repeated use of grid structure, consistent image sizes, and alignment across sections. Anchor Comparison: Similar to exemplar_6 with a disciplined layout. Score Justification: The layout is strong with minor roughness, justifying a score of 4.",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Observations: The color palette is harmonious with controlled accents. Reconstruction: Neutrals are well-tuned, and accents are used sparingly to highlight key areas. Consistency Map: Consistent use of color across sections, with clear accent roles. Anchor Comparison: Similar to exemplar_6 with a well-controlled palette. Score Justification: The color usage is strong and consistent, justifying a score of 4.",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 4
+    }
+  }
+}

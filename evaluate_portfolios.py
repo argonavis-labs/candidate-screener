@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional
 from abc import ABC, abstractmethod
 import time
+import subprocess
 import threading
 import random
 from datetime import datetime
@@ -56,7 +57,7 @@ class ModelProvider(ABC):
 class OpenAIProvider(ModelProvider):
     """OpenAI GPT-4o vision model provider."""
     
-    def __init__(self, api_key: str, model: str = "gpt-5", debug: bool = False):
+    def __init__(self, api_key: str, model: str = "gpt-5", debug: bool = False, temperature: Optional[float] = None):
         if not OPENAI_AVAILABLE:
             raise ImportError("OpenAI package not installed. Run: pip install openai")
         
@@ -64,6 +65,11 @@ class OpenAIProvider(ModelProvider):
         self.model = model
         self.debug = debug
         self.rate_limit_count = 0  # Track 429 errors
+        # Temperature control (default to 0.1 if not provided)
+        try:
+            self.temperature = float(temperature) if temperature is not None else float(os.getenv("OPENAI_TEMPERATURE", "0.1"))
+        except Exception:
+            self.temperature = 0.1
         
     def _encode_image(self, image_path: str) -> str:
         """Encode image to base64."""
@@ -208,12 +214,7 @@ class OpenAIProvider(ModelProvider):
                 "response_format": {"type": "json_object"}  # Ensure JSON response
             }
             
-            if self.model.startswith("gpt-5"):
-                # GPT-5 uses natural completion - no token limit needed
-                # GPT-5 only supports default temperature (1)
-                # Not setting temperature or max_completion_tokens will use defaults
-                pass
-            elif self.model.startswith("o1"):
+            if self.model.startswith("o1"):
                 # o1 reasoning models have specific requirements
                 # No temperature or max_tokens supported - uses reasoning approach
                 # Remove response_format for o1 as it may not support structured output
@@ -221,9 +222,13 @@ class OpenAIProvider(ModelProvider):
                     del completion_params["response_format"]
                     print("   ⚠️  Note: o1 model may not support structured JSON output")
             else:
-                # GPT-4o and other models
-                completion_params["max_tokens"] = 2000
-                completion_params["temperature"] = 0.3  # Lower temperature for more consistent evaluations
+                # GPT-4o and other chat models (not gpt-5 and not o1)
+                if not self.model.startswith("gpt-5"):
+                    completion_params["max_tokens"] = 2000
+            
+            # Apply temperature when supported (exclude o1 and gpt-5 which enforce defaults)
+            if not self.model.startswith("o1") and not self.model.startswith("gpt-5"):
+                completion_params["temperature"] = max(0.0, min(2.0, self.temperature))
             
             response = self.client.chat.completions.create(**completion_params)
             
@@ -639,6 +644,10 @@ class PortfolioEvaluator:
         
         # Track start time
         self.start_time = datetime.now()
+        # Persist run settings for metadata
+        self.concurrency = concurrency
+        self.save_every = save_every
+        self.max_retries = max_retries
         
         print("Starting portfolio evaluation...")
         print(f"Using provider: {self.provider.__class__.__name__}")
@@ -773,6 +782,9 @@ class PortfolioEvaluator:
         
         # Print summary
         self.print_summary(ai_ratings)
+        
+        # Return path to the saved evaluation file for downstream automation
+        return ai_ratings_file
     
     def structure_result(self, raw_result: Dict, candidate_id: str, filename: str) -> Dict:
         """Structure the raw model output into our desired format."""
@@ -855,7 +867,12 @@ class PortfolioEvaluator:
                 "total_candidates_evaluated": len(ratings),
                 "prompt_length_chars": len(self.full_prompt) if self.full_prompt else 0,
                 "evaluation_complete": final,
-                "no_exemplars_mode": self.no_exemplars
+                "no_exemplars_mode": self.no_exemplars,
+                "concurrency": getattr(self, 'concurrency', None),
+                "save_every": getattr(self, 'save_every', None),
+                "max_retries": getattr(self, 'max_retries', None),
+                "rate_limits_encountered": getattr(self.provider, 'rate_limit_count', 0),
+                "temperature": getattr(self.provider, 'temperature', None)
             },
             "full_prompt_used": self.full_prompt,
             "candidate_ratings": ratings
@@ -916,6 +933,15 @@ def main():
                         help='Maximum retry attempts for rate limited requests (default: 3)')
     parser.add_argument('--prompt-file', type=str, 
                         help='Path to custom prompt file (default: prompt.md)')
+    parser.add_argument('--temperature', type=float, default=0.1,
+                        help='Sampling temperature for OpenAI models (default: 0.1). Ignored for o1 reasoning.')
+    # Auto GAP report flags (default enabled)
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--auto-gap', dest='auto_gap', action='store_true',
+                       help='Auto-generate GAP report after evaluation (default)')
+    group.add_argument('--no-auto-gap', dest='auto_gap', action='store_false',
+                       help='Do not auto-generate GAP report')
+    parser.set_defaults(auto_gap=True)
     
     args = parser.parse_args()
     
@@ -972,7 +998,7 @@ def main():
             if debug:
                 print(f"🔧 Debug mode enabled")
                 print(f"🤖 Using OpenAI model: {model_name}")
-            provider = OpenAIProvider(api_key, model=model_name, debug=debug)
+            provider = OpenAIProvider(api_key, model=model_name, debug=debug, temperature=args.temperature)
         elif provider_choice == "claude":
             # Legacy: Claude selected via environment variable
             claude_key = os.getenv("ANTHROPIC_API_KEY")
@@ -990,7 +1016,26 @@ def main():
     evaluator = PortfolioEvaluator(provider, base_dir, no_exemplars=args.no_exemplars, custom_prompt_file=args.prompt_file)
     
     # Run evaluation with parallel processing and retry logic
-    evaluator.evaluate_candidates(concurrency=args.concurrency, save_every=args.save_every, max_retries=args.max_retries)
+    results_path = evaluator.evaluate_candidates(concurrency=args.concurrency, save_every=args.save_every, max_retries=args.max_retries)
+    
+    # Optionally auto-generate GAP report
+    if args.auto_gap and results_path:
+        try:
+            print("\n🔁 Auto-generating GAP report...")
+            script_path = Path(__file__).parent / "generate_gap_report.py"
+            # Pass just the filename; the GAP script resolves default directories
+            subprocess.run([sys.executable, str(script_path), results_path.name, "--save-report"], check=True)
+            # Locate the newest GAP report and surface the path
+            gap_dir = Path(__file__).parent / "gap_reports"
+            latest_gap = None
+            if gap_dir.exists():
+                gap_files = list(gap_dir.glob("gap_analysis_*.json"))
+                if gap_files:
+                    latest_gap = max(gap_files, key=lambda p: p.stat().st_mtime)
+            if latest_gap:
+                print(f"  📄 GAP report saved: {latest_gap}")
+        except Exception as e:
+            print(f"  ⚠️ Auto GAP generation failed: {e}")
 
 
 if __name__ == "__main__":

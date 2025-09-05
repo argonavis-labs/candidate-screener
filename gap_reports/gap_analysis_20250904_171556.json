@@ -1,0 +1,297 @@
+{
+  "report_metadata": {
+    "generated_at": "2025-09-04T17:15:56.821700",
+    "total_candidates_analyzed": 50,
+    "candidates_with_both_ratings": 50,
+    "source_file": "evaluation_20250904_165601.json",
+    "human_ratings_file": "human-ratings.json"
+  },
+  "overall_metrics": {
+    "average_gap": 0.6899999999999998,
+    "median_gap": 0.7000000000000002,
+    "ai_bias": "lenient",
+    "ai_average_score": 3.0430000000000006,
+    "human_average_score": 2.883,
+    "bias_magnitude": 0.16000000000000056
+  },
+  "gap_distribution": {
+    "large_gaps_1.5+": 1,
+    "medium_gaps_0.5-1.5": 31,
+    "small_gaps_<0.5": 18,
+    "perfect_matches": 18
+  },
+  "category_analysis": {
+    "typography": {
+      "avg_gap": 0.84,
+      "ai_bias": "lenient",
+      "ai_avg": 3.36,
+      "human_avg": 2.88,
+      "worst_gaps": [
+        "4",
+        "7",
+        "13"
+      ]
+    },
+    "layout_composition": {
+      "avg_gap": 0.76,
+      "ai_bias": "lenient",
+      "ai_avg": 3.26,
+      "human_avg": 2.98,
+      "worst_gaps": [
+        "7",
+        "10",
+        "13"
+      ]
+    },
+    "color": {
+      "avg_gap": 0.58,
+      "ai_bias": "lenient",
+      "ai_avg": 3.24,
+      "human_avg": 3.14,
+      "worst_gaps": [
+        "37",
+        "46",
+        "52"
+      ]
+    }
+  },
+  "red_flag_analysis": {
+    "template_scent_high": {
+      "human_flagged": 6,
+      "ai_flagged": 13,
+      "missed_by_ai": [
+        "11",
+        "26",
+        "49"
+      ]
+    },
+    "sloppy_images": {
+      "human_flagged": 10,
+      "ai_flagged": 9,
+      "missed_by_ai": [
+        "7",
+        "25",
+        "29",
+        "42"
+      ]
+    },
+    "process_soup": {
+      "human_flagged": 0,
+      "ai_flagged": 0,
+      "missed_by_ai": []
+    }
+  },
+  "top_gap_candidates": [
+    {
+      "candidate_id": "7",
+      "overall_gap": 1.7,
+      "human_score": 1.3,
+      "ai_score": 3.0,
+      "image_file": "candidate_7.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 1,
+          "ai": 3,
+          "gap": 2
+        },
+        "layout_composition": {
+          "human": 1,
+          "ai": 3,
+          "gap": 2
+        },
+        "color": {
+          "human": 3,
+          "ai": 3,
+          "gap": 0
+        }
+      },
+      "human_comments": {
+        "typography": "The typography here is kind of a disaster:\n- The DM on the top left is way too big compared to the rest of the elements in the nav bar\n- There's not enough white space between the hello I'm Dorna and the content underneath it\n- The description of herself is right-aligned, which is almost always a mistake",
+        "layout_composition": "This is one of the word layouts I've seen. They are going for a left-right, left-right effect, but because the vertical space between the different cards is not the same as the horizontal space, it creates this awkward gap that takes away from the effectiveness of the design. \n\nAt the bottom of the page, you'll also see a section that says \"Like what you see?\" I think this is supposed to fit in the left-right, left-right grid, but because there's no card around it again, it doesn't seem like that. So if they had to either add a card in the background or have that happy its own section. It was a bad choice to put it in the zigzag layout because, really, this is almost like a different concept. All that everything in the zigzag layout is a case study, whereas this is a call to action. So it probably should have been its own layout. ",
+        "color": "The color here is a consistent cut pastel palette on top of a generally more monochrome website design with a slight highlight. It's mostly fine. It's not a particularly well-executed pastel color palette, but it's not bad either. "
+      },
+      "ai_comments": {
+        "typography": "Readable sans\u2011serif system with a clear hierarchy: large H1, card titles, and smaller grey descriptions. Body copy in the hero sits around a comfortable ~55\u201365ch with adequate 1.4\u20131.6 leading. Card titles repeat predictably and are easy to scan. However, link styling in the hero appears close to default bright blue with a default underline, not integrated with the palette. Casing is mixed (Title Case like \u201cService Design for Lyft\u201d vs sentence\u2011style elsewhere; \u201cCase Study Coming Soon!\u201d stands out) and there\u2019s minor scale inconsistency between card titles and descriptions. Overall competent but generic without bespoke micro\u2011craft touches.",
+        "layout_composition": "Two\u2011column card layout with consistent gutters and repeated card structure (image block above, title/description below). Corner radii and soft shadows are consistent across tiles, and spacing between rows appears even. The staggered columns create a simple rhythm without collisions. Limitations: center\u2011aligned hero shifts to a left\u2011weighted content section later (\u201cLike what you see?\u201d) without a clear grid rationale; tile heights vary notably which produces a masonry vibe and irregular baselines; mixed asset types (flat browser screenshots vs an angled phone render) introduce uneven visual weight.",
+        "color": "Pastel mats behind screenshots (yellow, orange, lavender, mint, aqua, peach) are harmonious in saturation and help differentiate projects. The shell is neutral (white background, dark text) and shadows are soft, keeping focus on tiles. Constraints: the bright blue inline link in the hero feels off\u2011system next to the pastel accents; varied screenshot colors (strong purples/greens) cause some palette noise; neutrals read closer to pure #000/#fff than tuned greys, so the overall color system feels serviceable rather than refined."
+      },
+      "red_flags": {
+        "human": [
+          "sloppy_images"
+        ],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "34",
+      "overall_gap": 1.45,
+      "human_score": 3,
+      "ai_score": 1.55,
+      "image_file": "candidate_34.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 3,
+          "ai": 3,
+          "gap": 0
+        },
+        "layout_composition": {
+          "human": 3,
+          "ai": 2,
+          "gap": 1
+        },
+        "color": {
+          "human": 3,
+          "ai": 3,
+          "gap": 0
+        }
+      },
+      "human_comments": {
+        "typography": "",
+        "layout_composition": "",
+        "color": ""
+      },
+      "ai_comments": {
+        "typography": "Readable, consistent sans system with large display heads and comfortable body copy. Evidence: 1) Hero subhead sits around a 55\u201370ch measure with ~1.4 leading, 2) Link pattern 'Case Study \u2192' repeats with the same weight/arrow treatment, 3) Small meta labels (e.g., 'Companies who trusted my approach') use a lighter tone/size for hierarchy. However, several inconsistencies and default vibes keep it at baseline: 4) Mixed casing across headings ('Stunning Designs / Thoughtful experiences'; later 'Got a Project? Let\u2019s talk.' and sentence\u2011case section titles), 5) No visible custom link underline or state tuning, 6) Display/paragraph scale jumps are a bit coarse, producing a generic marketing\u2011template voice.",
+        "layout_composition": "Structure is clear but heavily template\u2011driven and image handling reduces polish. Observations: 1) Standard centered hero \u2192 logo band \u2192 testimonial grid \u2192 alternating case tiles \u2192 repeated CTA; no distinct POV, 2) Case rows mix a text card on the left with a tablet mock on the right; baselines/margins between the card and device don\u2019t align, causing rhythm flicker, 3) Mixed device frames (tablet, laptop, multi\u2011phone cluster) dominate while the UI inside is tiny and unreadable, 4) Large colored blocks (green callout behind laptop) create irregular whitespace and draw focus away from content, 5) Tile aspect ratios and internal mats vary across sections, breaking vertical rhythm. Limitation: cohesion could be improved with a consistent tile system (uniform mats, radii, captions) and fewer device frames.",
+        "color": "Neutral shell is mostly controlled (off\u2011white background, dark navy text) and the monochrome logo row is restrained. Evidence: 1) Headings use a desaturated navy that reads comfortably over the light grey, 2) Black pill buttons are consistent, 3) Monochrome client logos avoid color noise. Issues keeping it at baseline: 4) The saturated green panel is much hotter in value than adjacent sections, causing a jump, 5) Additional light blue/purple gradient near the phone cluster introduces a second accent family without a clear role, 6) Mixed device frames with their own dark bezels add competing values that aren\u2019t unified by mats/borders."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": [
+          "template_scent_high",
+          "sloppy_images"
+        ]
+      }
+    },
+    {
+      "candidate_id": "13",
+      "overall_gap": 1.4,
+      "human_score": 2.25,
+      "ai_score": 3.65,
+      "image_file": "candidate_13.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 2,
+          "ai": 4,
+          "gap": 2
+        },
+        "layout_composition": {
+          "human": 1,
+          "ai": 3,
+          "gap": 2
+        },
+        "color": {
+          "human": 4,
+          "ai": 4,
+          "gap": 0
+        }
+      },
+      "human_comments": {
+        "typography": "They used a pretty interesting serif here that I think is a sign that they have thought about this. The body also uses a relatively interesting looking model. But the problem is that the way that they use it is kind of bad. For example, a lot of the details around their bulleted list which is too indented, right? There's too much space on the left of their bullets. This subtracts points. The fact that they use a model only for their body is not great. Generally, you don't want to use a model for body text. It makes it a little hard to read. There's also a little bit of overuse of all caps and random tracking. If you look at the work writing dribble about navigation, they have just increased the letter spacing for no really good reason. Similarly, in the navbar, their name is a little too big in contrast to the rest of the navbar and competes with their main title. ",
+        "layout_composition": "The layout suffers from the typical sort of every section has a different width problem, but no intentionality. They also randomly shift from center-aligned to left-aligned.\n\nSo, if you look at the nav bar, it's kinda full-width. The header is quite narrow, and then the body is wide again. The \"See my work\" CTA is also super narrow, so it's kind of a little ragged and random. ",
+        "color": "They chose a pretty interesting pair of colors for the green and the yellow. I think it's actually quite good because of their complementarity"
+      },
+      "ai_comments": {
+        "typography": "Distinctive serif display headline with tight but non\u2011colliding leading; clear scale jump from hero to micro\u2011labels. Micro\u2011labels (UNDERSTAND/ITERATE/REFINE) are consistent all\u2011caps with measured tracking and equal offsets. Body copy sits in comfortable short measures with steady 1.4\u20131.6 leading; bullets align neatly and rags are controlled. Links use a unified teal with a thin, even underline that matches the body weight. Limitation: link treatment appears close to default and body size is on the small side, with limited evidence of hover/visited states.",
+        "layout_composition": "Simple, readable structure: centered hero followed by a disciplined three\u2011column grid. Illustration tiles share identical aspect ratios/mats and align cleanly to column text; gutters appear even and spacing follows a consistent rhythm. CTA button has clear hierarchy and sensible margin from the grid. Limitation: overall structure is conventional (centered hero then three cards) and the centered hero vs. left\u2011aligned columns introduces a mild alignment shift; only one section is visible, limiting proof of broader grid discipline.",
+        "color": "Cohesive palette with tuned neutrals (warm off\u2011white background, dark charcoal text) and a single teal accent used consistently for name, links, and CTA. Soft beige illustration mats unify the artwork and keep value contrast controlled. No noisy gradients or competing accents; palette feels considered and editorial. Limitation: state colors for links/CTAs aren\u2019t demonstrated, and the teal could be slightly dark for small text on some displays."
+      },
+      "red_flags": {
+        "human": [],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "25",
+      "overall_gap": 1.3,
+      "human_score": 1.7,
+      "ai_score": 3.0,
+      "image_file": "candidate_25.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        },
+        "layout_composition": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        },
+        "color": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        }
+      },
+      "human_comments": {
+        "typography": "Typography here is sloppy. So you'll notice that they use all caps for the items in the nav bar where it's not necessary. You also notice that all the headers are sort of like different styles, so their name Matt is a different weight and size than the headers in their images (the AI data assistant). Even though they are very similar, and then the \"Open to chat\" is also a different style. They just seem very similar but also different, which adds visual noise. ",
+        "layout_composition": "The composition here is mostly awkward from the sloppy images. The image is just like there's no consistency in how they're laid out. ",
+        "color": "The colors here almost have a system, but not quite. The first two images have a multi-colored background that is in the same hue. It's not super but it's working-ish. But then they do something completely different in the third and fourth images where it's just a solid pastel background. They also use a laptop picture for the third image, which is a bit more realistic, but doesn't really work well with their more UI-driven stuff for the first, second, and fourth images. "
+      },
+      "ai_comments": {
+        "typography": "Readable, consistent sans-serif throughout. Clear hierarchy: large name headline, smaller centered intro paragraph, then project titles in bold with lighter meta line beneath. Measures look comfortable (~60\u201370ch) with even leading; no widows/orphans in the hero. Links are presented as small icon buttons and an outlined CTA, avoiding default blue underlines. Limitations: type voice feels generic/system and lacks a distinctive treatment; link/hover states aren\u2019t visible; casing system mixes all\u2011caps in the nav with sentence/title case elsewhere without a clear rationale.",
+        "layout_composition": "Page follows a clean, consistent structure: centered hero, then a sequence of wide project tiles with left-aligned titles and right\u2011anchored imagery; vertical spacing and gutters are even across tiles. Text columns align to the same left edge, and the CTA band provides a clear section break. Imagery is placed intentionally (browser frame in one card, device mockups bleeding off the right edge in another). Limitations: image treatments vary (raw browser window vs. device mocks vs. white card) which softens cohesion; some screenshots are too small to read; overall pattern (centered hero + uniform promo tiles + outline CTA) reads default/common with limited point of view.",
+        "color": "Each project tile uses a single dominant background color (teal, lavender, neutral gray, yellow) providing clear contrast to dark text. Neutrals for the page shell and the light gray CTA band are calm and readable. The first two tiles share a similar gradient motif that adds some continuity. Limitations: strong color jumps between tiles create scroll flicker and there\u2019s no evident global accent system (links/CTAs default to black/outline). Neutrals appear close to pure black/white, with little evidence of tuned hue shifts."
+      },
+      "red_flags": {
+        "human": [
+          "sloppy_images"
+        ],
+        "ai": []
+      }
+    },
+    {
+      "candidate_id": "42",
+      "overall_gap": 1.2999999999999998,
+      "human_score": 1.35,
+      "ai_score": 2.65,
+      "image_file": "candidate_42.jpg",
+      "gap_breakdown": {
+        "typography": {
+          "human": 1,
+          "ai": 2,
+          "gap": 1
+        },
+        "layout_composition": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        },
+        "color": {
+          "human": 2,
+          "ai": 3,
+          "gap": 1
+        }
+      },
+      "human_comments": {
+        "typography": "The typography here uses just some really bad font choices. There's this pseudo-handwritten looking font for titles that's really awkward. And then the body is done in this rounded, playful font that's not very well done. ",
+        "layout_composition": "The layout is like almost a different width at every section in a way that doesn't lend anything to the design. ",
+        "color": "There's a consistent attempt at doing a taupe color here, but the problem is that they use a lot of stock photography that doesn't follow the taupe color theme, so it takes away from the color usage. Then they also use a lot of stark white images that have multiple colors on them, which again takes away from the overall taupe theme. "
+      },
+      "ai_comments": {
+        "typography": "Mixed font system reduces cohesion: script/handwritten headings (e.g., 'My Work', 'Recommendations') paired with a plain sans body feel stylistically disconnected. Intro and testimonial paragraphs run long (roughly 85\u201395ch) which softens hierarchy and rhythm. Work tile captions are small white text over photography with low contrast, making them hard to read. Nav/link styling appears minimal and state logic isn\u2019t evident. Section heading underlines and casual script vary in weight/spacing from body styles, adding inconsistency. Limitation: no clear link or hover treatment visible and some rags/measures read loose.",
+        "layout_composition": "Overall structure is clear with sequential sections and adequate spacing. The 3\u2011tile 'My Work' row uses consistent tile sizes, corner radii, and even gutters. 'My Process' presents two cards with matched proportions and labels, and the contact section uses a two\u2011column split with an arched image. Roughness: the slider arrow in 'My Work' floats over the right tile creating a visual overlap; the testimonial block is a large rounded container with an inner rounded card and excessive negative space; vertical alignment between the left contact text and the arched photo feels off (baseline mismatch). Process images contain dense, unreadable text, weakening the information hierarchy within that section.",
+        "color": "A cohesive warm beige palette with tinted section cards offers a consistent shell. Neutrals are soft and readable (dark grey on beige). However, the multiband background gradient introduces visual noise behind content. Photography varies in color temperature (wood desk, grey fabric, cool desktop, outdoor selfie) without neutral mats to unify them. White captions on photos lack contrast. Accents are restrained but state logic for links/buttons is not evident. Limitation: the busy gradient competes with content and slightly muddies hierarchy."
+      },
+      "red_flags": {
+        "human": [
+          "sloppy_images"
+        ],
+        "ai": []
+      }
+    }
+  ],
+  "key_patterns": {
+    "ai_overrating_frequency": 0.5,
+    "common_ai_blindspots": [
+      "Template detection - AI misses obvious template usage",
+      "Sloppy execution - AI sees 'clean' where humans see 'careless'"
+    ],
+    "most_problematic_categories": [
+      "typography",
+      "layout_composition",
+      "color"
+    ]
+  }
+}

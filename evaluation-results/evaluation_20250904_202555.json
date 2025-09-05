@@ -1,0 +1,1480 @@
+{
+  "evaluation_metadata": {
+    "timestamp": "2025-09-04T20:25:55.995214",
+    "end_time": "2025-09-04T20:30:42.611530",
+    "duration_seconds": 286.616316,
+    "model_used": {
+      "provider": "OpenAIProvider",
+      "model": "gpt-5"
+    },
+    "exemplar_images": [
+      "manual-test-images/manual-test-prompt-v2/exemplar_7.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_20.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_9.jpg",
+      "manual-test-images/manual-test-prompt-v2/exemplar_1.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_46.jpg",
+      "manual-test-images/manual-test-prompt-v2/exemplar_2.jpg",
+      "manual-test-images/manual-test-prompt-v2/exemplar_3.jpg",
+      "manual-test-images/manual-test-prompt-v2/exemplar_4.jpg",
+      "manual-test-images/manual-test-prompt-v2/exemplar_5.jpg",
+      "manual-test-images/manual-test-prompt-v2/exemplar_6.jpg",
+      "manual-test-images/manual-test-prompt-v2/exemplar_8.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_12.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_13.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_14.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_26.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_32.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_33.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_35.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_38.jpg",
+      "manual-test-images/manual-test-prompt-v2/candidate_44.jpg"
+    ],
+    "total_candidates_evaluated": 50,
+    "prompt_length_chars": 21071,
+    "evaluation_complete": true,
+    "no_exemplars_mode": false,
+    "concurrency": 25,
+    "save_every": 5,
+    "max_retries": 3,
+    "rate_limits_encountered": 0
+  },
+  "full_prompt_used": "<instructions>\nYou are a senior product design hiring manager with deep taste in visual design craft for product UI. Your task is to rate a candidate\u2019s craft from 1\u20135 using only the evidence visible in their portfolio screenshots (not the written story or r\u00e9sum\u00e9), and to return a concise, structured JSON assessment.\n</instructions>\n\n<evaluation_rules>\nScoring:\n* **Score 3** is the competent baseline.\n* Use **4\u20135 only** when criteria are clearly met **across multiple sections**, or when the **Single\u2011view Pass** applies.\n* **Default to 3** when evidence is mixed, default\u2011ish, or generic.\n* **Single\u2011view Pass** (rare): Only grant **4\u20135** when ALL apply:\n  - Each dimension shows **\u22654 concrete micro\u2011craft signals** specific to that dimension (e.g., tuned underline thickness/offset; stable baseline; matched mats/radii; even gutter rhythm; unified values; readable screenshots).\n  - No caps are triggered by the Preflight Checklist.\n  - Set **confidence \u2264 3** and explicitly note limited evidence. Otherwise cap each dimension at **3**.\n\n---\n\nGeneral:\n* Think carefully which score to assign for each criteria in the rubric based. Supplement your understanding of the rubric with the exemplars provided. \n* Don't be overfident in your analysis. It's better to say when you are not sure by providing a low confidence score. Being confident and wrong is bad.\n\nPreflight Checklist (complete BEFORE scoring; list findings inside each explanation)\n- Sloppy cues (count each): cut\u2011off crops; unreadable small UI; mixed/mismatched radii; heavy/inconsistent shadows; inconsistent mats; white\u2011balance mismatch; irregular masonry gutters; emoji bullets; default link blue + default underline; device\u2011frame collage with tiny UI.\n- Template cues (count each): \u201cI\u2019m [Name]\u201d hero; left text/right device hero; uniform 2\u2011column rows with outline \u201cVIEW PROJECT\u201d; billboard background words; default link styles; boilerplate footer; \u201cMade with \u2026\u201d badge; identical 12/16 radii; default Tailwind/Bootstrap tokens; unmodified Notion/Figma blocks.\n- Caps and flags:\n  - If sloppy cues \u2265 3 \u2192 add red_flag \"sloppy_images\"; **Layout \u2264 2**; if value flicker from mismatched whites/mats \u2192 **Color \u2264 2**.\n  - If template cues \u2265 3 \u2192 add red_flag \"template_scent_high\"; **Typography \u2264 3** and **Layout \u2264 3**.\n  - For any red_flag, cite **\u22652 concrete cues**.\n\nSloppy cue scoring (to reduce ambiguity):\n- Any device mock where UI text/icons are unreadable at presented size \u2192 +1 sloppy cue per instance.\n- Any visible cut\u2011off crop \u2192 +1 per affected tile/image.\n- Any mismatched whites/mats causing value flicker across tiles/rows \u2192 +1.\n- Any irregular masonry gutters (ragged bottoms/tops) \u2192 +1.\n\nEnforcement Rules (must follow; do not change JSON schema):\n- When Preflight thresholds trigger, you MUST add the corresponding red_flag(s) and apply the cap(s) to dimension scores BEFORE computing overall.\n- Compute base = 0.35*Typography + 0.35*Layout + 0.30*Color, then subtract penalties exactly:\n  - template_scent_high: 0.6; sloppy_images: 0.5; process_soup: 0.2.\n- Never exceed a cap once triggered. If your narrative cites a cap, your JSON scores must reflect that cap.\n\nCalibration Anchors (use exemplars actively)\n- Identify the closest **1\u20132 calibration examples** by structure and visual patterns (name them).\n- Keep each dimension within **\u00b10.5** of the closest anchor unless you cite **\u22653 concrete counter\u2011signals** for that dimension.\n- If overall differs by **>0.5** from the closest anchor, explicitly justify with those counter\u2011signals; otherwise **round down** to within 0.5.\n  - Place anchor names and the counter\u2011signals inside each dimension\u2019s explanation (no JSON field changes).\n\nSingle\u2011view Strict Cap + Proof Quota:\n- If evidence is limited to a single view/section, you MUST list **\u22654 dimension\u2011specific micro\u2011craft signals** in each explanation to justify a score > 3 for that dimension; otherwise that dimension \u2264 3.\n- With single\u2011view evidence, set **confidence \u2264 3** and state limited evidence in the explanation.\n\nEditorial Minimal Safe\u2011Harbor:\n- If the page exhibits strong editorial minimal signals (e.g., stable multi\u2011column rhythm, tuned neutrals, disciplined micro\u2011labels, sparse accent use) and no red_flags are present, do not rate overall < 3.5 unless you list **\u22653 concrete defects across \u22652 dimensions**.\n\nConfidence Discipline:\n- If single\u2011view evidence or any red_flag is present \u2192 **overall_confidence \u2264 3** (prefer \u2264 2.5). Confidence should track evidence breadth and ambiguity.\n</evaluation_rules>\n\n<rubric>\n\n## Typography (weight = 35%)\n\n**Examine:**\nTypeface quality and appropriateness; pairing logic; hierarchy through scale/weight/spacing/tone (not just bold); readability (body **45\u201380 characters**, line height **1.3\u20131.7**, tighter for display without collisions); consistency (heading levels, lists, links including underline **thickness/offset**, baseline rhythm, quotes/apostrophes, superscript/subscript alignment, casing); micro\u2011craft (optical kerning in all\u2011caps, punctuation spacing, small\u2011caps quality, number alignment, rag/hyphen control).\n\nTypography scoring method (principled, non\u2011token):\n- Score the following sub\u2011factors 1\u20135 in your reasoning (keep JSON unchanged):\n  1) Hierarchy (multi\u2011modal: size + weight/spacing/tone)\n  2) Readability (measure/leading/contrast)\n  3) Consistency (scale steps, casing, labels, links/states across sections)\n  4) Micro\u2011craft (baseline rhythm, optical alignment, underline tuning, punctuation)\n- Weakest\u2011link soft cap: if any sub\u2011factor \u2264 2, **Typography \u2264 3** unless you present **\u22653 counter\u2011signals** addressing that sub\u2011factor across multiple sections.\n- Evidence ceiling: with single\u2011section evidence or missing state/link proof, **Typography \u2264 3**.\n- Anchor alignment: keep Typography within **\u00b10.5** of the nearest calibration anchor unless you list **\u22653 concrete deltas** explaining the difference inside the explanation.\n\n**Score 5 \u2014 Exceptional**\n\n* A minimal style set yields a rich, unmistakable hierarchy with impeccable rhythm across sections.\n* A single family or pairing is mastered; details are tuned (optical alignment, kerning, consistent ascender/cap spacing, intentional hyphenation, no widows/orphans, clean list indents).\n* A distinctive yet highly readable voice; links/labels are rigorously consistent, including states and edge cases.\n\n**Score 4 \u2014 Strong**\n\n* Clear hierarchy with restrained, consistent styles; measures and leading are comfortable across sections.\n* A visible scale system (e.g., modular ratios) spans multiple elements; link styling is customized and consistent or intentionally conservative.\n* **Common system faces can earn 4** when rhythm, measures, punctuation, casing, and link treatment are disciplined and repeat. Minor issues only.\n\n**Score 3 \u2014 Competent baseline**\n\n* Readable with adequate hierarchy using a limited style set; may feel generic.\n* Defaults (system sans + near\u2011default link blue) are acceptable but not broken.\n* Small inconsistencies may appear (close heading levels, uneven list indents, occasional baseline drift or widows/orphans, inconsistent smart quotes, one over\u2011tracked all\u2011caps, minor nav/hero mismatches).\n\n**Score 2 \u2014 Below average**\n\n* Multiple issues reduce clarity/polish: inconsistent casing; \u201ceverything bold\u201d; random word\u2011level bolding; emoji bullets that break rhythm; over\u2011indented lists; heavy dividers; random tracking or all\u2011caps; display/mono used for body; mixed fonts between buttons and body; default link styling with thick default underline; mixed link treatments; repeated widows/orphans or unstable baselines. Voice reads junior despite legibility.\n\n**Score 1 \u2014 Poor**\n\n* Flat or confusing hierarchy; style proliferation; unreadable measures (e.g., \\~90\u2013100ch hero); collisions/overlaps; inconsistent quotes/apostrophes; broken lists/labels.\n\n**Pull\u2011downs to 2 (or 1 if frequent):** default link blue with default underline; unreasoned serif/sans mixing; visible reflow collisions; mismatched button fonts or strokes; harsh, oversized nameplate in navigation.\n\n**Refined minimal vs generic minimal:**\n\n* **Refined**: tuned neutrals; customized underline weight/offset; disciplined scale steps; stable baselines; optical alignment of icons/marks; consistent micro\u2011labels/dates; intentional hyphenation; bullets align with text; consistent casing.\n* **Generic**: default link blue/underline; uneven paragraph spacing; arbitrary size jumps; mixed alignment without rationale; unmodified \u201cNotion\u2011export\u201d toggles/dividers; emoji bullets; oversized or over\u2011tracked all\u2011caps; nav/hero compete for scale.\n\n---\n\n## Layout (weight = 35%)\n\n**Examine:**\nGrid usage (columns, gutters, container widths) and spacing system (multiples of 4/8/12); structural clarity (sections, scan paths, focal points, navigation affordances); image presentation (consistent crops, device\u2011frame consistency or bespoke mats, matched radii/borders/shadows, readable screenshots); innovation with control (novel structures that aid comprehension); breadth of evidence across sections and visible breakpoints.\n\n**Score 5 \u2014 Exceptional**\n\n* Masterful, point\u2011of\u2011view structure that elevates clarity while remaining disciplined.\n* Immaculate rhythm and alignment at visible breakpoints; optical fixes for asymmetric content; long, complex grids stay in sync.\n* Assets are harmonized (radii, borders, shadows, captions) with flawless consistency; even large galleries maintain exact mats/captions/gutters.\n\n**Score 4 \u2014 Strong**\n\n* Consistent grid and spacing; clear section hierarchy; strong alignment across sections.\n* Image/asset handling is deliberate and cohesive; cards/tiles feel unified.\n* Long repeated grids are disciplined (identical mats, radii, caption positions, gutter rhythm). Minor roughness is acceptable.\n* Uniform card grids may earn 4 only when mats/radii/spacing are notably refined and captions/labels are disciplined. Considered collage can also earn 4 when gutters, baselines, and captions repeat exactly and no crops are cut off.\n\n**Score 3 \u2014 Competent baseline**\n\n* A basic grid is present and mostly consistent; sections are readable with adequate spacing.\n* Common patterns (single column, centered hero, simple card grid, left\u2011text/right\u2011image hero) are executed decently but without a clear point of view.\n* Some inconsistencies may appear (gutters, container widths, vertical rhythm, image placement); device frames show light tuning.\n\n**Score 2 \u2014 Below average**\n\n* Structural problems: drifting container widths without rationale; unexplained switches between centered and left alignment; awkward rags; floaty calls to action that ignore the grid; masonry/collage tiles with inconsistent whitespace or cut\u2011off crops; small unreadable screenshots in generic device mocks; mixed tile ratios that cause rhythm flicker; inconsistent internal mats; oversized headings that overpower content; misaligned buttons/captions; billboard backgrounds crowd real content. Layout feels like an uncustomized template.\n\n**Score 1 \u2014 Poor**\n\n* Random placement; competing focal points; inconsistent widths/gutters; severe readability issues.\n* Haphazard screenshot handling; inconsistent radii/shadows; elements hug edges or overflow at visible breakpoints.\n\n**Common deductions and caps:**\n\n* Evidence limited to a **single hero or short view \u2192 cap at 3**, unless **Single\u2011view Pass** applies.\n* \u201cClean but generic\u201d templates (centered hero + simple grid with soft shadows/rounded corners and no point of view) should **not exceed 3** without visible refinement.\n* Repeated template modules with little customization: **cap at 3** and note **template scent high**.\n* If **\u22653 sloppy\u2011image cues** (cut\u2011offs, unreadable mocks, mixed radii/crops), **cap Layout at 2** and pull **Color** down when value flicker comes from mismatched whites/mats.\n\n---\n\n## Color (weight = 30%)\n\n**Examine:**\nPalette quality (harmony, hue/value control, consistency); neutrals (tuned grays/blacks, hue\u2011shifted borders/shadows, subtle overlays); accent strategy (sparseness and role clarity, link/call\u2011to\u2011action states); integration with imagery (does the shell unify diverse screenshots via mats, border tints, shadow logic, and sequencing).\n\n**Score 5 \u2014 Exceptional**\n\n* A sophisticated palette with precise value control; accents are sparse yet effective.\n* Neutrals and shadows are tuned; borders/overlays have intentional tints; varied content is unified effortlessly, including complex artwork.\n* Color expresses identity without noise and remains consistent across sections and states.\n\n**Score 4 \u2014 Strong**\n\n* A harmonious palette with controlled accents; link/call\u2011to\u2011action logic is clear or strongly implied by usage.\n* Neutrals are intentionally tuned (off\u2011black/off\u2011white) to support readability and hierarchy; gradients/illustrations sit comfortably within the system.\n* Conservative blue accents can still earn 4 when mats, borders, and grays are tuned and unify colorful content. Minor issues only.\n\n**Score 3 \u2014 Competent baseline**\n\n* A serviceable palette; the shell uses a single accent or default\u2011ish link blue acceptably.\n* When colorful tiles carry most color, the chrome does not clash but lacks unifying tactics that would lift it to 4.\n* States may be missing but are implied by stable patterns.\n\n**Score 2 \u2014 Below average**\n\n* Too many hues or values with little throughline; loud tiles overpower a claimed single\u2011accent scheme.\n* Flat, untuned grays; stark #000/#fff pairs; default bright link blue; inconsistent state colors.\n* Mixed tile backgrounds or mismatched whites cause grid flicker; full\u2011color social icons/client logos add noise; unnecessary colored outlines.\n* Pastel mats are attempted but overwhelmed by saturated foregrounds; value jumps (e.g., a saturated footer) break the page\u2019s structure.\n\n**Score 1 \u2014 Poor**\n\n* Clashing gradients; muddy overlays; illegible contrast; chaotic color with no role clarity.\n\n**Pull\u2011downs to 2:** pure #000/#fff with harsh default blue; mismatched tile backgrounds; muddy overlays; random hover colors; inconsistent visited link behavior; pastel mats that fail to unify saturated UIs; noisy social/logo rows; aggressive value jumps.\n\n**Tuned minimal vs default minimal:**\n\n* **Tuned**: slightly desaturated or hue\u2011shifted blue; consistent underline thickness/offset; hover/visited handled or implied; off\u2011black/off\u2011white neutrals; very light, even dividers; unified mats/shadows.\n* **Default**: pure black/white; harsh default blues; heavy generic shadows; inconsistent border tints; tile radii/shadows that do not match; multicolor logos/emoji adding noise.\n\n---\n\n# Red flags\n\nFlag these when clearly present and reflect them in explanations. Only add a flag when you can name at least two matching cues from the lists above; otherwise omit and reduce confidence.\n\n- template_scent_high:\n\n  - Obvious boilerplate patterns with minimal customization: centered \u201cI\u2019m [Name]\u201d hero with left text/right device, generic down arrow \u201cSee projects,\u201d uniform 2\u2011column rows with outline \u201cVIEW PROJECT\u201d buttons, billboard background words, stock \u201cAbout\u201d block, boilerplate footer, default link styles and underlines, visible \u201cMade with \u2026\u201d badge.\n  - Tokens that mirror popular UI kits without page\u2011level decisions: identical 12/16px radii everywhere; 24/24 paddings; Tailwind/Bootstrap default blues; identical card shadows; Inter/Roboto with untouched link defaults; Notion\u2011style layouts with unmodified toggles and dividers; emoji bullets as structure; oversized personal nameplate in nav.\n  - Repeated canned sections with identical structure, no bespoke visual decisions, and no tuning of mats, shadows, or link treatments; unexplained alternating center/left alignment and container widths that follow theme defaults.\n\n- sloppy_images:\n\n  - Inconsistent crops/aspect ratios; mixed/mismatched corner radii; aliasing/jaggies; compression artifacts; non\u2011retina blurriness; screenshots cut off or too zoomed out to read; tiny UI inside device frames.\n  - Generic device frames without customization; screenshots small/unreadable inside mocks; inconsistent mats/shadows/border weights; white\u2011balance mismatch across tiles; irregular masonry gutters.\n  - Misaligned captions/labels; inconsistent drop\u2011shadow directions; pixel wobble across a grid; outline/button strokes that do not match text weight; full\u2011color social/client logos used as graphic tiles without harmonization.\n\n- process_soup:\n  - Long timelines/diagrams overwhelming final visuals; walls of sticky\u2011note photos overshadowing product.\n  - Persona/journey maps with unreadable small text; very little outcome imagery; excessive wireframes with no polished result.\n\nNote: If uncertain, omit the flag and reduce confidence instead. If you do flag, list the cues you observed in your explanations.\n\n</rubric>\n\n<scoring_calculation> \n- base_score = (typography \u00d7 0.35) + (layout_composition \u00d7 0.35) + (color \u00d7 0.30)\n- penalty = sum of red flag penalties:\n  - template_scent_high: 0.6 points\n  - sloppy_images: 0.5 points\n  - process_soup: 0.2 points\n- overall_weighted_score = base_score - penalty\n- overall_confidence = average of individual dimension confidences\n</scoring_calculation>\n\n\n<output_format>\n\nReturn only valid JSON matching this exact structure:\n\n```json\n{\n  \"candidate_id\": \"X\",\n  \"scores\": {\n    \"typography\": {\n      \"score\": 1-5,\n      \"explanation\": \"detailed reasoning with specific evidence\",\n      \"confidence\": 1-5\n    },\n    \"layout_composition\": {\n      \"score\": 1-5,\n      \"explanation\": \"detailed reasoning with specific evidence\",\n      \"confidence\": 1-5\n    },\n    \"color\": {\n      \"score\": 1-5,\n      \"explanation\": \"detailed reasoning with specific evidence\",\n      \"confidence\": 1-5\n    }\n  },\n  \"red_flags\": [\"list any that apply\"],\n  \"overall_weighted_score\": calculated_number,\n  \"overall_confidence\": calculated_number\n}\n```\n</output_format>\n\n<calibration_examples>\n\n<calibration_example_1>\nimg_name: exemplar_7.jpg\noverall_score: 0.5\ntypography: 1\nlayout_composition: 1\ncolor: 2\nred_flags: [\"template_scent_high\", \"sloppy_images\"]\n</calibration_example_1>\n\n<calibration_example_2>\nimg_name: candidate_20.jpg\noverall_score: 2.0\ntypography: 2\nlayout_composition: 2\ncolor: 2\nred_flags: []\n</calibration_example_2>\n\n<calibration_example_3>\nimg_name: candidate_9.jpg\noverall_score: 3.0\ntypography: 3\nlayout_composition: 3\ncolor: 3\nred_flags: []\n</calibration_example_3>\n\n<calibration_example_4>\nimg_name: exemplar_1.jpg\noverall_score: 4.0\ntypography: 4\nlayout_composition: 4\ncolor: 4\nred_flags: []\n</calibration_example_4>\n\n<calibration_example_5>\nimg_name: candidate_46.jpg\noverall_score: 5.0\ntypography: 5\nlayout_composition: 5\ncolor: 5\nred_flags: []\n</calibration_example_5>\n\n<calibration_example_6>\nimg_name: exemplar_2.jpg\noverall_score: 4.65\ntypography: 5\nlayout_composition: 4\ncolor: 5\nred_flags: []\n</calibration_example_6>\n\n<calibration_example_7>\nimg_name: exemplar_3.jpg\noverall_score: 1.7\ntypography: 2\nlayout_composition: 2\ncolor: 1\nred_flags: []\n</calibration_example_7>\n\n<calibration_example_8>\nimg_name: exemplar_4.jpg\noverall_score: 1.65\ntypography: 2\nlayout_composition: 1\ncolor: 2\nred_flags: []\n</calibration_example_8>\n\n<calibration_example_9>\nimg_name: exemplar_5.jpg\noverall_score: 4.7\ntypography: 5\nlayout_composition: 5\ncolor: 4\nred_flags: []\n</calibration_example_9>\n\n<calibration_example_10>\nimg_name: exemplar_6.jpg\noverall_score: 4.35\ntypography: 5\nlayout_composition: 4\ncolor: 4\nred_flags: []\n</calibration_example_10>\n\n<calibration_example_11>\nimg_name: exemplar_8.jpg\noverall_score: 2.65\ntypography: 2\nlayout_composition: 3\ncolor: 3\nred_flags: []\n</calibration_example_11>\n\n<calibration_example_12>\nimg_name: candidate_12.jpg\noverall_score: 4.65\ntypography: 4\nlayout_composition: 5\ncolor: 5\nred_flags: []\n</calibration_example_12>\n\n<calibration_example_13>\nimg_name: candidate_13.jpg\noverall_score: 2.25\ntypography: 2\nlayout_composition: 1\ncolor: 4\nred_flags: []\n</calibration_example_13>\n\n<calibration_example_14>\nimg_name: candidate_14.jpg\noverall_score: 4.7\ntypography: 5\nlayout_composition: 5\ncolor: 4\nred_flags: []\n</calibration_example_14>\n\n<calibration_example_15>\nimg_name: candidate_26.jpg\noverall_score: 0.55\ntypography: 2\nlayout_composition: 1\ncolor: 1\nred_flags: [\"sloppy_images\", \"template_scent_high\"]\n</calibration_example_15>\n\n<calibration_example_16>\nimg_name: candidate_32.jpg\noverall_score: 4.35\ntypography: 5\nlayout_composition: 4\ncolor: 4\nred_flags: []\n</calibration_example_16>\n\n<calibration_example_17>\nimg_name: candidate_33.jpg\noverall_score: 3.0\ntypography: 3\nlayout_composition: 3\ncolor: 3\nred_flags: []\n</calibration_example_17>\n\n<calibration_example_18>\nimg_name: candidate_35.jpg\noverall_score: 4.7\ntypography: 5\nlayout_composition: 5\ncolor: 4\nred_flags: []\n</calibration_example_18>\n\n<calibration_example_19>\nimg_name: candidate_38.jpg\noverall_score: 2.95\ntypography: 3\nlayout_composition: 2\ncolor: 4\nred_flags: []\n</calibration_example_19>\n\n<calibration_example_20>\nimg_name: candidate_44.jpg\noverall_score: 4.7\ntypography: 5\nlayout_composition: 5\ncolor: 4\nred_flags: []\n</calibration_example_20>\n\n</calibration_examples>\n",
+  "candidate_ratings": {
+    "13": {
+      "candidate_id": "13",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_13.jpg",
+      "evaluated_at": "2025-09-04T20:27:14.410967",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy cues, no strong template scent. Closest anchors: Exemplar 16 and Exemplar 19 (editorial minimal). Evidence of strong hierarchy and polish within this single view: (1) distinctive serif display for the headline with balanced tracking and high contrast; (2) consistent small\u2011caps sans section labels with intentional letter\u2011spacing; (3) readable measures: centered intro ~55\u201365ch; three-column body copy ~35\u201345ch with comfortable ~1.5 leading; (4) link styling uses a tuned teal with a thin, offset underline that repeats across lists; (5) stable baseline rhythm and even list indents produce clean rags; (6) consistent casing and weight steps across levels. These signals lift it above generic. Single\u2011view constraint noted.",
+          "confidence": 2.6
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Three-column grid with equal image tiles, even gutters, and clear vertical rhythm. Centered hero/read-in flows into the grid cleanly; CTA centered with adequate breathing room. Asset handling is coherent (matched illustration mats, aligned captions). However, structure is conventional with limited complexity or breakpoint proof; no advanced image harmonization challenges or novel layout decisions visible. Closest anchors: Exemplar 19/16; within range.",
+          "confidence": 2.4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Cohesive palette: warm off\u2011white canvas, pine/teal accents, and illustrations tinted to match create harmony. Neutrals appear slightly softened (not pure #000/#fff), aiding readability. Accent usage is disciplined\u2014links, headings, and CTA border\u2014without noise. No value flicker between tiles. Aligns with Exemplar 16/19 strength.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.65,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.65,
+      "overall_confidence": 2.5
+    },
+    "2": {
+      "candidate_id": "2",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_2.jpg",
+      "evaluated_at": "2025-09-04T20:27:24.621425",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: no sloppy cues spotted; template cues low. The page uses a clean system sans with a modest scale. Pros: readable measure (~60\u201370ch in intro and lists), comfortable leading, consistent small section headers (Icons, Software, Work, Featured in, Interests), and restrained weights. Captions under tiles repeat a light label + year pattern with consistent casing. Cons: link styling leans default (bright blue, no evident custom underline/hover), voice is generic, and hierarchy is minimal (few scale steps; headers close to body). Limited evidence of micro\u2011craft like tuned underlines, optical alignment in numbered lists, or state consistency. Closest anchors: Exemplar 17 (gallery grid with simple type) and Exemplar 16 (minimal index). Compared with Exemplar 16, this has less typographic voice and fewer tuned details, so it stays at the competent baseline.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy image cues\u2014no cut\u2011offs, mats/radii/shadows are consistent; template scent low. Strong gallery handling: a disciplined two\u2011up grid with even gutters, identical square ratios, matched outer mats and corner radii, and consistent caption placement with aligned years. Vertical rhythm is steady across a long scroll, and sections transition cleanly into text lists with consistent widths. The asset unification (white/light mats, subtle shadows) keeps the page cohesive despite highly varied icon colors. Minor roughness: supporting text sections are straightforward lists with little structural invention. Closest anchors: Exemplar 17 (simple but well\u2011kept gallery) and Exemplar 19 (selected work grid with card consistency). This candidate matches those for grid rigor and asset harmony, warranting a strong 4.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Preflight: no mismatched whites or value flicker from mats; no sloppy color cues. Strengths: consistent neutral shell and identical light mats unify saturated icon artwork; accents limited to blue links keep the chrome quiet. Weaknesses: neutrals read as near\u2011pure black/white and the link blue appears default\u2011ish with no visible state logic; little evidence of hue\u2011tuned borders/shadows or a broader accent system. Closest anchors: Exemplar 17 and Exemplar 11 (neutral shells with colorful content). Good baseline harmony but not clearly tuned enough for a 4.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.35,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.35,
+      "overall_confidence": 2.83
+    },
+    "23": {
+      "candidate_id": "23",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_23.jpg",
+      "evaluated_at": "2025-09-04T20:27:26.309790",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy cues; template scent low. Type shows a confident, restrained system: (1) Clear hierarchy\u2014large left\u2011aligned hero, repeated small section headers ('Thoughts', 'Latest Projects'), and a bold location/time lockup; (2) Comfortable measures and leading across body and cards (roughly 50\u201370ch, LH ~1.4\u20131.6), easily readable; (3) Consistent casing and styles\u2014micro labels in card corners repeat, CTA pills use the same weight/size treatment, and link styling is custom (no default blue/underline); (4) Microcraft\u2014stable baselines between stacked lines, optical alignment of arrow icons within pills, consistent caption placement bottom\u2011left of tiles, and tidy rags with no widows. Closest anchors: Exemplar 17 and 19; this sits within \u00b10.5 by matching their disciplined hierarchy and custom link/label treatments.",
+          "confidence": 2.6
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: assets are clean\u2014no cut\u2011offs, matched radii, even gutters. Layout demonstrates a tight grid with generous rhythm: (1) A consistent card system\u2014identical mats, radii, and shadow logic across the 3\u2011up feature row and the horizontal project scroller; (2) Strong vertical spacing cadence separating modules, with section headers providing wayfinding; (3) Cohesive image handling\u2014bottom\u2011left captions and bottom\u2011right affordance arrows repeat, keeping tiles unified despite varied imagery; (4) Intentional alignment shifts (left\u2011aligned hero into centered modules) feel deliberate, not template\u2011driven. Minor note: some project thumbnails contain tiny UI that isn\u2019t readable at this size, but overall structure remains clear. Closest anchors: Exemplar 17 and 19; comparable discipline and tile cohesion keeps this within \u00b10.5.",
+          "confidence": 2.6
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Palette control is strong: (1) Neutral shell with tuned off\u2011black text lets colorful project cards take the stage without clashing; (2) Accent strategy is sparse and coherent\u2014black pill CTAs with white arrows; (3) Consistent soft shadows and subtle mats unify varied imagery; (4) Saturated card backgrounds (blue, orange, gradient) are balanced by ample white space and consistent value control, avoiding grid flicker. Closest anchors: Exemplar 17 and 19; harmony and restraint align closely, so scoring stays within \u00b10.5.",
+          "confidence": 2.6
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 2.6
+    },
+    "1": {
+      "candidate_id": "1",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_1.jpg",
+      "evaluated_at": "2025-09-04T20:27:38.768198",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: sloppy cues 0; template cues 1 (\"I'm [Name]\" style hero). Single\u2011view evidence, so capped at 3 unless Single\u2011view Pass applies. Signals: high\u2011quality italic display serif set with tight optical kerning; clear blue link styling on name and company; small superscript date annotations show typographic control; comfortable display leading and controlled rag. Gaps: only one section visible, no proof of link states/underline tuning, scale system across sections, or baseline rhythm consistency. Closest anchors: Exemplar 10 and 18 (editorial minimal). Within those, this shows similar voice but less proof across sections.",
+          "confidence": 2
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Single hero layout with generous margins and left\u2011aligned text block centered within the canvas; bespoke vertical side navigation on the right provides a clear scan path; spacing feels even and intentional. No assets/screens to judge image handling, grid rigor across sections, or multi\u2011module rhythm. Single\u2011view Strict Cap applied. Closest anchors: Exemplar 10 (large typographic hero) and 18 (editorial minimal); comparable structural cleanliness but with limited breadth here.",
+          "confidence": 2
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Muted off\u2011white background with dark slate text and a restrained saturated blue accent for links; palette feels harmonious and readable. Neutrals appear tuned rather than pure #000/#fff. However, with only one view, there\u2019s no evidence of state colors, unification tactics for diverse imagery, or neutral/overlay system\u2014thus kept at baseline. Closest anchors: Exemplar 10 and 18; similar restraint but less system proof.",
+          "confidence": 2
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 2.0
+    },
+    "22": {
+      "candidate_id": "22",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_22.jpg",
+      "evaluated_at": "2025-09-04T20:27:48.800645",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy image cues tied to type; template scent low (no default blue, custom underline). Signals: 1) Clear hierarchy\u2014bold intro line (\u201cMarco is building Turf.\u201d) contrasted with lighter, well\u2011spaced paragraphs; 2) Readable measures (~55\u201370ch) and comfortable line-height (~1.5) in the intro block; 3) Consistent voice and casing across tiles and nav; 4) Customized link styling on \u201cTurf\u201d with tuned underline weight/offset; 5) Small footnote asterisk set as a proper superscript with consistent spacing; 6) Micro labels (e.g., \u201cLook around\u2026\u201d) use a lighter tone for secondary info. Closest anchors: Exemplar 1 and 19. Compared to Exemplar 19 (baseline), this shows more tuned link/footnote treatments and steadier rhythm; close to Exemplar 1 in restraint and consistency. Single\u2011view pass satisfied with \u22654 micro\u2011craft signals.",
+          "confidence": 2.6
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: no cut\u2011off crops; screenshots generally readable; matched radii across cards; even gutters\u2014no irregular masonry issues visible. Signals: 1) Disciplined 3\u2011column card grid with consistent gutter rhythm; 2) Harmonized asset presentation\u2014uniform soft mats, matched corner radii, and subtle shadows; 3) Repeated micro\u2011pattern of bottom\u2011left arrow affordance aligned consistently; 4) Strong scan with a large intro card anchoring the grid and balanced negative space; 5) Device shots/captures are sized and framed to remain legible and consistent; 6) Nav pill and section spacing respect the same spacing system. Closest anchors: Exemplar 1 and 11; this page feels more controlled than Exemplar 11 (which has occasional rhythm drift) and aligns with Exemplar 1\u2019s cohesion.",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Preflight: no white\u2011balance/value flicker; neutrals consistent. Signals: 1) Tuned off\u2011white page with slightly darker card mats that unify diverse imagery; 2) Accents are sparse and intentional (green underline, warm coral gradient card/button, red asterisk) with clear role separation; 3) Subtle, cool\u2011tinted shadows/borders that avoid harsh #000/#fff; 4) Varied content (photos, UI, logos) sits comfortably due to the neutral shell; 5) Social/Twitter widget and app icons are visually tempered by the grid\u2019s neutral context. Closest anchors: Exemplar 1 and 19; stronger harmony than Exemplar 19\u2019s mixed tiles and comparable restraint to Exemplar 1.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 2.53
+    },
+    "32": {
+      "candidate_id": "32",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_32.jpg",
+      "evaluated_at": "2025-09-04T20:27:52.508624",
+      "criteria": {
+        "typography": {
+          "score": 5,
+          "explanation": "Preflight: sloppy cues 0, template cues 0. Editorial-minimal list with highly disciplined type. Hierarchy: clear scale between nameplate, section nav (About/Connect/Features), project titles, and muted metadata lines. Readability: comfortable measure (~55\u201365ch) and relaxed leading; contrast and tone shifts (dark titles vs light gray meta) are consistent and legible. Consistency: repeated pattern for every entry (Title on one line, year range with en dash and middle dot separators, role labels) with no casing drift. Micro\u2011craft: correct use of en dashes in year ranges, consistent interpunct spacing, even rags, tight alignment of labels to a precise baseline rhythm; no default link blue/underline. Closest anchors: Exemplar 16 and Exemplar 18; this matches their refined editorial voice.",
+          "confidence": 2.9
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy image issues; no template scent. Strong, controlled single-column grid with generous left margins and a fixed rhythm between rows. The nameplate + micro\u2011nav sits as a stable left header, with a clean scan path down the project list. Spacing feels systemized (consistent vertical increments), and alignment is crisp with no drift. Evidence is limited to this single view and contains mostly text, so not enough asset variety to justify a 5. Closest anchors: Exemplar 16 (very similar) and Exemplar 18; matches their disciplined structure.",
+          "confidence": 2.6
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Neutral-forward palette with tuned off-black text and soft grays for metadata; accents are extremely restrained (only the avatar provides a gentle color note). No harsh #000/#fff pair or default blue. The restrained scheme supports hierarchy and avoids value flicker. Limited proof of state/interactive color and broader imagery integration keeps this at 4, not 5. Closest anchors: Exemplar 16 and Exemplar 18.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.35,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.35,
+      "overall_confidence": 2.67
+    },
+    "12": {
+      "candidate_id": "12",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_12.jpg",
+      "evaluated_at": "2025-09-04T20:27:56.339477",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: sloppy cues 0; template cues 0. Closest anchors: Exemplar 12 (chat-style one-pager) and Exemplar 18 (editorial minimal). Hierarchy: clear multi-level system\u2014bold name + light handle, conversational bubbles with distinct tones (primary blue vs neutral), and small caption labels for cards (4/5). Readability: comfortable measures and line-height inside bubbles; no cramped blocks; good contrast with off-black text on soft neutrals (4/5). Consistency: chip/link styling is unified (rounded pills with icons), casing is sentence-case throughout, and spacing between bubble text and avatars is consistent (4/5). Micro-craft: customized link/chip underline-free treatment, tuned punctuation/quotes, even bullet separators in the intro meta line, and stable baseline/leading rhythm across bubbles (3.5/5). Single-view evidence but \u22654 concrete micro-signals present, hence 4.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: sloppy cues 0; template cues 0. Closest anchors: Exemplar 12 and Exemplar 18. The chat-thread structure is disciplined: consistent bubble widths, padding, and radii; even vertical rhythm; clear scan path down the page. Project cards drop into the flow with matched mats, shadows, and caption positions; social icon row aligns to the grid; footer and title sit on a centered column with generous side gutters. No cut-off crops or irregular masonry. It shows considered composition but only one long view, so not pushing to 5.",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Preflight: sloppy cues 0; template cues 0. Palette shows a refined blue accent used sparingly (primary intro bubble, call-to-action) with desaturated gray bubbles and a soft off-white/blue atmospheric background. Shadows are subtle and consistent; borders appear lightly tinted. Diverse project thumbnails are contained by neutral card shells, avoiding value flicker. Strong harmony but limited breadth of states/views keeps this at 4 rather than 5.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 2.5
+    },
+    "25": {
+      "candidate_id": "25",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_25.jpg",
+      "evaluated_at": "2025-09-04T20:28:02.404027",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: template cues present but not high; main issue is unreadable UI inside device mocks (sloppy cue) but this affects imagery more than type. Hierarchy: clear, with a large H1, secondary intro copy, and strong project titles with smaller client labels. Readability: body copy sits around a comfortable measure with adequate line-height; headings don\u2019t collide and spacing between blocks is even. Consistency: headings and sublabels repeat consistently across tiles and footer; casing and weights are disciplined. Micro\u2011craft: few proofs of refinement\u2014links/states/underlines aren\u2019t demonstrated; no evidence of tuned punctuation/number alignment. Overall reads competent but generic. Closest anchors: Exemplar 8 and Exemplar 19; scoring +0.5 over Exemplar 8 on type due to cleaner hierarchy and steadier spacing across sections.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Preflight sloppy cues = 4: each of the four project tiles contains small, unreadable UI inside device frames or cards; screenshots function more as decoration than content. This triggers red_flag 'sloppy_images' and caps Layout \u2264 2. Within that cap, the page uses a single-column grid with consistent gutters and predictable section rhythm, but the repeated full-bleed colored tiles (left text/right image) feel templated and provide little information hierarchy beyond size. Screenshots float with generous empty space, and the lack of captions or context reduces structural clarity. Closest anchor: Exemplar 8 (layout 3). Counter\u2011signals justifying the lower score: (1) four instances of unreadable mocked UI, (2) repetitive module with little customization, (3) screenshots not aligned to a clear grid within tiles and no captions to anchor them.",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Palette shows competent use of large pastel backgrounds per project (teal, lavender, gray, yellow) with neutral shell and black text. Accents are controlled and don\u2019t clash; the CTA band uses a gentle gray-blue that supports hierarchy. Neutrals appear slightly off\u2011white rather than stark #fff/#000. However, the big colored blocks drive the look more than a unified product\u2011level color system; no evidence of link/hover state color logic or tuned borders/shadows. No mismatched white mats, so no color cap from preflight. Closest anchor: Exemplar 8 (color 3); this portfolio sits at the same level.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.65,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 2.15,
+      "overall_confidence": 2.5
+    },
+    "20": {
+      "candidate_id": "20",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_20.jpg",
+      "evaluated_at": "2025-09-04T20:28:03.022596",
+      "criteria": {
+        "typography": {
+          "score": 5,
+          "explanation": "Preflight: no sloppy cues; no template scent. Closest anchors: Exemplar 2 and Exemplar 17; this matches Exemplar 2. Typography micro\u2011craft signals (single\u2011view pass): 1) Clean, well\u2011kerned logotype with balanced weight contrast between the green 'LISA' and purple 'CHEN'. 2) Consistent sans family across nameplate, nav pills, and footer with disciplined casing (title case in name, lowercase nav), yielding a calm voice. 3) Navigation pills show tuned letter\u2011spacing and comfortable vertical padding; label sizes are restrained and repeat exactly. 4) Footer micro\u2011copy uses a lighter gray and smaller size with adequate line height, maintaining a stable baseline and hierarchy. Readability and hierarchy are clear despite minimal text, and scale steps are consistent across the header, filter controls, and footer.",
+          "confidence": 3.8
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy cues; no template scent. Closest anchors: Exemplar 2 and Exemplar 17; aligned with Exemplar 2. Layout micro\u2011craft signals (single\u2011view pass): 1) Rigid 3\u2011column grid with even gutters and consistent tile ratios across all rows. 2) Harmonized internal mats and margins\u2014tiles breathe evenly within the container; side rails create a centered column with stable rhythm. 3) Header stack (logo + filter pills) aligns to the same container width as the gallery, maintaining clean vertical spacing before the grid. 4) Crops are intentional\u2014no cut\u2011offs; edges/radii appear consistent; tiles sit flush to the grid, producing a steady scan path. Overall, composition is disciplined and clear, though conventional.",
+          "confidence": 3.6
+        },
+        "color": {
+          "score": 5,
+          "explanation": "Preflight: no mismatched whites or value flicker. Closest anchors: Exemplar 2 and Exemplar 17; matches Exemplar 2. Color micro\u2011craft signals (single\u2011view pass): 1) Neutral shell (soft white center with very light gray side rails) that lets varied project colors sit without clashing. 2) Cohesive identity accents\u2014green and purple appear in the logotype and are not overused elsewhere, preserving focus. 3) Subtle gray for filter pills and footer text maintains hierarchy without harsh contrast. 4) Diverse tile artwork is sequenced and bordered to avoid value spikes; the neutrals successfully unify the colorful content. Palette control is confident and refined.",
+          "confidence": 3.7
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.65,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.65,
+      "overall_confidence": 3.7
+    },
+    "16": {
+      "candidate_id": "16",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_16.jpg",
+      "evaluated_at": "2025-09-04T20:28:10.053199",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: sloppy cues 0; template cues 2 (left-text/right-photo hero; billboard-sized background words). Closest anchors: Exemplar 1 and Exemplar 19. Hierarchy: very strong display hierarchy in the hero with heavy, short lines and disciplined punctuation; section titles, project numbers (01\u201303), captions, and body copy show clear levels. Readability: article blurbs use comfortable measure and line height; navigation and micro-labels are crisp and legible. Consistency: one sans family across nav, hero, buttons, tile captions; link treatment is consistent (subtle arrow/CTA, no default blue). Micro-craft: numbers aligned and tracked, steady baseline rhythm between cards, punctuation spacing looks intentional, no widows/orphans visible. Overall matches the strength of Exemplar 19 and within 0.5 of Exemplar 1.",
+          "confidence": 3.5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: sloppy cues 0; template cues 2 (hero pattern; billboard background words) \u2014 below threshold, so no caps. Closest anchors: Exemplar 1 and Exemplar 3. Grid and rhythm: consistent, centered container with even gutters; tiles align cleanly in a repeated grid; vertical rhythm holds from hero through projects to articles. Image handling: device renders are large and readable, with matched mats, radii, and subtle shadows; project indices (01/02/03) and captions are placed consistently. Composition: the grey band behind \u2018Selected Projects\u2019 creates a controlled value step and clear sectioning; CTAs are placed in predictable positions without floating. This is on par with Exemplar 1\u2019s discipline, clearly above generic templates.",
+          "confidence": 3.6
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Palette shows tuned neutrals: off-white background, soft grey section panel, and restrained dark mats that unify diverse screenshots. Accents are minimal and role-clear (subtle CTA pill, small social/link accents); no harsh default link blue. Value control is careful\u2014large black hero type sits on white without glare thanks to generous spacing; dark project cards create a stable focal band; screenshots harmonize under the dark mats. Comparable to Exemplar 1/19; minor room to elevate with more explicit state/hover system proof.",
+          "confidence": 3.4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 3.5
+    },
+    "14": {
+      "candidate_id": "14",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_14.jpg",
+      "evaluated_at": "2025-09-04T20:28:14.157739",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy cues; no strong template scent. Editorial, two-column layout with left micro-label column. Sub-factors \u2014 1) Hierarchy: 4. Clear section labels (About/Notes/Posts/Photos/Contact), timestamp labels, and link treatments produce a readable multi-level structure. 2) Readability: 4. Comfortable measure and leading for body copy; contrast is adequate; rags are tidy. 3) Consistency: 4. Section labeling, date formatting, and link/arrow treatments repeat across sections. 4) Micro-craft: 3. Few explicit signs of tuned link underlines/offsets or state styling; punctuation/number alignment is fine but not showcased. Calibration anchor: closest to Exemplar 18 (Paco Coursey) which I\u2019d rate higher; this page is slightly less typographically rigorous \u2014 fewer bespoke link/state details, less evident scale system across headings, and less proof of edge-case handling \u2014 hence 4 rather than 5.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy crops, gutters are even, image radii/borders consistent; no device-frame issues. Strong editorial grid: narrow label column + wide content column maintains alignment top-to-bottom; sections (About, Notes, Posts, Photos, Contact) have consistent spacing and scan paths. Image presentation is mostly disciplined (large hero photo, 3-up photo row). Minor roughness: the single large image in Selected work visually outweighs nearby text without supportive caption mat; photo thumbnails mix aspect ratios and color temperatures causing slight rhythm/value flicker. Calibration anchor: Exemplar 18 (very refined multi-column rhythm). This page is close but shows fewer harmonization tactics for imagery and slightly looser vertical rhythm, so 4.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Neutral, editorial palette with restrained accents; off-black text on white keeps focus on content. Links and arrows provide subtle accent without noise. Imagery sits reasonably within the shell. Minor issues preventing a 5: no obvious tuning of link states/underline color, and the Photos row exhibits mixed white balance that the shell doesn\u2019t fully harmonize (no mats/tints), introducing light value flicker. Calibration anchor: Exemplar 18 (color 4). This page matches that level \u2014 controlled neutrals with conservative accents.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 3
+    },
+    "31": {
+      "candidate_id": "31",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_31.jpg",
+      "evaluated_at": "2025-09-04T20:28:15.304859",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: multiple template cues (\"Hey, I am \u2026\" hero, left-text/right-portrait hero, repeating 2\u2011column project rows with identical 'Read more' CTAs, boilerplate footer) \u2192 template_scent_high cap applied (Typography \u2264 3). Evidence: a modern sans family with clear heading/body contrast; consistent scale between section headers, titles, and body; comfortable measures and leading; stats row numbers and micro\u2011labels are consistent. Weaknesses: generic voice, limited link/state proof, dense 'About' paragraph block and overuse of small all\u2011caps labels. Closest anchors: Exemplar 19 (3/3/3) and Exemplar 8 (typography 2). Compared to Exemplar 8, hierarchy and readability feel slightly more disciplined, but still template\u2011ish, so held at 3.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Preflight: sloppy image cues \u22653 \u2014 multiple device/window mocks where UI is unreadable at presented size (onboarding, data management, permissions, and 3\u2011phone mock) \u2192 sloppy_images flag; this caps Layout at 2. Additional template cues: repeated 2\u2011column modules with alternating dark/light bands; left\u2011text/right\u2011mock hero. While the grid and spacing are generally consistent, the page leans heavily on a generic template and the small, unreadable screenshots weaken presentation and hierarchy of work. Closest anchor: Exemplar 8 (layout 3). This portfolio is lower due to the unreadable mocks and stronger template repetition, hence 2 (cap enforced).",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Neutral shell (white and dark gray bands) with a restrained teal accent for links/buttons and micro\u2011labels. Contrast is adequate and alternating dark sections help segment projects. No obvious white\u2011balance mismatches across tiles. However, the palette is conservative and largely default; accents lack a distinctive point of view and value jumps between bright hero and very dark bands are abrupt but manageable. Closest anchors: Exemplar 8 and 19 (color 3).",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.65,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.55,
+      "overall_confidence": 2.5
+    },
+    "33": {
+      "candidate_id": "33",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_33.jpg",
+      "evaluated_at": "2025-09-04T20:28:18.723550",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: no sloppy cues; minimal text on this view. The nameplate and nav use a clean sans with comfortable spacing; casing and scale are consistent, but there\u2019s no body copy, link treatment, or multi\u2011level hierarchy shown to prove systems. Sub\u2011factors \u2014 Hierarchy: 3 (simple nav vs body scale only), Readability: 4 (ample spacing, high contrast), Consistency: 3 (limited but tidy), Micro\u2011craft: 3 (no visible underline/link states or baseline rhythm proof). Closest anchors: Exemplar 17 and 19; this matches their clean but sparse typographic evidence, so kept at the competent baseline. Evidence limited to a single view.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: no cut\u2011off crops, even gutters, consistent tile edges; no template scent. Single\u2011view Pass applied with concrete signals: (1) disciplined two\u2011column grid with identical horizontal and vertical gutters across both rows; (2) strong asymmetry/negative space in the top-left tile creating a controlled focal balance with the right tile; (3) harmonized tile edges with consistent radii (square) and no inconsistent shadows; (4) precise alignment of tiles to a common container width with generous outer margins; (5) deliberate tile aspect ratios that create a light top row/heavier bottom row rhythm without ragged bottoms. This maps closely to Exemplar 17\u2019s curated gallery and exceeds a generic template\u2019s rigor.",
+          "confidence": 2.3
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Preflight: no value-flicker from sloppy mats; variations appear intentional. Single\u2011view Pass cues: (1) restrained neutral shell with off\u2011white/very light gray backgrounds that keep focus on work; (2) controlled accent usage\u2014subtle red in the CZI mark and a single pastel pink tile\u2014showing sparseness and role clarity; (3) the dark phone close\u2011up sits on a cool gray mat that harmonizes with the site neutrals, avoiding harsh contrast; (4) consistent neutral gutters and page background unify diverse tile colors; (5) no default bright link blues or noisy multi\u2011hue UI chrome. Closest anchors: Exemplar 17 and 19; comparable or slightly stronger color control than a generic gallery.",
+          "confidence": 2.3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.65,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.65,
+      "overall_confidence": 2.37
+    },
+    "11": {
+      "candidate_id": "11",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_11.jpg",
+      "evaluated_at": "2025-09-04T20:28:21.687089",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: minor template cues (\"Hello, I'm Haley\" hero; basic footer), no major sloppy cues. Typeface appears like a clean geometric/grotesk sans used consistently across hero, nav, and footer. Hierarchy: clear but generic\u2014single bold heading, small body copy, and link lists in the footer (3/5). Readability: centered intro paragraph has comfortable measure and leading, legible footer links (3/5). Consistency: casing/weights look stable across sections; link treatment seems near\u2011default and not clearly customized (3/5). Micro\u2011craft: no visible underline tuning, states, or refined micro\u2011labels; nothing broken but little evidence of typographic voice (2\u20133/5). Closest anchors: Exemplar 2 and Exemplar 17; compared to them this page shows fewer refined typographic decisions (no tuned link styles or clear modular scale).",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Preflight: assets are clean; one device tile includes unreadable UI but the grid remains tidy. Layout uses a centered hero followed by a 3\u00d73 square tile grid with even gutters and consistent tile ratios. Footer splits into simple link columns with adequate spacing\u2014overall readable and aligned. However, structure feels template\u2011like (centered hero + uniform grid) with limited point of view; no captions/mats to harmonize content; one small phone mock is not readable. This lands at competent execution rather than strong refinement. Closest anchors: Exemplar 2 and Exemplar 17; this page is simpler and shows fewer harmonization details (no bespoke mats/radii systems), so it scores lower.",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Neutral shell (black/gray text on white, light gray footer) keeps things safe. The 3\u00d73 grid carries saturated, varied brand colors; while lively, there\u2019s no evident unifying mat/border strategy, producing some value flicker across tiles. Link accent appears default\u2011ish blue/teal with minimal state evidence. Nothing clashes, but there\u2019s limited sophistication in neutral tuning or accent logic. Closest anchors: Exemplar 2 and Exemplar 17; unlike those, this page doesn\u2019t show tuned neutrals or a clear accent system that unifies diverse imagery.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 2.5
+    },
+    "36": {
+      "candidate_id": "36",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_36.jpg",
+      "evaluated_at": "2025-09-04T20:28:22.371212",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy cues; no template scent. Editorial serif voice with disciplined hierarchy similar to exemplars 18 (Paco Coursey) and 14 (Justin Jay). Micro\u2011signals (\u22654): 1) comfortable reading measure (~60\u201370ch) with ~1.5 leading; 2) clear hierarchy\u2014display serif for name, smaller intro copy, then consistently sized post titles with lighter excerpts; 3) customized link treatment (muted accent + subtle arrow/chevron vs default blue/underline); 4) stable baseline rhythm and consistent spacing between list items; 5) numerals and punctuation read clean with proper quotes and spacing. Consistency holds across hero, posts module, and footer. Voice is refined, though limited evidence of link states keeps it at 4 rather than 5.",
+          "confidence": 2.4
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy image handling, no template modules. Layout shows a strong POV akin to exemplar 18: a restrained editorial grid with a left rail, a top intro block, and a well\u2011matted posts card. Micro\u2011signals (\u22654): 1) consistent container width and even gutters; 2) posts list card has matched internal padding, rounded corners, and a thin, even border; 3) vertical rhythm is steady\u2014uniform row spacing for titles/excerpts and consistent section spacing; 4) clear scan path with primary focal at intro then into the posts module; 5) subtle icon rail aligns optically with content column. Not overtly innovative, but highly controlled and cohesive.",
+          "confidence": 2.3
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Warm, tuned neutrals unify the page\u2014off\u2011white/cream background, softly tinted borders/shadows, and restrained text contrast\u2014close to exemplars 18 and 14. Micro\u2011signals (\u22654): 1) off\u2011black body text (not pure #000) for softer contrast; 2) consistent warm gray subtitles/excerpts; 3) border/shadow tints match the warm base, avoiding value flicker; 4) sparse accent color on links/controls only; 5) uniform background tone across sections maintains calm editorial feel. No harsh defaults or mismatched mats observed.",
+          "confidence": 2.3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 2.33
+    },
+    "17": {
+      "candidate_id": "17",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_17.jpg",
+      "evaluated_at": "2025-09-04T20:28:24.917721",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy-image cues or strong template scent observed. Single-view evidence only. Hierarchy: clear section labels (\u201cWORK \u2014\u201d, \u201cPROJECTS \u2014\u201d) contrasted with smaller card titles and fine-grain descriptions; year labels are consistently styled, giving a reliable multi-level hierarchy. Readability: intro paragraph sits at a comfortable ~60\u201370ch with relaxed line-height and solid contrast. Consistency: identical treatment for every card (title \u2192 year \u2192 one-line description), stable casing, and repeated dash usage; headings and body keep predictable scale steps. Micro-craft signals: 1) disciplined small-caps/uppercase section labels with em-dash motif repeated; 2) uniform card metadata (years aligned and consistently punctuated); 3) even paragraph spacing and controlled rags; 4) restrained weight changes (not everything bold) and consistent numeric styling; 5) tidy link/label tone without default-underline distractions. Closest anchors: Exemplar 9 and 18; this page shows slightly stronger typographic discipline (section labeling and metadata rhythm), warranting +0.5 above baseline.",
+          "confidence": 2.6
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: no cut-off crops, no irregular masonry gutters, no inconsistent radii/shadows; template scent is low. Structure: a tight three-column grid with consistent gutters and identical tile ratios across both sections. Sectioning is clear (Work vs Projects) with balanced vertical rhythm and sensible spacing between image and captions. Image handling feels deliberate\u2014no heavy shadows, crisp crops, and even internal mats. Micro-craft signals: 1) identical aspect ratios across tiles keep rhythm stable; 2) consistent image-to-caption spacing; 3) even left alignment of titles, years, and descriptions across the grid; 4) section transitions use equal vertical intervals; 5) container width and margins feel considered, with no floaty CTAs. Closest anchors: Exemplar 9 and 18; this is comparably minimal but shows tighter tile discipline and gutters, justifying a 4.",
+          "confidence": 2.7
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Neutral, editorial shell lets diverse thumbnails carry color. The neutrals feel restrained and likely off-black/white, but there\u2019s limited evidence of a cohesive accent system or unifying mats/border tints to harmonize the varied artwork. Some value variation between dark code shots and pale photos is handled acceptably by the consistent grid, but without visible state/hover or accent logic this remains a competent baseline. Closest anchors: Exemplar 9 and 18 (similar neutral shells).",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.7,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.7,
+      "overall_confidence": 2.6
+    },
+    "27": {
+      "candidate_id": "27",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_27.jpg",
+      "evaluated_at": "2025-09-04T20:28:28.635201",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: strong template scent noted. Type appears to be a clean geometric/humanist sans with a simple scale. Positives: consistent project titling (Title + small uppercase meta), comfortable hero measure (~55\u201365ch), adequate spacing between rows, and consistent all\u2011caps button style. Weaknesses: generic system feel, very light gray meta text reducing contrast, defaultish outline buttons with over\u2011tracked all\u2011caps, no visible link/hover states, and little evidence of tuned micro\u2011details (underline weights, optical alignment). Sub\u2011factor ratings \u2014 Hierarchy: 3; Readability: 3; Consistency: 3; Micro\u2011craft: 2. Closest anchor: Exemplar 8 (similar conservative typography). Template scent caps Typography at \u22643.",
+          "confidence": 2.6
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Preflight findings: multiple sloppy image cues and high template scent. Sloppy cues (\u22653): several device mocks with tiny, unreadable UI (Amplitude, Zeguro, WeTravel, BuildZoom, Freddie Mac, Eventbrite phones), repeated across rows; generic device frames with no mats; thin HR separators providing most structure. Template cues (\u22653): classic 'I'm [Name]' centered hero, uniform left\u2011image/right\u2011text rows repeated down the page, outline 'VIEW PROJECT' buttons, boilerplate footer. While spacing is even and alignment is consistent, the reliance on tiny device frames and repeated module makes the structure feel canned. Caps applied: sloppy_images \u2192 Layout \u22642; template_scent_high \u2192 Layout \u22643 (stricter cap is 2). Closest anchor: Exemplar 8, but this page is weaker due to unreadable mocks and stronger template scent; hence one step down.",
+          "confidence": 2.4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Palette is essentially grayscale chrome with color coming from screenshots. Positives: restrained use of color avoids clashes; consistent gray dividers and button outlines maintain harmony. Weaknesses: neutrals feel default (pure white background, near\u2011black text), light gray meta text risks low contrast, and no unifying mats/tints to harmonize the varied screenshot hues, leading to some row\u2011to\u2011row value shifts. Not enough evidence of tuned states or accent logic to rise above baseline. Closest anchor: Exemplar 8 (similar neutral shell with screenshot\u2011driven color). No value\u2011flicker cap applied as mismatched whites are not egregious.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.65,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.55,
+      "overall_confidence": 2.5
+    },
+    "15": {
+      "candidate_id": "15",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_15.jpg",
+      "evaluated_at": "2025-09-04T20:28:29.270554",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: sloppy cues 0, template cues 0. Editorial serif used throughout with a clear left\u2011aligned hierarchy: large hero paragraphs with comfortable measure (~55\u201370ch) and generous leading, small caption text under each project, and restrained nav links. Readability is solid (high contrast, adequate line height). Consistency feels good across hero, captions, and labels; punctuation and italic emphasis are handled cleanly. However, link/state treatment isn\u2019t demonstrated and there\u2019s limited proof of micro\u2011details (no tuned underlines, baseline grid or number alignment shown). Closest anchors: Exemplar 17 and 19; this matches their competent editorial tone but doesn\u2019t show extra typographic proof that would lift it. Evidence ceiling \u2192 keep at 3.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Preflight: no sloppy image issues (no cut\u2011offs, radii/shadow mismatches, or unreadable device mocks). The page uses a disciplined two\u2011column editorial grid with consistent gutters and sensible spacing; captions sit in predictable positions and images are cropped intentionally. Some rhythm flicker comes from masonry height variance and a few mixed aspect ratios (e.g., a bright yellow long\u2011format tile next to shorter tiles) and one early tile that breaks width alignment, so the page feels curated rather than systematized. Asset handling is decent but not harmonized to the level of a strong 4. Closest anchors: Exemplar 17 and 19; similar quality and POV, hence baseline 3.",
+          "confidence": 2.6
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Preflight: no mismatched shadows or harsh default blues; accents are minimal. Neutral shell (black on white) lets project imagery carry color. While tasteful, the lack of unifying mats/borders means significant value flicker across tiles (e.g., black, purple, and bright yellow backgrounds adjacent), so the system doesn\u2019t actively harmonize diverse content. This aligns with a competent baseline rather than a tuned palette. Closest anchors: Exemplar 17/19\u2014similar reliance on imagery with conservative chrome.",
+          "confidence": 2.7
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 2.6
+    },
+    "10": {
+      "candidate_id": "10",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_10.jpg",
+      "evaluated_at": "2025-09-04T20:28:30.704689",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "Preflight: clear template cues present (\"Hi, my name is\u2026\" hero; left-text/right-portrait hero; default bright-blue inline links with default underlines; boilerplate 'Let\u2019s connect' footer). Closest anchors: Exemplar 8 and 14. Sub-factors \u2014 1) Hierarchy: 3 (legible serif body with modest scale steps; section titles and body differentiate). 2) Readability: 3 (comfortable line length and leading). 3) Consistency: 2 (default link styling inside paragraphs clashes with the otherwise quiet serif voice; nav and body tones feel unrelated). 4) Micro-craft: 2 (default underline thickness/offset; no evident link state refinement; punctuation and bullets feel default). Pull\u2011down applies due to default link blue + underline and weak micro\u2011craft. Template scent caps Typography \u22643; assigned 2 given the defaults.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Preflight: template cues indicate boilerplate structure. Layout uses a simple two\u2011column hero (text left, portrait right) followed by repeated text + right CTA card blocks and thin dividers. Alignment appears consistent and spacing is generous; no cut\u2011off crops or unreadable mocks. However, the structure is generic with little point\u2011of\u2011view; CTA cards float with soft shadows typical of theme defaults. Evidence is a single page with limited variety. Closest anchors: Exemplar 8 (similar simple page) and Exemplar 14. Template scent caps Layout \u22643; baseline 3 for cleanliness, but no refinement to justify higher.",
+          "confidence": 2.7
+        },
+        "color": {
+          "score": 3,
+          "explanation": "A conservative palette: white background, black/dark text, and a single saturated blue used for inline links and CTA boxes with a light blue mat. Harmony is acceptable and consistent; contrast is fine. Minor noise from full\u2011color social icons and the dark portrait but not egregious. No tuned neutrals or state logic visible, so it lands at a competent 3. Closest anchors: Exemplar 8/14.",
+          "confidence": 2.6
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 2.65,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.05,
+      "overall_confidence": 2.6
+    },
+    "35": {
+      "candidate_id": "35",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_35.jpg",
+      "evaluated_at": "2025-09-04T20:28:32.707173",
+      "criteria": {
+        "typography": {
+          "score": 5,
+          "explanation": "Preflight: no sloppy cues; no template cues. Hierarchy: clear multi\u2011level system\u2014intro line in refined italic display, small section labels (Building/Projects/Writing), then compact body copy; weight/size/spacing shifts are controlled and consistent across sections. Readability: comfortable measures (~55\u201370ch) with 1.4\u20131.6 leading, strong contrast, calm rags, and ample breathing room; long em\u2011dash line handles well without collisions. Consistency: link treatment appears uniform (subtle blue with tuned underline/offset), paragraph spacing is even, consistent capitalization and label tone across columns and subsequent \"Now/Connect\" sections. Micro\u2011craft: stable baseline rhythm across three columns; optical letter\u2011spacing in small caps/labels; true italics (not faux) with clean punctuation spacing; arrow/link icons align optically with text; widows/orphans avoided. Closest anchors: Exemplar 18 and 16\u2014quality and discipline match, warranting a 5.",
+          "confidence": 2.6
+        },
+        "layout_composition": {
+          "score": 5,
+          "explanation": "Preflight: 0 sloppy image cues; 0 template cues. The page shows a disciplined editorial grid: a three\u2011column matrix with equal gutters and aligned baselines for Building/Projects/Writing, followed by clearly separated single\u2011column sections (Now, Connect) that maintain container width and rhythm. Vertical spacing follows a consistent scale; scan path is effortless with left\u2011anchored headings and compact summaries. Negative space is intentional, with balanced margins and no floaty CTAs. Asset handling is minimalist but precise\u2014no mismatched mats/radii, no cropped elements, no irregular gutters. Closest anchors: Exemplar 18 and 16; this execution equals their rigor, justifying 5.",
+          "confidence": 2.7
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Preflight: no mismatched whites or value flicker. Palette is restrained: off\u2011white background, soft off\u2011black text, light gray labels, and a single, desaturated blue accent for links. Neutrals are tuned to keep hierarchy legible without stark #000/#fff contrast. Accents are sparse and role\u2011driven (links only), creating harmony across sections. Evidence for broader state palette is limited to this view, so capped at 4 despite strong control. Closest anchors: Exemplar 18 (similar tuned neutrals and single accent).",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.7,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.7,
+      "overall_confidence": 2.6
+    },
+    "28": {
+      "candidate_id": "28",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_28.jpg",
+      "evaluated_at": "2025-09-04T20:28:32.711760",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: no sloppy cues; mild template cues (default bright-blue link with default underline in footer, boilerplate footer). The page uses a single modern geometric sans with a clear hierarchy: large display hero, section headers on the left, and role/company lines with bold weight followed by smaller meta and bullets. Readability is solid (comfortable measures and line-height on both light and dark sections). Consistency is decent across sections, but link treatment is default and not integrated; micro-craft details like tuned underlines, quote/number alignment, or visible baseline rhythm tuning aren\u2019t demonstrated. Sub\u2011factors \u2014 Hierarchy: 3.5; Readability: 3.5; Consistency: 3; Micro\u2011craft: 2.5. Closest anchors: Exemplar 9 (similar editorial resume page).",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Preflight: no sloppy image cues (there are essentially no screenshots); template cues are limited and below threshold. Layout shows a competent two-column system: left column for section titles, right column for content; consistent spacing and alignment; section breaks are clear (hero, Experience, Education, Toolbox, More). However, the structure is generic with minimal bespoke decisions and no complex asset handling or rhythmic challenges to validate higher craft (e.g., harmonized mats, captions, varied grids). Closest anchor: Exemplar 9; this portfolio matches its straightforward editorial structure.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 2,
+          "explanation": "Palette is mostly stark black/white with a large dark band for Experience and a decorative gradient orb in the hero. Links use a default bright blue that doesn\u2019t tie into a broader accent system. Neutrals appear untuned (pure #000 on the dark band against #fff elsewhere), causing a strong value jump between sections without unifying tactics (no border tints/shadow logic). These cues keep color at 2. Closest anchor: Exemplar 9, but this page shows harsher contrast and default link styling than that anchor.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 2.7,
+      "penalty_applied": 0,
+      "overall_weighted_score": 2.7,
+      "overall_confidence": 3
+    },
+    "24": {
+      "candidate_id": "24",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_24.jpg",
+      "evaluated_at": "2025-09-04T20:28:34.894777",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: template cues present (centered nameplate hero + boilerplate contact form + 'Built with GeneratePress' footer). Sloppy image cues elsewhere but not typography-specific. Typography shows a clear but generic hierarchy: all\u2011caps section heads with thin dividers and smaller paragraph body. Readability is adequate but compromised by center\u2011aligned multi\u2011paragraph text and relatively small body size. Consistency is fair across sections (same caps/weights for ABOUT, PORTFOLIO, CONTACT; consistent numerals 01\u201303). Micro\u2011craft is light\u2014no custom link treatment is evident, tracking on the all\u2011caps heads feels default, and there\u2019s little proof of tuned baselines or caption systems. Closest anchors: Exemplar 8/2. Compared to them, this page lacks tuned link styles, typographic rhythm, and caption discipline. Hence baseline 3 with template cap applied.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Preflight: sloppy_images \u22653 and template cues \u22653. Sloppy cues: multiple tiles show phones/laptops where UI is too small to read; mixed white balances and backgrounds across tiles cause value flicker; several tiles feel like stock photos vs. unified product mats. Template cues: centered hero with name/tagline, standard portfolio grid with no captions, boilerplate contact form and footer ('Built with GeneratePress'). These trigger Layout \u22642 cap. Beyond the caps, the decorative wave bands add visual noise and compete with content; portfolio thumbnails lack consistent mat/radius logic and provide no structural captions, reducing clarity. Anchors: closer to Exemplar 8 and 2; unlike those, this grid lacks harmonized tiles/captions and readable artifacts, hence below-baseline 2.",
+          "confidence": 2.3
+        },
+        "color": {
+          "score": 2,
+          "explanation": "Preflight: value flicker from mismatched whites/mats across the gallery triggers Color \u22642. The palette relies on black/gray text with pastel multi\u2011hue wave backgrounds plus highly saturated thumbnails. The shell does not unify the diverse imagery (no consistent mats/borders/shadows), so the page reads noisy. Accent logic is unclear (purple Send button appears once; links/categories look default). Compared to anchors Exemplar 8/2, this execution lacks tuned neutrals and a unifying frame, so it stays at 2.",
+          "confidence": 2.3
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.35,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.25,
+      "overall_confidence": 2.37
+    },
+    "3": {
+      "candidate_id": "3",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_3.jpg",
+      "evaluated_at": "2025-09-04T20:28:35.011625",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: sloppy cues 0, template cues 0. Evidence is a single minimal about page. Positives: clean sans family with comfortable leading; readable measure around upper\u2011mid range; consistent link styling with small external\u2011link icons; tidy paragraph spacing and micro\u2011labels (year, dates) that read as a disciplined scale. Issues keeping it at baseline: hierarchy is fairly flat (title vs body close in size/weight); links appear near\u2011default blue with no visible underline tuning; longish measure in the intro block; limited proof of states and heading levels. Closest anchors: Exemplar 18 and Exemplar 20 (editorial minimal).",
+          "confidence": 2.3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Preflight: sloppy cues 0, template cues 0. The single\u2011column editorial layout is clean with ample negative space. The projects list uses a clear three\u2011column rhythm (year/title/date) with consistent dividers and alignment, and spacing feels systemized. Minor roughness: large left gutter creates slight imbalance on wide view; transition from intro text to list feels abrupt; minimal proof of other sections/breakpoints or image handling. Anchor alignment: close to Exemplar 18/20; no strong counter\u2011signals to justify >3 with single\u2011view evidence.",
+          "confidence": 2.2
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Preflight: sloppy cues 0, template cues 0. Palette is restrained and coherent: off\u2011white background, off\u2011black text, light gray dividers, single blue accent for links. It feels calm and readable. Limits: the blue reads defaultish rather than tuned; no demonstrated state system or unifying mats since there\u2019s no imagery; neutrals aren\u2019t clearly hue\u2011shifted or articulated beyond basics. Closest anchors: Exemplar 18/20. With single\u2011view evidence, baseline 3 is appropriate.",
+          "confidence": 2.3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 2.27
+    },
+    "18": {
+      "candidate_id": "18",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_18.jpg",
+      "evaluated_at": "2025-09-04T20:28:40.107437",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: template cues \u22653 (centered hero sentence; repeated two\u2011column rows with outline \u201cVIEW CASE STUDY\u201d; boilerplate footer; three\u2011icon 'Design Thinking' block). Sloppy image cues noted separately. Typography shows a serif display for headings paired with a neutral sans for body, similar in tone to Exemplar 8. Sub\u2011factors \u2014 1) Hierarchy: clear H1/H2/body scaling with consistent section titling like 'Featured Projects' (3.5). 2) Readability: measures look ~60\u201370ch with comfortable leading; long multi\u2011column blocks on dark background remain legible though small (3). 3) Consistency: heading casing and button labels are mostly consistent, but a script/handwritten line ('I look forward to connecting\u2026') introduces a second display voice that breaks cohesion (2.5). 4) Micro\u2011craft: link/underline treatment appears defaultish, no visible tuning of quotes or number alignment; button and caption spacing feel standard (2). Weakest\u2011link \u22642 keeps Typography at \u22643; template scent also caps at \u22643. Closest anchor: Exemplar 8 (typography 2); slightly stronger here due to cleaner serif/sans pairing and better hierarchy.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Preflight sloppy cues \u22653 \u2192 cap Layout \u22642 and add flag. Evidence: 1) multiple device mocks where UI is too small to read, 2) generic device frames used repeatedly, 3) several tiles mix phone/tablet sizes that don't scale to a consistent read size, 4) image areas carry most weight while content remains template\u2011like. Structure is a standard stack: centered hero, then face-left/text-right bio, then a vertical list of two\u2011column project rows with identical 'View case study' CTAs; later information blocks and a dark multi\u2011column section. Spacing is adequate and consistent, but there\u2019s little point\u2011of\u2011view in asset presentation and the unreadable device collages reduce craft. Closest anchor: Exemplar 8 (layout 3). Downscored by \u22653 counter\u2011signals: unreadable screenshots, reliance on template modules, and overuse of stock device frames.",
+          "confidence": 2.2
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Palette is restrained: white/black neutrals with a soft mint accent section and light gray mats around imagery. Accents in small icons are controlled and consistent. The dark section introduces a strong value step but remains coherent with the overall scheme. No major white\u2011balance flicker across project tiles; however, the varied app screenshots aren\u2019t significantly unified by the shell beyond neutral mats, keeping this at a competent baseline. Closest anchor: Exemplar 8 (color 3).",
+          "confidence": 2.4
+        }
+      },
+      "red_flags": [
+        "template_scent_high",
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.65,
+      "penalty_applied": 0.8,
+      "overall_weighted_score": 1.55,
+      "overall_confidence": 2.37
+    },
+    "19": {
+      "candidate_id": "19",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_19.jpg",
+      "evaluated_at": "2025-09-04T20:28:40.644238",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: few template cues (big 'I am a digital product designer' hero; large CTA link with arrow), but no defaults or broken states. Hierarchy: strong display headings with clear secondary paragraphs and micro\u2011labels; link styling (blue + arrow) provides a consistent tertiary level. Readability: comfortable measures and leading across sections (hero display tighter; body around ~55\u201370ch), good contrast. Consistency: same family throughout, repeated scale for section headers, consistent link treatment (blue text + arrow), disciplined caption/body styling in the Framer section and overview list. Micro\u2011craft: optical alignment of arrows with baselines, consistent punctuation/casing, neat logo row label, no widows/orphans visible. Closest anchors: Exemplar 1 and Exemplar 6. Slightly less editorial nuance than Exemplar 6 (fewer style steps and no visible link state proof), hence a solid 4.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy cues (screenshots are large enough, no cut\u2011offs; consistent radii/shadow; gutters stable). Grid and rhythm: clear sectioning with consistent spacing; two\u2011column overview aligns well with the section header; long\u2011form spacing feels disciplined; logo strip centered with even rhythm. Image handling: the Framer composite sits on a unified mat with matched shadow and radii; no device\u2011frame collage. Variation with control: a full\u2011bleed gradient section adds contrast without breaking alignment; decorative 3D badges are consistent and do not disrupt the grid. Closest anchors: Exemplar 1 and Exemplar 6 (both strong structure); this page is comparably controlled though simpler in complexity, so 4 fits.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Palette: off\u2011white shell with off\u2011black text and a saturated but controlled blue accent for links and highlights; consistent across sections. Integration: the Framer brand blue links harmonize with the site\u2019s primary accent; shadows and mats are neutral and clean. The orange\u2011pink gradient panel is bold but reserved to one section, providing a focal break without causing value flicker elsewhere. Repeated blue gradient badges (name chips) are consistent in value and edge treatment. Closest anchors: Exemplar 1 and Exemplar 6. Slightly less nuanced neutral tuning than Exemplar 6, but still clearly above baseline.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 3
+    },
+    "29": {
+      "candidate_id": "29",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_29.jpg",
+      "evaluated_at": "2025-09-04T20:28:41.266616",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: sloppy cues 0; template cues 2 (name-in-hero sentence; repeated outline VIEW pills) \u2014 no caps triggered. Anchors: closest to Exemplar 11 and Exemplar 8; exceeds Exemplar 8 via clearer hierarchy and rhythm. Signals: 1) Clear hierarchy\u2014project titles sit one step above descriptors with consistent small caps/labels (e.g., WEB/MOBILE) and body copy below; 2) Readable measures (~60\u201370ch) with comfortable leading; 3) Consistent casing and weights across tiles and section labels (CASE STUDIES/ADDITIONAL WORK); 4) Inline link styling is restrained and consistent (blue text without heavy underlines), list bullets in hero align cleanly; 5) Baseline/spacing between title, description, and CTA repeats across rows. Minor: default-leaning link blue and all-caps VIEW weaken distinct voice, but overall type system is disciplined.",
+          "confidence": 2.7
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy image handling; assets have matched radii and consistent mats. Anchors: similar to Exemplar 11; stronger than Exemplar 8 via tighter grid discipline. Signals: 1) Repeating two-column row with stable left image/right text alignment and even gutter; 2) Consistent image aspect ratios, corner radii, and internal padding across all tiles; 3) Section hierarchy is clear (hero \u2192 Case Studies list \u2192 Additional Work grid \u2192 contact footer) with generous vertical rhythm; 4) CTA placement (VIEW pill) aligns and repeats, maintaining scan path; 5) Additional Work uses a disciplined two-up grid with synchronized baselines and captions. Not novel, but cohesive and controlled.",
+          "confidence": 2.8
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Palette is harmonious with a single accent blue used for links and a purposeful saturated footer. Signals: 1) Soft pastel mats behind thumbnails unify varied app screenshots; 2) Neutral off-black text with lighter gray metadata maintains hierarchy; 3) Accent blue is used consistently (hero emphasis, links, footer) with restraint elsewhere; 4) Value control keeps the page calm despite colorful tiles\u2014no harsh flicker or mismatched whites; 5) Black Adobe tile provides contrast without breaking the system due to controlled surrounding neutrals. Minor note: footer blue is bold but intentional.",
+          "confidence": 2.6
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 2.7
+    },
+    "26": {
+      "candidate_id": "26",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_26.jpg",
+      "evaluated_at": "2025-09-04T20:28:47.737763",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight/template cues noted: an 'I\u2019m [Name]' hero line, billboard-style 'OTHER PROJECTS' background words, and a boilerplate social footer. These cues cap Typography at 3. Strengths: tiles show a clear hierarchy (large project titles, small descriptors like 'PRODUCT STRATEGY'), comfortable measures and leading in the larger Tophatter block, and restrained weights with hairline rules that reinforce structure. Issues: hierarchy varies per tile due to client brand lockups, casing/scale shifts (e.g., oversized 'OTHER PROJECTS') reduce consistency, and there\u2019s no visible custom link/state treatment. Closest anchors: Exemplar 8 and Exemplar 19. Relative to those, this matches their readable, competent type but lacks the editorial polish and consistent rhythm needed for a 4.",
+          "confidence": 2.6
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Preflight/template cues: repeated two\u2011column tiles with a single full\u2011width feature, billboard text section, and a standard social footer indicate high template scent (Layout capped at 3). Positives: gutters and column widths are mostly consistent; tiles align cleanly; the full\u2011width Tophatter section creates a clear focal break; text\u2013image balance within tiles is serviceable. Roughness: a phone mock is too small to read (asset handling), varied tile mats cause value flicker between adjacent cards, and the billboard 'OTHER PROJECTS' block feels more marketing than product, diluting information density. Closest anchors: Exemplar 8 and Exemplar 19\u2014this sits squarely with their competent, template\u2011like grids rather than the refined control seen in higher\u2011scoring examples.",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "The page relies on soft pastel backgrounds per tile with brand colors inside imagery. Harmony is acceptable and nothing clashes, but the changing tile mats (light blue, pink, gray, teal) introduce value flicker across rows, and the shell lacks a unifying accent system or tuned neutrals to tie everything together. The billboard section\u2019s large pale teal block adds another value plate without clarifying hierarchy. Closest anchors: Exemplar 8 and Exemplar 19\u2014comparable in overall restraint, but without the unifying color logic to merit a 4.",
+          "confidence": 2.4
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.4,
+      "overall_confidence": 2.5
+    },
+    "34": {
+      "candidate_id": "34",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_34.jpg",
+      "evaluated_at": "2025-09-04T20:28:50.804396",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: no red\u2011flag thresholds hit. Template cues present (centered hero, testimonial grid) but not excessive. Hierarchy: strong headline scale with consistent H2/H3 styles and supportive body copy; pill CTAs and link+arrow micro\u2011labels are consistent across sections (4/5). Readability: comfortable measures and leading in hero and testimonial blurbs; adequate contrast with softened neutrals (4/5). Consistency: one geometric sans used throughout with repeatable weights and casing; logo row and CTAs follow the same tone; link treatment (blue + arrow) repeats (4/5). Micro\u2011craft: rags and baselines appear stable; quotes/avatars neatly aligned; however no visible custom underline tuning or advanced typographic details, so still feels somewhat generic (3/5). Closest anchors: candidate_33 (T=3) and exemplar_1 (T=4). Relative to candidate_33, this shows clearer scale discipline and consistent link styling; slightly less refined than exemplar_1 due to generic face and fewer micro\u2011details.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Preflight: observed 2\u20133 small device mocks with borderline readability but not enough to trigger sloppy_images; gutters and section spacing are even. Structure: clear sectioning\u2014hero, logos, testimonials, case studies, CTA, contact\u2014on a centered grid. The 2\u2011column case\u2011study rows and colored panels are aligned and spaced with a consistent rhythm. Image handling is decent but relies on generic device frames; some screenshots are too small to read and the colored blocks behind devices feel like theme modules rather than bespoke mats. No distinctive page\u2011level point of view. Closest anchors: candidate_33 (L=3) and exemplar_11 (L=3). This matches their competent, template\u2011leaning execution without the refined harmony seen in higher\u2011scoring examples.",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Neutrals: off\u2011white background and soft off\u2011black text provide comfortable contrast. Accents: conservative blue for links/arrows and buttons; occasional bold green and a pale blue panel add energy. Integration: accents are generally controlled, but the saturated green block next to neutral sections introduces a noticeable value jump and does not clearly unify the devices/screens; multiple accent hues (blue + green) feel opportunistic rather than systematized. Closest anchors: candidate_33 (C=3) and exemplar_1 (C=4). This sits at the competent baseline\u2014harmonious overall but lacking the tuned mats and disciplined accent system required for a 4.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.35,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.35,
+      "overall_confidence": 2.67
+    },
+    "38": {
+      "candidate_id": "38",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_38.jpg",
+      "evaluated_at": "2025-09-04T20:28:56.400526",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy cues; mild template scent (\"Hi, I'm\" hero + left text/right photo) but not enough to flag. Hierarchy: strong\u2014clear nav scale, large hero headline with supporting line, section labels (Selected Works, Past Projects) as quiet micro\u2011labels, and consistent project titles/captions. Readability: comfortable measures and line heights; body copy sits ~60\u201370ch with good contrast; captions are lighter and shorter lines. Consistency: same sans family throughout, disciplined scale steps across cards, consistent casing and spacing for labels and captions; brand badges align consistently. Micro\u2011craft: optical alignment of icons/badges with titles, clean punctuation and rags, even spacing between title and caption blocks. Closest anchors: Exemplar 8 and 17; this page shows tighter scale discipline and micro\u2011labels than Exemplar 8, closer to Exemplar 17\u2019s tidy treatment.",
+          "confidence": 3
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: no cut\u2011offs, even gutters, readable screenshots; consistent rounded mats. Structure: clear left hero content with right portrait, then a disciplined 2\u2011column card grid with consistent spacing and section separation. Asset handling: cards share identical radii, internal padding, and caption positions; brand marks sit in the same corner; thumbnails are readable and proportionally scaled; shadows/borders are subtle and even. Rhythm: vertical spacing is consistent from hero to grids and into the Past Projects row. Minor template cue (common hero pattern) but execution is refined. Closest anchors: Exemplar 8 and 17; this shows more consistent mats/gutters and better asset harmonization than Exemplar 8, similar discipline to Exemplar 17.",
+          "confidence": 3
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Palette: tuned neutrals with off\u2011black text; soft pastel mats per project unify varied screenshots without value flicker. Accents are sparse\u2014brand glyphs and subtle tints provide hierarchy. Integration: screenshots sit comfortably on tinted tiles; shadows/borders are low\u2011contrast and consistent. No harsh #000/#fff or default bright link blue visible; overall harmony is maintained across sections. Closest anchors: Exemplar 8 and 17; this page uses softer, more controlled tints and neutrals than Exemplar 8, comparable restraint to Exemplar 17.",
+          "confidence": 3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 3.0
+    },
+    "37": {
+      "candidate_id": "37",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_37.jpg",
+      "evaluated_at": "2025-09-04T20:29:03.972992",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Baseline\u2011competent type. The hero uses clear scale and weight contrast with occasional yellow highlights to emphasize words; body copy lines appear within a comfortable measure and adequate leading. Heading levels across work cards and testimonial cards are consistent and readable. However, link/CTA styling looks fairly default (simple underlines/arrows with no visible tuning), the body size skews small in places (footer/contact, card captions), and the overall voice feels generic sans without notable micro\u2011craft (no evident underline thickness/offset tuning, punctuation spacing, or optical alignment work). Preflight notes: minor template cues present (\"Hi, I'm [Name]\" hero; companies logo row; \"Made with \u2026\" footer), but not enough to flag. Closest anchors: Exemplar 19 and Exemplar 8; this piece matches their clarity but lacks the tighter typographic refinement seen in stronger anchors, so a 3 is appropriate.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Clean, readable structure with a conventional single\u2011column rhythm: hero, large project cards, testimonials grid, logos, and footer. Card mats/radii and spacing are mostly consistent, and alignment is disciplined. Positive signals: even gutters, repeated card treatment, and clear section hierarchy. Rough edges preventing a 4: device renders dominate but don\u2019t communicate UI detail at this scale; one project tile appears captured mid\u2011fade/overlay producing a washed band and slight value flicker; testimonial cards vary subtly in height leading to a less steady baseline across the row. Overall feels polished yet template\u2011like rather than a strong point of view. Closest anchors: Exemplar 19 (similar tile rhythm) and Exemplar 8; this lands at the competent baseline rather than the more refined control of the stronger anchors.",
+          "confidence": 2.4
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Pleasant neutral shell (off\u2011white/beige) with a restrained yellow accent (highlighter marks, star). The mats for work cards are light and cohesive; testimonials sit on a soft tinted background that maintains readability. Accents are sparse and consistent. Opportunities: accent logic for links/CTAs isn\u2019t clearly expressed beyond black text/arrow; device renderings introduce varied palette without additional unifying tints; the confetti texture in the hero adds mild noise. Overall harmonious but not notably sophisticated. Anchors: similar to Exemplar 19/8 where color is serviceable but not highly tuned.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 2.47
+    },
+    "42": {
+      "candidate_id": "42",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_42.jpg",
+      "evaluated_at": "2025-09-04T20:29:08.999825",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "Preflight: sloppy cues noted (3 unreadable device mocks with tiny UI; mixed white-balance across tiles). Template cues low. Hierarchy: clear section titles but the script display face for headings competes with a light sans body, creating a decorative voice that weakens information hierarchy. Readability: several captions and overlaid titles on photo tiles are very small and sit on busy imagery; testimonial text is light on a low-contrast beige card. Consistency: headings use the same script and underline motif, but card titles/labels vary in tone and placement. Micro-craft: no tuned link styles shown; punctuation/line spacing and baseline rhythm look generic; overlay text lacks padding/contrast control. Closest anchor: Exemplar 8 (typography 2).",
+          "confidence": 2
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Preflight: sloppy_images triggered (\u22653 instances of device-frame photos with unreadable UI); this caps Layout at 2. Structure shows a basic grid (3-up work tiles, 2-up process), but content presentation relies on lifestyle device photos where the UI is too small to read; this harms proof of craft. The large gradient bands create value stripes that fight section spacing. The testimonial slider sits inside a rounded card with floating dots and uneven visual weight; the arched portrait interrupts the grid rhythm. Gutter spacing is mostly even but lacks a strong point of view. Closest anchor: Exemplar 8 (layout 3); scored lower due to unreadable mocks, gradient banding, and interrupted grid.",
+          "confidence": 2
+        },
+        "color": {
+          "score": 2,
+          "explanation": "Preflight: noticeable white-balance mismatch across the three work photos (warm, cool, neutral) and pastel mats; value flicker increased by the multi-band beige gradient background. The shell relies on taupe/beige neutrals with low-contrast text in places (testimonial block), and accent logic is unclear beyond black/gray text. The imagery is not harmonized via consistent mats/borders, so the page reads noisy. Per rules, mismatched whites/value flicker pulls Color to \u22642. Closest anchor: Exemplar 8 (color 3); downgraded for stronger value/temperature mismatch and low-contrast body areas.",
+          "confidence": 2
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 1.5,
+      "overall_confidence": 2.0
+    },
+    "41": {
+      "candidate_id": "41",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_41.jpg",
+      "evaluated_at": "2025-09-04T20:29:13.717698",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: template cues are borderline (left\u2011aligned mission hero, uniform two\u2011column grid, boilerplate social/footer), but not conclusive. Sloppy cues mainly come from unreadable device mocks. Typography shows a competent baseline: a serif display voice in the hero with comfortable measure (~45\u201360ch) and generous leading, small sans in the nav, and consistent caption styling (the dot\u2011prefixed project labels repeat). Hierarchy is clear through size/weight contrast between hero, project titles, and micro\u2011labels. Readability is fine with adequate contrast on white. Consistency is decent across tiles; no obvious mixed fonts or random bolding. Micro\u2011craft is limited\u2014links look defaultish and there\u2019s no visible state/underline tuning; punctuation/rags aren\u2019t specially tuned. Calibration anchor: closest to Exemplar 8 (which scored typog 2). This portfolio is slightly better due to stronger serif voice, tighter hero rhythm, and more disciplined caption treatment (three concrete deltas), hence 3.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Preflight: sloppy cues \u22653 from multiple unreadable device frames (laptop + phone in several tiles) and heavy, inconsistent mock shadows; this triggers layout \u22642. Structure uses a simple two\u2011column grid with adequate gutters, but image handling weakens craft: small, unreadable UI inside device renders; mixed tile ratios create vertical rhythm jumps; a heavy black footer band interrupts the grid; captions float with uneven alignment between columns. There\u2019s little evidence of harmonized mats/radii across tiles. Calibration anchor: Exemplar 8 (layout 3). Compared to that, this page shows more asset sloppiness (unreadable mocks), heavier object shadows, and stronger footer break (three counter\u2011signals), justifying the drop to 2.",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 2,
+          "explanation": "Preflight: mismatched tile backgrounds (navy solid, orange and blue gradients, white device mats) cause value flicker across the grid; with sloppy_images this pulls color toward 2. The shell is largely black/white with minimal accent logic; saturated gradient backdrops fight each other and the devices. The large black footer creates a harsh value jump. There\u2019s no visible unifying tactic (e.g., consistent off\u2011white mats/border tints) to harmonize the diverse brand colors. Calibration anchor: Exemplar 8 (color 3). Here the background variety and footer contrast are more disruptive, with no neutral unification\u2014clear deltas warrant 2.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.35,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 1.85,
+      "overall_confidence": 2.5
+    },
+    "4": {
+      "candidate_id": "4",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_4.jpg",
+      "evaluated_at": "2025-09-04T20:29:13.815982",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: no sloppy cues; template scent low. Typography shows an editorial serif with a restrained scale and consistent styling across company blocks and pill buttons. Hierarchy is clear (company/role > dates > descriptions), and rags are controlled. However, the opening paragraph runs an overly long measure (reads ~90\u2013100ch) which hurts readability, link/state styling isn\u2019t demonstrated beyond a subtle accent email link, and there\u2019s limited proof of micro\u2011craft (no tuned underlines, number alignment, or baseline rhythm evidence across multiple sections). Single\u2011view evidence caps at 3. Calibration anchors: closer to candidate_33.jpg (baseline 3) than exemplar_16.jpg (Gavin Nelson, typographic 5); deltas from the latter include long hero measure, less disciplined scale, and lack of link/state proof.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "A clean two\u2011column editorial layout lists roles with consistent spacing, alignment, and repeated pill CTAs. Sections breathe and the scan path is easy. Yet structure is conventional and offers little point of view; there\u2019s no image/asset harmonization or complex grid to demonstrate higher\u2011level control. Single\u2011view evidence also caps at 3. Calibration anchors: closer to candidate_33.jpg (competent grid) than exemplar_16.jpg (Gavin Nelson, layout 4); differences include lack of varied modules, asset handling, and breakpoint/complex grid proof.",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Neutral monochrome shell with a restrained warm accent for the email link and soft gray pills; harmony is calm and consistent with no value flicker. However, there\u2019s limited demonstration of a color system (states, mats, or unification of mixed imagery) and the palette remains conservative. Calibration anchors: aligns with candidate_33.jpg (baseline 3). Falls short of exemplar_16.jpg (color 4) due to absence of tuned state system and asset unification.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 2.5
+    },
+    "48": {
+      "candidate_id": "48",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_48.jpg",
+      "evaluated_at": "2025-09-04T20:29:16.356349",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: no sloppy cues; one template cue likely (default-ish blue underlined links). Evidence is a single, editorial-minimal view. Hierarchy: clear H1 ('Shu Ding') vs body and a distinct, lighter left-nav label set; spacing between paragraphs is even. Readability: comfortable line length (~60\u201370ch) and line-height; off-black on off-white improves contrast without glare. Consistency: one sans family used consistently; casing and weights are disciplined; links styled uniformly. Micro-craft: clean rag, stable baseline and tidy paragraph rhythm; subtle vertical divider aligning the two columns. Limitations: link underline/blue appears default and no visible state tuning; no proof of multiple heading levels or link states. Closest anchors: Exemplar 9 (editorial minimal, score 3) and Exemplar 18 (more refined minimal). With single-view evidence and missing state/link proof, typographic score capped at 3.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Preflight: no sloppy image handling; assets are purely text with a clean two-column structure. The left sidebar navigation, a thin vertical rule, and a well-measured main column show a sensible grid and spacing system. Paragraph rhythm is steady, and the heading aligns to the text column. However, evidence is limited to one simple section; no additional modules, cards, or image handling are shown to demonstrate breadth or harmonization. Closest anchors: Exemplar 9 (similar two-column editorial layout, score 3). Given single-view breadth, layout is competent but cannot exceed 3.",
+          "confidence": 2.3
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Neutral palette feels tuned (soft off-white background, off-black text, light gray divider) and supports readability. Accent color comes from link blue; it reads default and lacks visible hover/visited differentiation or bespoke underline tuning. No noisy mismatches or value flicker present, but also no evidence of a richer accent strategy across varied content. Closest anchor: Exemplar 9 (score 3).",
+          "confidence": 2.3
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 2.37
+    },
+    "40": {
+      "candidate_id": "40",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_40.jpg",
+      "evaluated_at": "2025-09-04T20:29:23.053693",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: template cues=2 (\"I'm [Name]\" hero; billboard-scale 'Let's Connect' background line). Sloppy cues=1 (small mobile UI inside device mock is unreadable). Type shows a clear H1 vs paragraph hierarchy, comfortable measure (~55\u201365ch) and adequate leading. Accent in the name provides hierarchy without overusing weight. However, link styles/states are not demonstrated, and the large display scale in the footer slightly crowds the container. Micro-craft like underline tuning, consistent caption styles, and baseline rhythm across multiple sections are not evidenced. Closest anchors: exemplar_8 (typo 2) and candidate_33 (typo 3). This sits at the competent baseline.",
+          "confidence": 2.6
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Preflight: 1 sloppy image cue (unreadable device mock); template cues=2 as above. The asymmetric projects layout (left project list, right feature image) shows intent with generous whitespace and a stable left margin. Assets have consistent rounded corners and spacing looks mostly on a 8-based rhythm. Weaknesses: large empty spans between sections, a decorative 'Creative Canvas' box that feels floaty, and the hero/footer scales compete with content. The featured project image includes a small phone frame that cannot be read, reducing presentation quality. Closest anchors: exemplar_8 (layout 3) and candidate_33 (layout 3). Competent but not notably refined.",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Palette is serviceable: off-white shell, strong red accent used in hero and footer, with a purple project tile that doesn't clash. Contrast is adequate and neutrals are acceptable, but the saturated red 'Let's Connect' block is heavy and dominates the page, and there's limited evidence of state logic or tuned neutrals/border tints that unify diverse imagery. No value flicker issues beyond the single purple tile. Closest anchors: exemplar_8 (color 3) and candidate_33 (color 3). Baseline quality.",
+          "confidence": 2.4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 2.5
+    },
+    "39": {
+      "candidate_id": "39",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_39.jpg",
+      "evaluated_at": "2025-09-04T20:29:25.065929",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: no template flag, but sloppy_images present elsewhere. Typography shows a clear hierarchy and readable measures: the hero uses a restrained sans with an italic serif accent on the name, consistent small caps/micro-labels under project cards, and comfortable paragraph line-length/leading. Links appear customized with colored emphasis rather than default blue. However, proof of micro-craft is limited: link underline tuning and states are not visible, captions vary slightly in spacing, and the long collage section mixes label sizes and rags, reducing consistency. Closest anchors: Exemplar 20 (similar editorial tone) and Exemplar 8; this portfolio reads stronger than Ex20 on hierarchy (serif accent, clearer scale) but lacks the rigorous repetition to exceed 3.",
+          "confidence": 2.7
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Preflight sloppy cues (3): 1) Several device mocks/screens are too small to read in the hero project tile (+1). 2) Mixed mats with drastic value jumps (periwinkle, lime, pure black) cause rhythm flicker (+1). 3) The 'Designing for Impact' collage shows irregular masonry gutters and ragged bottoms/tops with uneven tile heights (+1). These trigger red_flag 'sloppy_images' and cap Layout \u22642. Beyond that, sections are generally organized (hero \u2192 featured projects \u2192 collage \u2192 about \u2192 footer), but asset handling is inconsistent: one large video tile renders as a black slab, and the collage\u2019s card sizes/spacing don\u2019t align to a stable grid. Closest anchors: Exemplar 20 and Exemplar 8; like Ex20, structure is understandable but asset harmony and grid discipline are weak, so capped at 2.",
+          "confidence": 2.3
+        },
+        "color": {
+          "score": 2,
+          "explanation": "The warm neutral shell and coral accent have potential, but color control is undermined by strong value/hue flicker: pastel mats (lavender, lime) sit next to a pure black video tile and dark-blue textured backgrounds in the collage, producing uneven contrast and breaking unity. Because the mismatched mats cause value flicker (a noted sloppy cue), Color is capped at 2. Accent usage is otherwise restrained (coral highlights/italics), yet the surrounding imagery isn\u2019t harmonized with tints/borders to unify the page. Closest anchors: Exemplar 20 and Exemplar 8; similar issues with untuned neutrals versus imagery keep this at 2.",
+          "confidence": 2.3
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.35,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 1.85,
+      "overall_confidence": 2.43
+    },
+    "44": {
+      "candidate_id": "44",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_44.jpg",
+      "evaluated_at": "2025-09-04T20:29:31.119307",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "Preflight: no sloppy-image cues; 1 template cue (\u201cHello, I\u2019m \u2026\u201d hero) but below threshold. Closest anchor: Exemplar 20. Hierarchy: Section heads (\u201cProjects,\u201d \u201cThoughts & ideas\u201d) are small and close in weight to list items; right-column bio is the only large block, producing a weak overall hierarchy. Readability: list copy appears small with tight leading; light gray links reduce contrast, making long lists feel dense. Consistency: link treatments vary (inline titles vs \u201cBrowse all \u2026\u201d CTA with arrow) and don\u2019t form a clear system; casing mixes sentence and title case across columns. Micro-craft: rags are acceptable but there\u2019s little evidence of tuned link underlines, baseline rhythm, or scale system across sections. This aligns with the 2-level craft seen in the anchor.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Preflight: no sloppy-image issues; no template-scent cap. Closest anchor: Exemplar 20. The three-column grid is clean, but the composition lacks a clear scan path or focal hierarchy\u2014three equal-weight columns of long lists compete. Side gutters/bars introduce strong value blocks that don\u2019t support content. Spacing rhythm is acceptable yet generic; there\u2019s little asset handling or harmonization to demonstrate higher craft. Overall structure feels functional but not refined or opinionated, matching the anchor\u2019s level.",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 2,
+          "explanation": "Palette is mostly grayscale with a single orange dot accent. Neutrals lean toward near-pure black/white with strong dark sidebars, causing value jumps that dominate the minimal content. Link gray is light, hurting contrast and hierarchy. There\u2019s limited evidence of tuned neutrals (e.g., hue-shifted borders/shadows) or a consistent accent system beyond the lone dot. This aligns with the anchor\u2019s color craft at 2.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 2.0,
+      "overall_confidence": 2.5
+    },
+    "46": {
+      "candidate_id": "46",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_46.jpg",
+      "evaluated_at": "2025-09-04T20:29:45.929110",
+      "criteria": {
+        "typography": {
+          "score": 5,
+          "explanation": "Preflight: no sloppy or template cues observed. Typography shows a confident system across many sections. Hierarchy: oversized left-aligned section titles (e.g., \u201cColumn\u201d, \u201cWebflow Brand\u201d, \u201cSamsung\u201d) contrasted with small meta lines create a clear multi-modal hierarchy. Readability: short measures for the metadata with comfortable leading; display sizes have tight but controlled tracking with ample breathing room. Consistency: section headers repeat with identical casing, scale steps, and alignment; small micro-labels (e.g., M/L control and meta strings with separators) repeat consistently across sections. Micro-craft: even baselines between header blocks and grid starts, precise rags on the small text, balanced letterspacing in large headers, and consistent weight pairing between titles and captions. Closest anchor: Exemplar 5 (very similar); within anchor bounds.",
+          "confidence": 4
+        },
+        "layout_composition": {
+          "score": 5,
+          "explanation": "Preflight: no sloppy assets; grids are disciplined. The page uses a strong two-column section structure\u2014oversized title column on the left, dense thumbnail grid on the right\u2014repeated with exact spacing rhythm. Grids maintain consistent tile ratios, gutters, and alignment across long scroll; no cut-off crops; internal mats/radii appear unified. Section transitions keep vertical rhythm stable; labels and controls align to the grid. Image handling is deliberate (cohesive square tiles, consistent margins) despite diverse content. Closest anchor: Exemplar 5 (nearly identical in structure and rigor).",
+          "confidence": 4
+        },
+        "color": {
+          "score": 4,
+          "explanation": "A restrained, mostly white/neutral shell lets varied project colors sit without clashing. Unification tactics include consistent dark/neutral mats around thumbnails and repeated black text/gray accents, which control value jumps across very colorful tiles. Accent usage is sparse and role-clear (small controls/labels). Minor variability from project artwork prevents a 5, but overall harmony is strong. Closest anchor: Exemplar 5 (same assessment: strong but not maximal).",
+          "confidence": 4
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.7,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.7,
+      "overall_confidence": 4.0
+    },
+    "5": {
+      "candidate_id": "5",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_5.jpg",
+      "evaluated_at": "2025-09-04T20:29:52.300167",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy cues; no strong template scent. Hierarchy: clear separation between a large display H1, a concise sub\u2011copy paragraph, section label 'Projects', and small caption blocks under tiles. Readability: comfortable measures (hero ~55\u201370ch) and open leading with strong contrast on white/black sections. Consistency: same grotesk family across hero, labels, captions; consistent casing; link to \u201cAllbirds\u201d uses a tuned underline that matches stroke weight. Micro\u2011craft signals: 1) custom underline thickness/offset on the Allbirds link, 2) disciplined scale steps between H1/H2/captions, 3) tidy rags with no widows/orphans visible, 4) baseline rhythm feels even between paragraphs and captions. Closest anchors: Exemplar 17 and 19. Minor nit: body copy is very small in the black \u2018About\u2019 panel which slightly compresses readability. Overall reads refined and controlled.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: zero cut\u2011off crops, even gutters, matched tile ratios, no unreadable device mocks. The page uses a clear grid: wide hero image then a three\u2011up projects row with identical mats and consistent captions aligned to the grid. Section hierarchy is strong\u2014value shift to a black \u2018About\u2019 band creates clear structure. Micro\u2011craft signals: 1) even horizontal gutters between project tiles, 2) consistent caption spacing and alignment under each tile, 3) balanced split layout in \u2018About\u2019 (photo left; three text columns + CTA right) with aligned baselines, 4) generous top/bottom spacing that repeats across sections. Closest anchors: Exemplar 17 and 19. Minor roughness: the small \u2018Contact\u2019 button feels slightly under\u2011scaled relative to surrounding content.",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Palette is intentionally minimal\u2014neutral white shell with a deep black \u2018About\u2019 band; photography carries color. Value control is clean with no flicker; colorful product imagery sits comfortably against neutrals. Micro\u2011craft signals: 1) disciplined two\u2011tone shell (white/black) that frames imagery, 2) consistent black text/link treatment without stray hues, 3) captions use restrained gray for hierarchy, 4) the black band provides a deliberate value step to separate content without overwhelming. Closest anchors: Exemplar 17 and 19. Slight nit: the gray \u2018Contact\u2019 pill is visually timid and could use clearer accent logic.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 2.5
+    },
+    "43": {
+      "candidate_id": "43",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_43.jpg",
+      "evaluated_at": "2025-09-04T20:30:01.999208",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: template cues present \u2014 \u201cHey, I\u2019m [Name]\u201d hero; default link blue with a default-looking underline on the resume link; boilerplate footer. This caps Typography at \u22643. Strengths: clear hierarchy between large hero heading, secondary intro heading, and readable body copy; comfortable measure (~60\u201370ch) and line-height; consistent sentence casing and restrained style set; nav labels are small and unobtrusive. Weaknesses/micro-craft: link styling appears untouched (bright default blue + underline); no visible custom states; type family feels generic; limited proof of baseline rhythm or tuned scale across multiple sections due to single-view evidence. Closest anchors: Exemplar 14/18 (editorial minimal). Compared to those, this page lacks customized link treatment, visible scale discipline across multiple modules, and micro\u2011craft details.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Preflight: template scent high \u2014 classic centered intro with 'I\u2019m [Name]' hero, two-column about block with a photo, and a boilerplate footer. Caps Layout at \u22643. Positives: stable two-column grid, generous whitespace, consistent container width, clean alignment between text block and image, and an uncropped, well-balanced photo. Negatives: structure is very standard with little point of view; no harmonized mats/captions or project tiles to show spacing system breadth; limited evidence of responsive/breakpoint decisions. Closest anchors: Exemplar 14/18. Those demonstrate stronger grid rhythm and more varied sections; here the layout is competent but templated.",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Neutral shell with off-white/very light gray sections reads calm and consistent; photo integrates without clashing. Accent appears to rely on default bright link blue, which feels un-tuned; footer band introduces a slightly different neutral but stays within a tight range. No mismatched whites causing harsh flicker. Overall serviceable but not showing the tuned accent/neutral system seen in stronger anchors (Exemplar 14/18).",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.4,
+      "overall_confidence": 2.5
+    },
+    "52": {
+      "candidate_id": "52",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_52.jpg",
+      "evaluated_at": "2025-09-04T20:30:04.988478",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: no major template-typography cues; sloppy-image issues noted elsewhere. Hierarchy: clear\u2014large all\u2011caps nameplate, small subtitle, consistent small captions under each project, and a distinct 'Let's chat!' section. Readability: main text blocks have comfortable measures and line height; nav labels are lightweight and legible. Consistency: same sans family throughout; captions share size/weight and left alignment; nav casing consistent. Micro\u2011craft: minimal evidence of tuned link states or underline treatments; punctuation/quotes and baseline rhythm not demonstrated. Closest anchors: Exemplar 8 and Exemplar 19. Compared to Exemplar 8 (typography 2), this page shows a cleaner display hierarchy and steadier caption system; however it lacks the refined link/state proof of Exemplar 19, so it stays at a competent 3.",
+          "confidence": 2.7
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Preflight: multiple sloppy-image cues\u2014(1) tiny phone mocks with unreadable UI in the first project, (2) full-page screenshots scaled too small for legibility (Xbox, UCLA), (3) mixed textured mats/torn-paper shapes causing value and rhythm flicker. Grid: overall single-column stack is straightforward, but decorative bands (cat pattern strip) and washi\u2011tape collages are off-grid and introduce noise. Asset handling: mixed device frames vs raw screenshots; internal mats/radii/shadows are inconsistent; captions align but the images do not share a common ratio or border logic. Closest anchors: Exemplar 8 (layout 3) and Exemplar 19 (layout 4). This page is notably rougher due to unreadable screenshots, mismatched mats, and ornamental elements that undermine rhythm, so it drops to 2. Sloppy-images red flag caps layout at \u22642, which applies here.",
+          "confidence": 2.2
+        },
+        "color": {
+          "score": 2,
+          "explanation": "Preflight: value/white balance mismatch across tiles (maroon hero, green patterned strip, tan/red/green textured project backdrops) creates flicker. Palette: no single accent strategy\u2014each project brings a different saturated backdrop; body text is neutral but lacks a unifying chrome to harmonize diverse imagery. The decorative green band adds an unrelated hue family that competes with the hero. States/links are not evidenced. Closest anchors: Exemplar 8 (color 3) and Exemplar 15 (color 3). Compared to those, this page is less controlled, with several competing hues and inconsistent mats; thus a 2. Because the mismatched whites/mats drive value flicker, color is also capped at \u22642 by the sloppy-images flag.",
+          "confidence": 2.1
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.35,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 1.85,
+      "overall_confidence": 2.33
+    },
+    "53": {
+      "candidate_id": "53",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_53.jpg",
+      "evaluated_at": "2025-09-04T20:30:08.272147",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: template cues seen (\"I'm a Product Designer\u2026\" intro; boilerplate footer). No clear default link underline; overall clean. Hierarchy: simple but clear\u2014nav, intro sentence, H2 \"Featured work,\" and small caption create readable levels. Readability: centered copy has a comfortable measure (~60\u201370ch) and adequate leading; contrast is fine. Consistency: same family and tone across nav/body/headings; link styling appears conservative and consistent. Micro\u2011craft: spacing between blocks is steady; no widows/orphans or tracking issues visible, but no tuned link underlines or evident baseline system. Closest anchors: candidate_33 (3/3/3) and exemplar_8 (2/3/3). Given stable measure and cleaner copy than exemplar_8, a baseline 3 is warranted.",
+          "confidence": 2.6
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Preflight: 2 minor sloppy cues\u2014(1) mixed mats/value between the two project banners (dark navy vs light blue) causing slight flicker; (2) one device mock where in\u2011phone UI is barely readable at this size. Grid: straightforward single\u2011column with consistent container width and predictable vertical rhythm. Sections are clear (intro \u2192 section header \u2192 two large showcase images). Asset handling: large, uncropped tiles; however, backgrounds differ and the collage/phone overlay lacks a unifying mat system. No irregular gutters or misalignments. Closest anchors: candidate_33 (3) and exemplar_8 (3). Matches the clean-but-generic baseline.",
+          "confidence": 2.7
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Neutral shell (white background, dark gray text) with restrained blue/teal links. Project tiles introduce saturated blues via bespoke backgrounds; these are not unified across tiles, producing mild value shifts but no clashes. Neutrals appear default rather than tuned; no clear accent/state system beyond links. Closest anchors: candidate_33 (3) and exemplar_8 (3). Solid but not notably refined.",
+          "confidence": 2.6
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 2.63
+    },
+    "50": {
+      "candidate_id": "50",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_50.jpg",
+      "evaluated_at": "2025-09-04T20:30:09.222183",
+      "criteria": {
+        "typography": {
+          "score": 2,
+          "explanation": "Preflight: evidence is a single gallery-style page with minimal copy; no visible body text, captions, or link treatments \u2192 Typography \u2264 3 by evidence ceiling. Observed: 1) Nameplate set in a generic sans with uppercase name and small subtitle; hierarchy beyond this is unclear. 2) No demonstrated type scale across sections (no H1/H2/body rhythm or captions). 3) Missing customized link states and micro-details (underline tuning, lists, quotes). 4) Mixed type inside thumbnails (bud.com logo, poster text) is project art, not site system, which reduces perceived consistency. Closest anchors: Exemplar 8 and 19 (both simple grids). Compared to them, this page shows less hierarchy and fewer system decisions, so a 2 is appropriate.",
+          "confidence": 2
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Preflight sloppy cues (\u22653) \u2192 red_flag 'sloppy_images' and Layout \u2264 2. Concrete cues: 1) Multiple tiny, unreadable device mocks (triple-phone orange UI, twin chat screens, MacBook+phone, iPad+phone) make outcome imagery illegible. 2) Irregular masonry with ragged bottoms/tops across the two-column grid. 3) Mismatched mats/whites and asset styles (angled iPad render, full-bleed photography, black poster, iMac mock) with no harmonization. Structure: simple two-column collage lacking captions, consistent radii, or unifying mats; spacing rhythm varies with tile heights. Closest anchors: Exemplar 8 (layout 3) and 11. This page is rougher\u2014more ragged rhythm and unreadable mocks\u2014so it sits below at 2.",
+          "confidence": 2
+        },
+        "color": {
+          "score": 2,
+          "explanation": "Preflight: mismatched whites/mats and strong value jumps (white tiles, black poster, bright orange UI, full-color photo) cause grid flicker \u2192 Color \u2264 2. Observed: the shell is plain white with no evident accent system; diverse thumbnails introduce unrelated palettes; no use of neutral tints, borders, or mats to unify imagery; saturation/values vary widely between tiles. Compared to anchors Exemplar 8/19 (color 3), this page shows less control and unification, warranting a 2.",
+          "confidence": 2
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.0,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 1.5,
+      "overall_confidence": 2.0
+    },
+    "6": {
+      "candidate_id": "6",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_6.jpg",
+      "evaluated_at": "2025-09-04T20:30:11.772703",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: 0 sloppy cues; 0 template cues observed. Closest anchors: Exemplar 1 and Exemplar 6. Hierarchy: Clear, editorial hierarchy using a high\u2011contrast serif for section titles with consistent right\u2011aligned meta labels; weights/scale changes are restrained and repeat across projects. Readability: Comfortable measures (~60\u201370ch) and relaxed leading on an off\u2011white background; body copy remains legible even near imagery. Consistency: Same heading style, meta line, and link treatment recur across sections; casing and tone are stable. Micro\u2011craft: off\u2011black body text (not #000) for softer contrast; precise spacing between title and meta; tidy rags with no widows; optical alignment of headings and images keeps baselines steady. Minor gaps (limited proof of link/hover states and only one text family pairing shown) keep it at 4.",
+          "confidence": 3.2
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: no cut\u2011off crops, no irregular gutters, readable screenshot scale; device frames appear customized and consistent. Closest anchors: Exemplar 1 and Exemplar 6. The page shows a strong, consistent grid with generous margins; section pattern (title/description/large hero image) repeats cleanly. Image handling is disciplined: mats, radii, and shadows feel unified; screenshots are large enough to read; no ragged masonry. Editorial blocks (e.g., principle statements and the dark footer specimen grid) provide a distinct point of view while maintaining rhythm. Slight conservatism (mostly linear single\u2011column flow, limited breakpoint evidence) holds it at 4 rather than 5.",
+          "confidence": 3.3
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Preflight: no white\u2011balance flicker; neutrals are tuned. Closest anchors: Exemplar 1 and Exemplar 6. Palette shows taste: warm off\u2011white shell, soft off\u2011black text, and a dark navy footer; colorful project imagery is balanced by neutral mats. Gradients in the Discord pieces sit comfortably against the shell. Accent usage is restrained (links/meta) with good value control across light and dark sections. Minor gap: limited demonstration of state logic keeps it at a strong 4.",
+          "confidence": 3.0
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 3.17
+    },
+    "9": {
+      "candidate_id": "9",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_9.jpg",
+      "evaluated_at": "2025-09-04T20:30:14.485194",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: sloppy cues 0; template cues 1 (centered \u201cI\u2019m [Name]\u201d hero). Closest anchors: Exemplar 3 and Exemplar 19. Counter-signals: 1) Clear, multi-level hierarchy\u2014oversized display hero, small intro copy, section label (\u201cSelected work\u201d), project titles and captions with consistent step-down; 2) Comfortable measures and leading throughout (hero and body ~55\u201370ch, ample line-height, no collisions); 3) Consistency\u2014repeating project title styles, small all-caps client labels, and micro-link like \u201cSee all work\u201d using the same tone; 4) Micro-craft\u2014balanced rags, tidy punctuation/quotes, no widows/orphans visible, optical tracking on small all-caps labels. The disciplined scale and rhythm exceed Exemplar 3\u2019s baseline; feels closer to a refined editorial system.",
+          "confidence": 2.6
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: sloppy cues 0; template cues 1. Closest anchors: Exemplar 3 and Exemplar 19. Counter-signals: 1) Cohesive grid and spacing system\u2014consistent container width, even vertical rhythm between sections; 2) Asset handling is deliberate\u2014matched mats/radii, consistent soft shadows, and readable focal crops (no cut-offs); 3) Section structure is clear\u2014\u2018Selected work\u2019 label with right-aligned \u2018See all work\u2019, then repeated project blocks with title, subtitle, and hero image; 4) Device renders and screenshots are harmonized in scale and placement; gutters are even with no ragged masonry. This shows stronger structural discipline than the anchor.",
+          "confidence": 2.8
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Preflight: sloppy cues 0; template cues 1. Closest anchors: Exemplar 3 and Exemplar 19. Counter-signals: 1) Tuned neutrals (off-black headings, soft grays) provide comfortable contrast; 2) Accent strategy is restrained\u2014coral button/badge and subtle link color used sparingly; 3) Screenshots with diverse palettes are unified by pale mats and consistent shadow/border treatment, avoiding value flicker; 4) Blue data visuals sit well within the neutral shell without clashing. Overall harmony and value control clearly stronger than the Exemplar 3 anchor.",
+          "confidence": 2.5
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 2.63
+    },
+    "49": {
+      "candidate_id": "49",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_49.jpg",
+      "evaluated_at": "2025-09-04T20:30:22.587381",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: no obvious default link blue/underline seen; text legible. Closest anchors: Exemplar 8 (lower craft) and Exemplar 19 (simple, tasteful grids). Compared to Exemplar 8, this page shows slightly better typographic discipline: (1) clear hierarchy with project titles in heavier weight and smaller gray descriptions beneath; (2) comfortable leading and short measures within labels; (3) consistent casing and scale across all tiles and in the header\u2019s three-column micro-labels; (4) spacing between title/description pairs is even across rows. Micro\u2011craft proof is limited (no link states, underline tuning, or long-form rhythm visible), so Single\u2011view evidence caps the score at 3.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Preflight sloppy cues: (1) multiple device-mock photos where the UI is too small to read (desktop and laptop shots across FutureAdvisor, Streamloan, Hipcamp), (2) mismatched photographic backgrounds (wood desk, white desk, leaves) causing value flicker across the grid. This triggers red_flag 'sloppy_images' and caps Layout at 2. Positives: a stable two-column grid with even gutters, generous margins, and consistent caption placement under each tile. However, inconsistent asset handling and unreadable mocks reduce compositional polish compared with anchor Exemplar 8 (which maintained clearer, more unified asset mats).",
+          "confidence": 2.0
+        },
+        "color": {
+          "score": 2,
+          "explanation": "Neutral shell is restrained (white background, gray/black type), but the tiles introduce uncontrolled variation: warm wood, cool white desk, and high-contrast leaf textures. This white-balance/value mismatch creates flicker and lacks unifying mats/shadows. Per Preflight, mismatched whites/mats pull Color to \u22642. Compared with Exemplar 8, which kept a calmer set of mats, this page feels noisier because the photography dominates without harmonization.",
+          "confidence": 2.0
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.35,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 1.85,
+      "overall_confidence": 2.17
+    },
+    "47": {
+      "candidate_id": "47",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_47.jpg",
+      "evaluated_at": "2025-09-04T20:30:23.140204",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: no template cap, but sloppy-images flag applies elsewhere. Typography sub-factors\u20141) Hierarchy: clear H1/H2 scale, left-aligned section titles, and pill CTAs establish hierarchy; 2) Readability: comfortable line lengths and line-height in hero/about; 3) Consistency: headings and body use the same sans with predictable weight steps; labels for job history and skills read clean; 4) Micro-craft: limited proof\u2014links/underlines not demonstrated, punctuation/quotes and small labels show no extra tuning. Overall feels competent but generic with few distinctive typographic decisions. Closest anchor: Exemplar 8 (typography 2). Up-scoring by ~+1 justified by cleaner hierarchy and measures than that anchor, but still not refined enough for 4.",
+          "confidence": 2.6
+        },
+        "layout_composition": {
+          "score": 2,
+          "explanation": "Preflight sloppy cues \u22654: repeated device-frame tiles where UI text is unreadable at presented size across four project cards; generic device frames; inconsistent photo-mat backgrounds behind each device creating rhythm/value flicker; small CTA chips float at different positions. This triggers red_flag 'sloppy_images' and caps Layout \u22642. While the page uses a straightforward single-column grid with adequate spacing and a tidy About/skills block, the core work presentation relies on tiny screenshots inside frames with heavy blurred-photo backdrops, which undermines clarity. Closest anchors: Exemplar 8 (layout 3) and Exemplar 19 (layout 3). Scored lower due to the unreadable mocks, inconsistent card mats, and floating CTAs which those anchors avoid.",
+          "confidence": 2.3
+        },
+        "color": {
+          "score": 2,
+          "explanation": "Color is largely neutral (black/white with black pill CTAs), but the project cards each use different blurred photo backgrounds, causing noticeable value flicker and lack of unifying mats/borders. This derives from the same image handling issues; per rubric, mismatched mats causing value flicker pulls Color down and, with sloppy-images flag, Color \u22642. The 'Fun' section introduces saturated product renders that further break the neutral rhythm. No evidence of tuned neutrals or link state system. Closest anchor: Exemplar 8 (color 3); scored lower due to the inconsistent background mats and noisy accents.",
+          "confidence": 2.2
+        }
+      },
+      "red_flags": [
+        "sloppy_images"
+      ],
+      "base_weighted_score": 2.35,
+      "penalty_applied": 0.3,
+      "overall_weighted_score": 1.85,
+      "overall_confidence": 2.37
+    },
+    "54": {
+      "candidate_id": "54",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_54.jpg",
+      "evaluated_at": "2025-09-04T20:30:24.446489",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight (template cues): \u201cI am [Name]\u201d left-text/right-graphic hero, a down-arrow prompt, and a uniform two-column project grid \u2192 template_scent_high cap applied (Typography \u22643). Hierarchy: clear headline, supporting paragraph, and smaller caption labels under tiles. Readability: comfortable hero measure and line-height; captions remain legible; button label weight contrasts adequately on dark hero. Consistency: single sans family used consistently across nav, body, and captions; casing appears disciplined; spacing between headings and body is steady. Micro-craft: alignment/baselines look stable, but no visible custom link/underline treatment or typographic states; limited proof of small details (quotes, number alignment). Closest anchors: Exemplar 19 and Exemplar 8. This is cleaner than Exemplar 8 but similar system to Exemplar 19; not enough refined signals to exceed 3.",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Preflight: same template cues as above cap Layout \u22643. The structure is a standard hero followed by a two-column grid with consistent gutters and aligned captions. Spacing and container widths feel disciplined; tiles sit on a steady rhythm. Minor roughness: mixed image treatments (some with gray mats, some full-bleed collages, some dark browser-chrome frames) create slight value flicker; several thumbnails show full-screen UI that\u2019s hard to read at this size; varied tile heights produce a light masonry feel. No cut-off crops or obvious misalignments. Closest anchors: Exemplar 19 (very similar two-column gallery) and Exemplar 8; this is closer to 19 and merits a competent 3.",
+          "confidence": 2.5
+        },
+        "color": {
+          "score": 4,
+          "explanation": "A restrained palette with a tuned, desaturated deep green hero, off-white content area, and light gray mats. Accents are sparse and consistent (white-outline button on dark hero, neutral captions). The dark hero contrasts cleanly with the lighter gallery, and the gray mats help contain colorful UI collages. Minor issue: alternating dark UI screenshots vs. light mats causes mild value variation, but overall harmony is maintained. Counter-signals vs anchor (Exemplar 19): more distinctive hero hue, better-tuned neutrals, and restrained accent use lift color quality above a baseline 3.",
+          "confidence": 2.7
+        }
+      },
+      "red_flags": [
+        "template_scent_high"
+      ],
+      "base_weighted_score": 3.3,
+      "penalty_applied": 0.5,
+      "overall_weighted_score": 2.7,
+      "overall_confidence": 2.57
+    },
+    "51": {
+      "candidate_id": "51",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_51.jpg",
+      "evaluated_at": "2025-09-04T20:30:36.690575",
+      "criteria": {
+        "typography": {
+          "score": 4,
+          "explanation": "Preflight: template cues 1 (\"Hello, I'm [Name]\" hero). Sloppy cues 0 material (thumbnails are small but intentional and not device mock collages). Closest anchors: Exemplar 6 and Exemplar 5. Hierarchy: Strong display headline paired with a secondary statement and a right-column bio; clear title/meta hierarchy under each card (title, status chip, company \u2022 type \u2022 year). Readability: comfortable measures and leading in the bio; project captions sit ~2\u20133 lines with good contrast on a warm off\u2011white background. Consistency: recurring small pill chips (e.g., SHIPPED) with consistent tracking/casing; repeated dot separators and micro\u2011labels across all cards; nav uses a unified pill treatment. Micro\u2011craft: baseline rhythm across hero/bio/cards feels even; punctuation/spacing around bullets is tight; chip radii/line\u2011height are tuned; no default underlines visible. Minor nit: the deliberately blurred \"Hello, I\u2019m Tammy\" softens crispness, but overall system reads considered.",
+          "confidence": 2.7
+        },
+        "layout_composition": {
+          "score": 4,
+          "explanation": "Preflight: no sloppy image set, no irregular gutters; template scent low. Closest anchors: Exemplar 6 and Exemplar 5. The page uses a disciplined multi\u2011column grid: left hero column + right bio card, then a 3\u2011column project grid with even gutters and aligned captions. Micro\u2011craft signals: (1) consistent card aspect ratios and internal mats; (2) matched corner radii between tiles and chips; (3) captions align and repeat in structure; (4) vertical rhythm between rows is even; (5) no cut\u2011off crops or floaty CTAs; (6) container width feels intentionally constrained with comfortable outer margins. It\u2019s clean and controlled; only roughness is that some UI in thumbnails is small at this scale, but presentation stays cohesive.",
+          "confidence": 2.8
+        },
+        "color": {
+          "score": 4,
+          "explanation": "Preflight: no mismatched whites causing flicker; palette is intentional. Closest anchors: Exemplar 6 and Exemplar 5. Color system shows tuned neutrals (warm off\u2011white background, off\u2011black text) and a curated set of pastel/earthy mats per project tile that stay within a controlled value range, avoiding harsh jumps. Micro\u2011craft signals: (1) consistent, desaturated backgrounds unify diverse screenshots; (2) subtle gray chips and nav pills with clear state/accent logic; (3) harmonious sequencing across rows (lavender/green/ochre/blue/pink) keeps balance; (4) shadows/borders are very light and not noisy. Overall harmony is strong without resorting to default bright blues.",
+          "confidence": 2.7
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 4.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 4.0,
+      "overall_confidence": 2.73
+    },
+    "7": {
+      "candidate_id": "7",
+      "portfolio_category": "Unknown",
+      "image_filename": "candidate_7.jpg",
+      "evaluated_at": "2025-09-04T20:30:42.608456",
+      "criteria": {
+        "typography": {
+          "score": 3,
+          "explanation": "Preflight: a couple of template cues (\"Hello! I'm [Name]\" hero, social\u2011icon footer). No red\u2011flag threshold met. Typography uses a single modern sans with clear heading hierarchy (large hero, card titles, short descriptions). Readability is fine with comfortable leading and line lengths; card copy stays legible. Consistency is mostly steady across cards and CTAs. Micro\u2011craft feels generic: links in the intro read close to default blue with standard underline, and there\u2019s little evidence of tuned underline weight/offset or refined baseline rhythm. Closest anchors: Exemplar 8 and Candidate_17 (both baseline competent).",
+          "confidence": 2.5
+        },
+        "layout_composition": {
+          "score": 3,
+          "explanation": "Preflight: minor image cue\u2014one small device mock where UI is not readable; otherwise crops and radii are consistent. Two\u2011column staggered card grid is clean with adequate gutters and consistent card mats/shadows. Sections are clear (intro, projects, CTA, footer). Image handling is competent though the grid relies on a standard template; varied card heights create mild rhythm flicker but not sloppy. No advanced structural moves or bespoke harmonization beyond the basic pattern. Closest anchors: Exemplar 8 (similar two\u2011column grid) and Exemplar 19; this execution matches their baseline level.",
+          "confidence": 2.6
+        },
+        "color": {
+          "score": 3,
+          "explanation": "Preflight: no mismatched whites; colored mats vary per card. Palette is serviceable\u2014neutral shell (white/black/gray) with pastel mats behind screenshots for visual interest. Accents are controlled, though the rotating mat colors introduce some value/hue flicker across the grid and links lean toward default blue rather than a tuned accent system. Shadows are soft and consistent. Overall harmonious but generic. Anchors: Exemplar 8 (similar neutral shell with light accents).",
+          "confidence": 2.6
+        }
+      },
+      "red_flags": [],
+      "base_weighted_score": 3.0,
+      "penalty_applied": 0,
+      "overall_weighted_score": 3.0,
+      "overall_confidence": 2.57
+    }
+  }
+}
